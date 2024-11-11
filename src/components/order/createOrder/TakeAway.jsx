@@ -1,8 +1,13 @@
-import { Spinner } from "@chakra-ui/react";
-import { role } from "../../../utils/testData";
-import { SearchIcon } from "../../../utils/icons";
 import { useState } from "react";
+import Select from "react-select";
+
+import { Spinner } from "@chakra-ui/react";
+
 import { useDraggable } from "../../../hooks/useDraggable";
+
+import { DownloadIcon, SearchIcon } from "../../../utils/icons";
+import { paymentOptions } from "../../../utils/defaultData";
+import { role } from "../../../utils/testData";
 
 const TakeAway = () => {
   const [takeAwayData, setTakeAwayData] = useState({
@@ -14,6 +19,7 @@ const TakeAway = () => {
   const [isMerchantLoading, setIsMerchantLoading] = useState(false);
   const [isProductLoading, setIsProductLoading] = useState(false);
   const [isInvoiceLoading, setIsInvoiceLoading] = useState(false);
+  const [isOrderLoading, setIsOrderLoading] = useState(false);
 
   const {
     isDragging,
@@ -169,9 +175,7 @@ const TakeAway = () => {
                         <select
                           className="outline-none focus:outline-none bg-white p-2"
                           value={item.selectedVariantId || ""}
-                          onChange={(e) =>
-                            handleVariantChange(item.productId, e.target.value)
-                          }
+                          onChange={(e) => {}}
                         >
                           {item.variants.flatMap((variant) =>
                             variant.variantTypes.map((type) => (
@@ -189,14 +193,14 @@ const TakeAway = () => {
                   <div className="flex items-center border-2 border-gray-300 px-2">
                     <button
                       className="text-red-400 text-xl"
-                      onClick={(e) => decreaseQuantity(item.productId, e)}
+                      onClick={(e) => {}}
                     >
                       -
                     </button>
                     <span className="mx-2">{item.quantity}</span>
                     <button
                       className="text-green-400 text-xl"
-                      onClick={(e) => increaseQuantity(item.productId, e)}
+                      onClick={(e) => {}}
                     >
                       +
                     </button>
@@ -247,7 +251,7 @@ const TakeAway = () => {
                 value={paymentOptions.find(
                   (option) => option.value === paymentMode
                 )}
-                onChange={(option) => setPaymentMode(option.value)}
+                onChange={(option) => {}}
                 className="w-ful outline-none focus:outline-none"
                 placeholder="Select payment mode"
                 isSearchable={true}
@@ -290,15 +294,15 @@ const TakeAway = () => {
             <button
               className="bg-cyan-50 py-2 px-4 rounded-md text-lg"
               type="button"
-              onClick={downloadInvoiceBill}
+              onClick={() => {}}
             >
-              <SaveAltIcon /> Bill
+              <DownloadIcon /> Bill
             </button>
 
             <button
               className="bg-teal-700 text-white py-2 px-4 rounded-md"
               type="submit"
-              onClick={createOrder}
+              onClick={() => {}}
             >
               {isOrderLoading
                 ? "Creating order..."
