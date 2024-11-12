@@ -38,12 +38,14 @@ import {
   FaIndianRupeeSign as PricingIcon,
   FaPlus as PlusIcon,
   FaArrowLeftLong as LeftArrowIcon,
+  FaLocationDot as LocationIcon,
 } from "react-icons/fa6";
 import { FiBell as NotificationIcon } from "react-icons/fi";
 import {
   MdCrisisAlert as AlertNotificationIcon,
   MdLocationPin as GeofenceIcon,
   MdSmartphone as AccountIcon,
+  MdOutlineDeleteOutline as DeleteIcon,
 } from "react-icons/md";
 import { GrUserManager as ManagerIcon } from "react-icons/gr";
 import { IoSettingsOutline as SettingsIcon } from "react-icons/io5";
@@ -80,4 +82,6 @@ export {
   DownloadIcon,
   CalendarIcon,
   LeftArrowIcon,
+  LocationIcon,
+  DeleteIcon,
 };
