@@ -4,7 +4,7 @@ const Setting = () => {
   return (
     <div className="bg-gray-100 h-full">
       <GlobalSearch />
-      <p>Home</p>
+      <p>Settings</p>
     </div>
   );
 };

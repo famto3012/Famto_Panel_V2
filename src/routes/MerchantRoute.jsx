@@ -19,10 +19,10 @@ const MerchantDetail = lazy(
 const MerchantRoutes = () => (
   <Suspense fallback={<Loader />}>
     <Routes>
-      <Route path="/" element={<AllMerchant />} />
-      <Route path="/payout" element={<MerchantPayout />} />
-      <Route path="/payout-detail" element={<MerchantPayoutDetail />} />
-      <Route path="/:merchantId" element={<MerchantDetail />} />
+      <Route path="" element={<AllMerchant />} />
+      <Route path="payout" element={<MerchantPayout />} />
+      <Route path="payout-detail" element={<MerchantPayoutDetail />} />
+      <Route path=":merchantId" element={<MerchantDetail />} />
     </Routes>
   </Suspense>
 );

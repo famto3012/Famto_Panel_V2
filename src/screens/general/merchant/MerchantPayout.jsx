@@ -4,7 +4,7 @@ const MerchantPayout = () => {
   return (
     <div className="bg-gray-100 h-full">
       <GlobalSearch />
-      <p>Home</p>
+      <p>Merchant Payout</p>
     </div>
   );
 };

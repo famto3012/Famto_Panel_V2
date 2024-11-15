@@ -4,7 +4,7 @@ const DeliveryManagement = () => {
   return (
     <div className="bg-gray-100 h-full">
       <GlobalSearch />
-      <p>Home</p>
+      <p>Delivery Management</p>
     </div>
   );
 };

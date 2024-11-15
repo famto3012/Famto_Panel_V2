@@ -4,7 +4,7 @@ const AgentApp = () => {
   return (
     <div className="bg-gray-100 h-full">
       <GlobalSearch />
-      <p>Home</p>
+      <p>Agent App</p>
     </div>
   );
 };

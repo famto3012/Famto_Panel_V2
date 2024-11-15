@@ -1,13 +1,15 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import Select from "react-select";
 import DatePicker from "react-datepicker";
+
+import RenderIcon from "../../../icons/RenderIcon";
 
 import { Table } from "@chakra-ui/react";
 import { Button } from "@/components/ui/button";
 
 import GlobalSearch from "../../../components/others/GlobalSearch";
 
-import { CalendarIcon, DownloadIcon, PlusIcon } from "../../../utils/icons";
 import {
   deliveryModeOption,
   orderStatusOption,
@@ -17,7 +19,6 @@ import {
 import "react-datepicker/dist/react-datepicker.css";
 
 import { role } from "../../../utils/testData";
-import { Link } from "react-router-dom";
 
 const AllOrders = () => {
   const [selectedOption, setselectedOption] = useState("order");
@@ -69,19 +70,20 @@ const AllOrders = () => {
 
         <div className="flex gap-x-4">
           <Button variant="solid" className="bg-teal-200 text-black px-3">
-            <DownloadIcon />
+            <RenderIcon iconName="DownloadIcon" />
             <span className="text-[16px]">CSV</span>
           </Button>
           <Link
-            to="/order/create"
+            to={`/order/create`}
             className="bg-teal-700 text-white px-3 flex items-center gap-2 rounded-md"
           >
-            <PlusIcon /> <span className="text-[16px]">Create Order</span>
+            <RenderIcon iconName="PlusIcon" />
+            <span className="text-[16px]">Create Order</span>
           </Link>
         </div>
       </div>
 
-      <div className="flex items-center bg-white p-3 mx-5 rounded-lg justify-between mt-[20px] px-[30px]">
+      <div className="flex items-center bg-white p-3 py-[20px] mx-5 rounded-lg justify-between mt-[20px] px-[30px]">
         <div className="flex items-center gap-[20px]">
           <Select
             options={orderStatusOption}
@@ -186,8 +188,8 @@ const AllOrders = () => {
             withPortal
             className="cursor-pointer "
             customInput={
-              <span>
-                <CalendarIcon className="text-gray-400 text-xl" />
+              <span className="text-gray-400 text-xl">
+                <RenderIcon iconName="CalendarIcon" size={24} loading={2} />
               </span>
             }
             placeholderText="Select Date range"
@@ -205,52 +207,58 @@ const AllOrders = () => {
         </div>
       </div>
 
-      <Table.ScrollArea className="mt-[30px]" height="20rem">
-        <Table.Root size="lg" stickyHeader interactive striped>
-          <Table.Header>
-            <Table.Row className="bg-teal-700 h-[70px]">
-              {[
-                "Order ID",
-                "Order Status",
-                "Merchant Name",
-                "Customer Name",
-                "Delivery Mode",
-                "Order Time",
-                "Delivery Time",
-                "Payment Method",
-                "Delivery Option",
-                "Amount",
-              ].map((header) => (
-                <Table.ColumnHeader color="white" textAlign="center">
-                  {header}
-                </Table.ColumnHeader>
-              ))}
-            </Table.Row>
-          </Table.Header>
+      {/* <Table className="mt-[30px]" height="20rem"> */}
+      <Table.Root
+        size="lg"
+        stickyHeader
+        interactive
+        striped
+        className="mt-[30px]"
+      >
+        <Table.Header>
+          <Table.Row className="bg-teal-700 h-[70px]">
+            {[
+              "Order ID",
+              "Order Status",
+              "Merchant Name",
+              "Customer Name",
+              "Delivery Mode",
+              "Order Time",
+              "Delivery Time",
+              "Payment Method",
+              "Delivery Option",
+              "Amount",
+            ].map((header) => (
+              <Table.ColumnHeader color="white" textAlign="center">
+                {header}
+              </Table.ColumnHeader>
+            ))}
+          </Table.Row>
+        </Table.Header>
 
-          <Table.Body>
-            <Table.Row key={""} className="h-[70px]">
-              <Table.Cell textAlign="center">
-                <Link
-                  to={`/order/45`}
-                  className="underline underline-offset-2 cursor-pointer"
-                >
-                  O24013
-                </Link>
-              </Table.Cell>
-              <Table.Cell textAlign="center">Pending</Table.Cell>
-              <Table.Cell textAlign="center">Merchant Name</Table.Cell>
-              <Table.Cell textAlign="center">Customer Name</Table.Cell>
-              <Table.Cell textAlign="center">Delivery Mode</Table.Cell>
-              <Table.Cell textAlign="center">Order Time</Table.Cell>
-              <Table.Cell textAlign="center">Delivery Time</Table.Cell>
-              <Table.Cell textAlign="center">Payment Method</Table.Cell>
-              <Table.Cell textAlign="center">Delivery Option</Table.Cell>
-              <Table.Cell textAlign="center">Amount</Table.Cell>
-            </Table.Row>
-          </Table.Body>
-        </Table.Root>
-      </Table.ScrollArea>
+        <Table.Body>
+          <Table.Row key={""} className="h-[70px]">
+            <Table.Cell textAlign="center">
+              <Link
+                to={`/order/45`}
+                className="underline underline-offset-2 cursor-pointer"
+              >
+                O24013
+              </Link>
+            </Table.Cell>
+            <Table.Cell textAlign="center">Pending</Table.Cell>
+            <Table.Cell textAlign="center">Merchant Name</Table.Cell>
+            <Table.Cell textAlign="center">Customer Name</Table.Cell>
+            <Table.Cell textAlign="center">Delivery Mode</Table.Cell>
+            <Table.Cell textAlign="center">Order Time</Table.Cell>
+            <Table.Cell textAlign="center">Delivery Time</Table.Cell>
+            <Table.Cell textAlign="center">Payment Method</Table.Cell>
+            <Table.Cell textAlign="center">Delivery Option</Table.Cell>
+            <Table.Cell textAlign="center">Amount</Table.Cell>
+          </Table.Row>
+        </Table.Body>
+      </Table.Root>
+      {/* </Table> */}
     </div>
   );
 };

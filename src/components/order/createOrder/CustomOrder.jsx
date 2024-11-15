@@ -1,10 +1,14 @@
-import Select from "react-select";
-import { useDraggable } from "../../../hooks/useDraggable";
-import ShowBill from "./ShowBill";
-import { unitOptions } from "../../../utils/defaultData";
 import { useState } from "react";
+import Select from "react-select";
+
+import RenderIcon from "../../../icons/RenderIcon";
+
+import { useDraggable } from "../../../hooks/useDraggable";
+
+import ShowBill from "./ShowBill";
 import MapModal from "./MapModal";
-import { DeleteIcon, LocationIcon, PlusIcon } from "../../../utils/icons";
+
+import { unitOptions } from "../../../utils/defaultData";
 
 const CustomOrder = () => {
   const [customOrderData, setCustomOrderData] = useState({
@@ -58,7 +62,7 @@ const CustomOrder = () => {
                 ) : (
                   <>
                     Mark location
-                    <LocationIcon size={20} />
+                    <RenderIcon iconName="LocationIcon" size={20} loading={6} />
                   </>
                 )}
               </button>
@@ -84,7 +88,10 @@ const CustomOrder = () => {
                 type="button"
                 onClick={() => {}}
               >
-                <PlusIcon className="mr-3" /> Add Item
+                <span className="mr-3">
+                  <RenderIcon iconName="PlusIcon" size={20} loading={6} />
+                </span>
+                Add Item
               </button>
             </div>
           </div>
@@ -166,7 +173,7 @@ const CustomOrder = () => {
                     htmlFor={`adImage-${index}`}
                     className="bg-gray-300 w-1/2 rounded-md p-2 flex items-center justify-center gap-2 cursor-pointer"
                   >
-                    <PlusIcon />
+                    <RenderIcon iconName="PlusIcon" size={20} loading={6} />
                     Upload Photo
                   </label>
 
@@ -175,7 +182,9 @@ const CustomOrder = () => {
                     className="bg-red-100 w-1/2 rounded-md p-2 flex items-center justify-center gap-2"
                     onClick={() => {}}
                   >
-                    <DeleteIcon className="text-red-500" size={20} />
+                    <span className="text-red-500">
+                      <RenderIcon iconName="DeleteIcon" size={20} loading={6} />
+                    </span>
                     Delete Item
                   </button>
                 </div>
@@ -323,7 +332,7 @@ const CustomOrder = () => {
                 onClick={() => {}}
               >
                 <span>Add Address</span>
-                <PlusIcon />
+                <renderIcon iconName="PlusIcon" size={20} loading={6} />
               </button>
             </div>
 

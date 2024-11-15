@@ -16,9 +16,9 @@ const SubscriptionLog = lazy(
 const CommAndSubsRoutes = () => (
   <Suspense fallback={<Loader />}>
     <Routes>
-      <Route path="/" element={<CommissionAndSubscription />} />
-      <Route path="/commission-log" element={<CommissionLog />} />
-      <Route path="/subscription-log" element={<SubscriptionLog />} />
+      <Route path="" element={<CommissionAndSubscription />} />
+      <Route path="commission-log" element={<CommissionLog />} />
+      <Route path="subscription-log" element={<SubscriptionLog />} />
     </Routes>
   </Suspense>
 );

@@ -1,18 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
-import {
-  AgentIcon,
-  BikeIcon,
-  BookIcon,
-  HomeIcon,
-  PercentageIcon,
-  ProductIcon,
-  ShopIcon,
-  UsersIcon,
-  WhatsappIcon,
-} from "../../utils/icons";
 import { role } from "../../utils/testData";
+
+import RenderIcon from "../../icons/RenderIcon";
 
 const SmallSideBar = () => {
   const [selectedLink, setSelectedLink] = useState("");
@@ -42,13 +33,17 @@ const SmallSideBar = () => {
 
       <ul className="ul-side">
         <Link to="/home" className="side">
-          <HomeIcon className="m-2" size={24} />
+          <span className="m-2">
+            <RenderIcon iconName="HomeIcon" size={28} loading={6} />
+          </span>
         </Link>
         <Link
           to="/order"
           className={`side ${selectedLink === "/order" || /^\/order\/[A-Za-z0-9]+$/.test(selectedLink) ? "selected-link" : ""}`}
         >
-          <BookIcon className="m-2" size={24} />
+          <span className="m-2">
+            <RenderIcon iconName="BookIcon" size={28} loading={6} />
+          </span>
         </Link>
         <Link
           to="/merchant"
@@ -56,13 +51,19 @@ const SmallSideBar = () => {
             selectedLink === "/merchant/payout" ? "selected-link" : ""
           }`}
         >
-          <ShopIcon className="m-2" size={24} />
+          <span className="m-2">
+            <RenderIcon iconName="ShopIcon" size={28} loading={6} />
+          </span>
         </Link>
         <Link to="/product" className="side">
-          <ProductIcon className="m-2" size={24} />
+          <span className="m-2">
+            <RenderIcon iconName="ProductIcon" size={28} loading={6} />
+          </span>
         </Link>
         <Link to="/customer" className="side">
-          <UsersIcon className="m-2" size={24} />
+          <span className="m-2">
+            <RenderIcon iconName="UsersIcon" size={28} loading={6} />
+          </span>
         </Link>
         <Link
           to="/agent"
@@ -70,7 +71,9 @@ const SmallSideBar = () => {
             selectedLink === "/agent/payout" ? "selected-link" : ""
           }`}
         >
-          <AgentIcon className="m-2" size={24} />
+          <span className="m-2">
+            <RenderIcon iconName="AgentIcon" size={28} loading={6} />
+          </span>
         </Link>
         <Link
           to="/delivery-management"
@@ -78,10 +81,14 @@ const SmallSideBar = () => {
             selectedLink === "/delivery-management" ? "selected-link" : ""
           }`}
         >
-          <BikeIcon className="m-2" size={24} />
+          <span className="m-2">
+            <RenderIcon iconName="BikeIcon" size={28} loading={6} />
+          </span>
         </Link>
         <Link to="/comm-and-subs" className="side">
-          <PercentageIcon className="m-2" size={24} />
+          <span className="m-2">
+            <RenderIcon iconName="PercentageIcon" size={28} loading={6} />
+          </span>
         </Link>
         {role === "Admin" && (
           <Link
@@ -90,7 +97,9 @@ const SmallSideBar = () => {
               selectedLink === "/chat" ? "selected-link" : ""
             }`}
           >
-            <WhatsappIcon className="m-2" size={24} />
+            <span className="m-2">
+              <RenderIcon iconName="WhatsappIcon" size={28} loading={6} />
+            </span>
           </Link>
         )}
       </ul>

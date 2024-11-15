@@ -16,9 +16,9 @@ const MerchantApp = lazy(
 const CustomizeRoutes = () => (
   <Suspense fallback={<Loader />}>
     <Routes>
-      <Route path="/customer-app" element={<CustomerApp />} />
-      <Route path="/agent-app" element={<AgentApp />} />
-      <Route path="/merchant-app" element={<MerchantApp />} />
+      <Route path="customer-app" element={<CustomerApp />} />
+      <Route path="agent-app" element={<AgentApp />} />
+      <Route path="merchant-app" element={<MerchantApp />} />
     </Routes>
   </Suspense>
 );

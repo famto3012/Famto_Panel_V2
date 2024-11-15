@@ -4,7 +4,7 @@ const AlertNotification = () => {
   return (
     <div className="bg-gray-100 h-full">
       <GlobalSearch />
-      <p>Home</p>
+      <p>Alert Notification</p>
     </div>
   );
 };

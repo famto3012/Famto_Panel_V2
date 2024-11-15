@@ -10,7 +10,7 @@ const DeliveryManagement = lazy(
 const DeliveryRoutes = () => (
   <Suspense fallback={<Loader />}>
     <Routes>
-      <Route path="/" element={<DeliveryManagement />} />
+      <Route path="" element={<DeliveryManagement />} />
     </Routes>
   </Suspense>
 );

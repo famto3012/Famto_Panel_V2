@@ -4,7 +4,7 @@ const NotificationLog = () => {
   return (
     <div className="bg-gray-100 h-full">
       <GlobalSearch />
-      <p>Home</p>
+      <p>Notification Logs</p>
     </div>
   );
 };

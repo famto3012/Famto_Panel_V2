@@ -6,8 +6,9 @@ import GlobalSearch from "../../../components/others/GlobalSearch";
 import Details from "../../../components/order/detail/Details";
 import OrderItems from "../../../components/order/detail/OrderItem";
 
-import { DownloadIcon, LeftArrowIcon } from "../../../utils/icons";
 import OrderBill from "../../../components/order/detail/OrderBill";
+
+import RenderIcon from "../../../icons/RenderIcon";
 
 const OrderDetail = () => {
   const orderId = "O2345";
@@ -22,10 +23,10 @@ const OrderDetail = () => {
 
       <div className="flex justify-between mx-5 mt-[20px]">
         <p className="flex items-center gap-[10px] mb-0">
-          <LeftArrowIcon
-            onClick={() => navigate("/order")}
-            className="cursor-pointer"
-          />
+          <span onClick={() => navigate("/order")} className="cursor-pointer">
+            <RenderIcon iconName="LeftArrowIcon" size={24} loading={6} />
+          </span>
+
           <p className="font-[600] mb-0 text-[18px]">
             Order information #{orderId}{" "}
             {orderDetail?.scheduledOrderId && (
@@ -42,9 +43,12 @@ const OrderDetail = () => {
         {orderId.charAt(0) === "O" && (
           <Button
             onClick={() => {}}
-            className="bg-blue-100 px-4 p-2 rounded-md"
+            className="bg-blue-100 px-4 p-2 rounded-md cursor-pointer"
           >
-            <DownloadIcon /> Bill
+            <span>
+              <RenderIcon iconName="DownloadIcon" size={24} loading={6} />
+            </span>
+            Bill
           </Button>
         )}
       </div>

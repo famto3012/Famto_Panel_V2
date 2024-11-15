@@ -4,7 +4,7 @@ const SubscriptionLog = () => {
   return (
     <div className="bg-gray-100 h-full">
       <GlobalSearch />
-      <p>Home</p>
+      <p>Subscription Logs</p>
     </div>
   );
 };

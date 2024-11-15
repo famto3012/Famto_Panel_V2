@@ -14,9 +14,9 @@ const CustomerDetail = lazy(
 const CustomerRoutes = () => (
   <Suspense fallback={<Loader />}>
     <Routes>
-      <Route path="/" element={<AllCustomer />} />
+      <Route path="" element={<AllCustomer />} />
       <Route
-        path="/:customerId"
+        path=":customerId"
         element={
           <ProtectedRoute requiredRole="Admin">
             <CustomerDetail />

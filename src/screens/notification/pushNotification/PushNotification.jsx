@@ -4,7 +4,7 @@ const PushNotification = () => {
   return (
     <div className="bg-gray-100 h-full">
       <GlobalSearch />
-      <p>Home</p>
+      <p>Push Notification</p>
     </div>
   );
 };

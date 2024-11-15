@@ -1,9 +1,13 @@
 import { useState } from "react";
+
 import { useDraggable } from "../../../hooks/useDraggable";
+
 import { itemTypes } from "../../../utils/defaultData";
-import { PlusIcon } from "../../../utils/icons";
+
 import NewAddress from "./NewAddress";
 import ShowBill from "./ShowBill";
+
+import RenderIcon from "../../../icons/RenderIcon";
 
 const PickAndDrop = ({ data }) => {
   const [pickAndDropData, setPickAndDropData] = useState({
@@ -180,7 +184,7 @@ const PickAndDrop = ({ data }) => {
                 onClick={() => {}}
               >
                 <span>Add Address</span>
-                <PlusIcon />
+                <RenderIcon iconName="PlusIcon" size={20} loading={6} />
               </button>
             </div>
             {isNewPickupAddressVisible && (
@@ -230,7 +234,7 @@ const PickAndDrop = ({ data }) => {
               className="bg-zinc-200 w-1/2 rounded-md p-2 flex items-center justify-center gap-3"
               onClick={() => {}}
             >
-              <PlusIcon />
+              <RenderIcon iconName="PlusIcon" size={20} loading={6} />
               <span>Add Item</span>
             </button>
           </div>
@@ -451,7 +455,7 @@ const PickAndDrop = ({ data }) => {
                 onClick={() => {}}
               >
                 <span>Add Address</span>
-                <PlusIcon />
+                <RenderIcon iconName="PlusIcon" size={20} loading={6} />
               </button>
             </div>
             {isNewDeliveryAddressVisible && (

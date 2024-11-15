@@ -11,12 +11,11 @@ import HomeDelivery from "../../../components/order/createOrder/HomeDelivery";
 import PickAndDrop from "../../../components/order/createOrder/PickAndDrop";
 import CustomOrder from "../../../components/order/createOrder/CustomOrder";
 
-import { LeftArrowIcon, PlusIcon, SearchIcon } from "../../../utils/icons";
-
 import "react-datepicker/dist/react-datepicker.css";
 
 import { role } from "../../../utils/testData";
 import { useEffect, useState } from "react";
+import RenderIcon from "../../../icons/RenderIcon";
 
 const CreateOrder = () => {
   const [topData, setTopData] = useState({
@@ -105,10 +104,9 @@ const CreateOrder = () => {
       <GlobalSearch />
 
       <div className="flex items-center justify-start mt-[10px] ms-[20px]">
-        <LeftArrowIcon
-          className="cursor-pointer"
-          onClick={() => navigate("/orders")}
-        />
+        <span onClick={() => navigate("/order")} className="cursor-pointer">
+          <RenderIcon iconName="LeftArrowIcon" size={20} loading={6} />
+        </span>
         <span className="text-lg font-semibold ml-3">Create Order</span>
       </div>
 
@@ -134,7 +132,9 @@ const CreateOrder = () => {
                   className="absolute top-[30%] right-[10px]"
                 />
               ) : (
-                <SearchIcon className="text-xl text-gray-500 absolute top-[30%] right-[10px]" />
+                <span className="text-gray-500 absolute top-[30%] right-[10px]">
+                  <RenderIcon iconName="SearchIcon" size={20} loading={6} />
+                </span>
               )}
               {customerResults?.length > 0 && (
                 <ul className="absolute bg-white border w-full mt-1">
@@ -161,7 +161,7 @@ const CreateOrder = () => {
                 onClick={toggleNewCustomerForm}
               >
                 <span>Add Customer</span>
-                <PlusIcon />
+                <RenderIcon iconName="PlusIcon" size={20} loading={6} />
               </button>
             </div>
             {isFormVisible && (

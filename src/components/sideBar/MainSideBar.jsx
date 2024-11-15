@@ -1,33 +1,9 @@
 import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import {
-  AccountIcon,
-  ActivityIcon,
-  AdBannerIcon,
-  AgentIcon,
-  AlertNotificationIcon,
-  AngleRightDropDownIcon,
-  BikeIcon,
-  BookIcon,
-  CustomizationIcon,
-  GeofenceIcon,
-  GiftIcon,
-  HomeIcon,
-  LoyaltyPointIcon,
-  ManagerIcon,
-  NotificationIcon,
-  NotificationSettingsIcon,
-  PercentageIcon,
-  PricingIcon,
-  ProductIcon,
-  PromoCodeIcon,
-  PushNotificationIcon,
-  SettingsIcon,
-  ShopIcon,
-  UsersIcon,
-  WhatsappIcon,
-} from "../../utils/icons";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+
 import { role } from "../../utils/testData";
+
+import RenderIcon from "../../icons/RenderIcon";
 
 const MainSideBar = () => {
   const [openDropdown, setOpenDropdown] = useState(null);
@@ -41,19 +17,12 @@ const MainSideBar = () => {
 
     const path = location.pathname;
 
-    if (path.includes("marketing")) {
-      setOpenDropdown("marketing");
-    } else if (path.includes("notification")) {
-      setOpenDropdown("notification");
-    } else if (path.includes("configure")) {
-      setOpenDropdown("configure");
-    } else if (path.includes("customize")) {
-      setOpenDropdown("customize");
-    } else if (path.includes("account")) {
-      setOpenDropdown("account");
-    } else {
-      setOpenDropdown(null);
-    }
+    if (path.includes("marketing")) setOpenDropdown("marketing");
+    else if (path.includes("notification")) setOpenDropdown("notification");
+    else if (path.includes("configure")) setOpenDropdown("configure");
+    else if (path.includes("customize")) setOpenDropdown("customize");
+    else if (path.includes("account")) setOpenDropdown("account");
+    else setOpenDropdown(null);
   }, [location.pathname]);
 
   const toggleSidebar = (dropdown) => () => {
@@ -66,13 +35,13 @@ const MainSideBar = () => {
     <div className="fixed w-[270px] h-full bg-gradient-to-b from-[#016B6C] to-[#000] bg-[length:100%_150%] bg-top font-poppins overflow-y-auto pb-[50px] z-20 overflow-element">
       <div className="flex gap-3 ml-[10px] mt-[30px]">
         <div
-          className="w-[140px] h-[40px] bg-gray-300 animate-pulse"
+          className="w-[140px] h-[30px] bg-gray-300 animate-pulse"
           style={{ display: isImageLoaded ? "none" : "block" }}
         />
         <img
           src="https://firebasestorage.googleapis.com/v0/b/famtowebsite.appspot.com/o/images%2FWhite.svg?alt=media&token=3d91a036-029f-4d67-816e-19b1f8dd3f6e"
           alt="Logo"
-          className="w-[140px]"
+          className="w-[140px] h-[30px]"
           style={{ display: isImageLoaded ? "block" : "none" }}
           onLoad={() => setIsImageLoaded(true)}
         />
@@ -85,57 +54,57 @@ const MainSideBar = () => {
           className={`ps-4 side ${
             selectedLink === "/home" ? "selected-link" : ""
           }`}
+          key="home"
         >
-          <HomeIcon className="m-2" size={24} />
+          <span className="m-2">
+            <RenderIcon iconName="HomeIcon" size={28} loading={6} />
+          </span>
           <span className="font-[poppins]">Home</span>
         </Link>
         <Link
           to="/order"
-          className={`ps-4 side ${
-            selectedLink === "/order" ||
-            selectedLink === "/create" ||
-            /^\/order\/[A-Za-z0-9]+$/.test(selectedLink)
-              ? "selected-link"
-              : ""
-          }`}
+          className={`ps-4 side ${selectedLink.startsWith("/order") ? "selected-link" : ""}`}
+          key="order"
         >
-          <BookIcon className="m-2" size={24} />
+          <span className="m-2">
+            <RenderIcon iconName="BookIcon" size={28} loading={6} />
+          </span>
+
           <span className="font-[poppins]">Orders</span>
         </Link>
         {role === "Admin" && (
           <Link
-            to="/merchant"
-            className={`ps-4 side ${
-              selectedLink === "/merchant" ||
-              /^\/merchant\/[A-Za-z0-9]+$/.test(selectedLink) ||
-              selectedLink === "/merchant/payout"
-                ? "selected-link"
-                : ""
-            }`}
+            to={"/merchant"}
+            className={`ps-4 side ${selectedLink.startsWith("/merchant") ? "selected-link" : ""}`}
+            key="merchant"
           >
-            <ShopIcon className="m-2" size={24} />
+            <span className="m-2">
+              <RenderIcon iconName="ShopIcon" size={28} loading={6} />
+            </span>
+
             <span className="font-[poppins]">Merchants</span>
           </Link>
         )}
         <Link
           to="/product"
-          className={`ps-4 side ${
-            selectedLink === "/product" ? "selected-link" : ""
-          }`}
+          className={`ps-4 side ${selectedLink.startsWith("/product") ? "selected-link" : ""}`}
+          key="product"
         >
-          <ProductIcon className="m-2" size={24} />
+          <span className="m-2">
+            <RenderIcon iconName="ProductIcon" size={28} loading={6} />
+          </span>
+
           <span className="font-[poppins]">Products</span>
         </Link>
         <Link
           to="/customer"
-          className={`ps-4 side ${
-            selectedLink === "/customer" ||
-            /^\/customer\/[A-Za-z0-9]+$/.test(selectedLink)
-              ? "selected-link"
-              : ""
-          }`}
+          className={`ps-4 side ${selectedLink.startsWith("/customer") ? "selected-link" : ""}`}
+          key="customer"
         >
-          <UsersIcon className="m-2" size={24} />
+          <span className="m-2">
+            <RenderIcon iconName="UsersIcon" size={28} loading={6} />
+          </span>
+
           <span className="font-[poppins]">Customers</span>
         </Link>
 
@@ -143,24 +112,25 @@ const MainSideBar = () => {
           <>
             <Link
               to="/agent"
-              className={`ps-4 side ${
-                selectedLink === "/agent" ||
-                /^\/agent\/[A-Za-z0-9]+$/.test(selectedLink)
-                  ? "selected-link"
-                  : ""
-              }`}
+              className={`ps-4 side ${selectedLink.startsWith("/agent") ? "selected-link" : ""}`}
+              key="agent"
             >
-              <AgentIcon className="m-2" size={24} />
+              <span className="m-2">
+                <RenderIcon iconName="AgentIcon" size={28} loading={6} />
+              </span>
+
               <span className="font-[poppins]">Delivery Agents</span>
             </Link>
 
             <Link
               to="/delivery-management"
-              className={`ps-4 side ${
-                selectedLink === "/delivery-management" ? "selected-link" : ""
-              }`}
+              className={`ps-4 side ${selectedLink.startsWith("/delivery-management") ? "selected-link" : ""}`}
+              key="delivery-management"
             >
-              <BikeIcon className="m-2" size={24} />
+              <span className="m-2">
+                <RenderIcon iconName="BikeIcon" size={28} loading={6} />
+              </span>
+
               <span className="font-[poppins]">Delivery Management</span>
             </Link>
           </>
@@ -168,25 +138,25 @@ const MainSideBar = () => {
 
         <Link
           to="/comm-and-subs"
-          className={`ps-4 side ${
-            selectedLink === "/comm-and-subs" ||
-            selectedLink === "/subscription-log" ||
-            selectedLink === "/commission-log"
-              ? "selected-link"
-              : ""
-          }`}
+          className={`ps-4 side ${selectedLink.startsWith("/comm-and-subs") ? "selected-link" : ""}`}
+          key="comm"
         >
-          <PercentageIcon className="m-2" size={24} />
+          <span className="m-2">
+            <RenderIcon iconName="PercentageIcon" size={28} loading={6} />
+          </span>
+
           <span className="font-[poppins]">Commission/Subscription</span>
         </Link>
         {role === "Admin" && (
           <Link
             to="/chat"
-            className={`ps-4 side ${
-              selectedLink === "/chat" ? "selected-link" : ""
-            }`}
+            className={`ps-4 side ${selectedLink.startsWith("/chat") ? "selected-link" : ""}`}
+            key="chat"
           >
-            <WhatsappIcon className="m-2" size={24} />
+            <span className="m-2">
+              <RenderIcon iconName="WhatsappIcon" size={28} loading={6} />
+            </span>
+
             <span className="font-[poppins]">Whatsapp</span>
           </Link>
         )}
@@ -195,7 +165,7 @@ const MainSideBar = () => {
       <div className="dropside" onClick={toggleSidebar("marketing")}>
         <span className="font-[poppins]">Marketing</span>
         <button>
-          <AngleRightDropDownIcon size={24} />
+          <RenderIcon iconName="AngleRightDropDownIcon" size={24} loading={2} />
         </button>
       </div>
       {openDropdown === "marketing" && (
@@ -206,7 +176,9 @@ const MainSideBar = () => {
               selectedLink === "/marketing/discount" ? "selected-link" : ""
             }`}
           >
-            <GiftIcon className="me-2 ms-2 mb-1" size={24} />
+            <span className="m-2">
+              <RenderIcon iconName="GiftIcon" size={28} loading={6} />
+            </span>
             <span className="font-[poppins]">Discount</span>
           </Link>
 
@@ -218,7 +190,9 @@ const MainSideBar = () => {
                   selectedLink === "/marketing/ad-banner" ? "selected-link" : ""
                 }`}
               >
-                <AdBannerIcon className="m-2" size={24} />
+                <span className="m-2">
+                  <RenderIcon iconName="AdBannerIcon" size={28} loading={6} />
+                </span>
                 <span className="font-[poppins]">Ad banner</span>
               </Link>
 
@@ -230,7 +204,13 @@ const MainSideBar = () => {
                     : ""
                 }`}
               >
-                <LoyaltyPointIcon className="m-2" size={24} />
+                <span className="m-2">
+                  <RenderIcon
+                    iconName="LoyaltyPointIcon"
+                    size={28}
+                    loading={6}
+                  />
+                </span>
                 <span className="font-[poppins]">Loyality Point</span>
               </Link>
 
@@ -242,7 +222,9 @@ const MainSideBar = () => {
                     : ""
                 }`}
               >
-                <PromoCodeIcon className="m-2" size={24} />
+                <span className="m-2">
+                  <RenderIcon iconName="PromoCodeIcon" size={28} loading={6} />
+                </span>
                 <span className="font-[poppins]">Promo code</span>
               </Link>
 
@@ -252,7 +234,10 @@ const MainSideBar = () => {
                   selectedLink === "/marketing/referral" ? "selected-link" : ""
                 }`}
               >
-                <AngleRightDropDownIcon className="m-2" size={24} />
+                <span className="m-2">
+                  <RenderIcon iconName="ReferralIcon" size={28} loading={6} />
+                </span>
+
                 <span className="font-[poppins]">Referral</span>
               </Link>
             </>
@@ -263,7 +248,7 @@ const MainSideBar = () => {
       <div className="dropside" onClick={toggleSidebar("notification")}>
         <span className="font-[poppins]">Notification</span>
         <button>
-          <AngleRightDropDownIcon size={24} />
+          <RenderIcon iconName="AngleRightDropDownIcon" size={24} loading={2} />
         </button>
       </div>
       {openDropdown === "notification" && (
@@ -274,7 +259,9 @@ const MainSideBar = () => {
               selectedLink === "/notification/logs" ? "selected-link" : ""
             }`}
           >
-            <NotificationIcon className="m-2" size={24} />
+            <span className="m-2">
+              <RenderIcon iconName="NotificationIcon" size={28} loading={6} />
+            </span>
             <span className="font-[poppins]">Notification log</span>
           </Link>
 
@@ -288,7 +275,13 @@ const MainSideBar = () => {
                     : ""
                 }`}
               >
-                <PushNotificationIcon className="m-2" size={24} />
+                <span className="m-2">
+                  <RenderIcon
+                    iconName="PushNotificationIcon"
+                    size={28}
+                    loading={6}
+                  />
+                </span>
                 <span className="font-[poppins]">Push Notification</span>
               </Link>
 
@@ -300,7 +293,13 @@ const MainSideBar = () => {
                     : ""
                 }`}
               >
-                <NotificationSettingsIcon className="m-2" size={24} />
+                <span className="m-2">
+                  <RenderIcon
+                    iconName="NotificationSettingsIcon"
+                    size={28}
+                    loading={6}
+                  />
+                </span>
                 <span className="font-[poppins]">Notification Settings</span>
               </Link>
 
@@ -312,7 +311,13 @@ const MainSideBar = () => {
                     : ""
                 }`}
               >
-                <AlertNotificationIcon className="m-2" size={24} />
+                <span className="m-2">
+                  <RenderIcon
+                    iconName="AlertNotificationIcon"
+                    size={28}
+                    loading={6}
+                  />
+                </span>
                 <span className="font-[poppins]">Alert Notification</span>
               </Link>
             </>
@@ -325,7 +330,11 @@ const MainSideBar = () => {
           <div className="dropside" onClick={toggleSidebar("configure")}>
             <span className="font-[poppins]">Configure</span>
             <button>
-              <AngleRightDropDownIcon size={24} />
+              <RenderIcon
+                iconName="AngleRightDropDownIcon"
+                size={24}
+                loading={2}
+              />
             </button>
           </div>
           {openDropdown === "configure" && (
@@ -336,7 +345,9 @@ const MainSideBar = () => {
                   selectedLink === "/configure/managers" ? "selected-link" : ""
                 }`}
               >
-                <ManagerIcon className="m-2" size={24} />
+                <span className="m-2">
+                  <RenderIcon iconName="ManagerIcon" size={28} loading={6} />
+                </span>
                 <span className="font-[poppins]">Managers</span>
               </Link>
 
@@ -346,7 +357,9 @@ const MainSideBar = () => {
                   selectedLink === "/pricing" ? "selected-link" : ""
                 }`}
               >
-                <PricingIcon className="m-2" size={24} />
+                <span className="m-2">
+                  <RenderIcon iconName="PricingIcon" size={28} loading={6} />
+                </span>
                 <span className="font-[poppins]">Pricing</span>
               </Link>
 
@@ -356,7 +369,9 @@ const MainSideBar = () => {
                   selectedLink === "/configure/tax" ? "selected-link" : ""
                 }`}
               >
-                <PercentageIcon className="m-2" size={24} />
+                <span className="m-2">
+                  <RenderIcon iconName="PercentageIcon" size={28} loading={6} />
+                </span>
                 <span className="font-[poppins]">Tax</span>
               </Link>
 
@@ -366,7 +381,9 @@ const MainSideBar = () => {
                   selectedLink === "/configure/geofence" ? "selected-link" : ""
                 }`}
               >
-                <GeofenceIcon className="m-2" size={24} />
+                <span className="m-2">
+                  <RenderIcon iconName="GeofenceIcon" size={28} loading={6} />
+                </span>
                 <span className="font-[poppins]">Geofence</span>
               </Link>
             </ul>
@@ -375,7 +392,13 @@ const MainSideBar = () => {
           <div className="dropside" onClick={toggleSidebar("customize")}>
             <span className="font-[poppins]">App Customization</span>
             <button>
-              <AngleRightDropDownIcon size={24} />
+              <button>
+                <RenderIcon
+                  iconName="AngleRightDropDownIcon"
+                  size={24}
+                  loading={2}
+                />
+              </button>
             </button>
           </div>
           {openDropdown === "customize" && (
@@ -388,7 +411,13 @@ const MainSideBar = () => {
                     : ""
                 }`}
               >
-                <CustomizationIcon className="m-2" size={24} />
+                <span className="m-2">
+                  <RenderIcon
+                    iconName="CustomizationIcon"
+                    size={28}
+                    loading={6}
+                  />
+                </span>
                 <span className="font-[poppins]">Customer App</span>
               </Link>
 
@@ -398,7 +427,13 @@ const MainSideBar = () => {
                   selectedLink === "/customize/agent-app" ? "selected-link" : ""
                 }`}
               >
-                <CustomizationIcon className="m-2" size={24} />
+                <span className="m-2">
+                  <RenderIcon
+                    iconName="CustomizationIcon"
+                    size={28}
+                    loading={6}
+                  />
+                </span>
                 <span className="font-[poppins]">Agent App</span>
               </Link>
 
@@ -410,7 +445,13 @@ const MainSideBar = () => {
                     : ""
                 }`}
               >
-                <CustomizationIcon className="m-2" size={24} />
+                <span className="m-2">
+                  <RenderIcon
+                    iconName="CustomizationIcon"
+                    size={28}
+                    loading={6}
+                  />
+                </span>
                 <span className="font-[poppins]">Merchant App</span>
               </Link>
             </ul>
@@ -421,7 +462,13 @@ const MainSideBar = () => {
       <div className="dropside" onClick={toggleSidebar("account")}>
         <span className="font-[poppins]">Account</span>
         <button>
-          <AngleRightDropDownIcon />
+          <button>
+            <RenderIcon
+              iconName="AngleRightDropDownIcon"
+              size={24}
+              loading={2}
+            />
+          </button>
         </button>
       </div>
       {openDropdown === "account" && (
@@ -436,7 +483,9 @@ const MainSideBar = () => {
                     : ""
                 }`}
               >
-                <ActivityIcon className="m-2" size={24} />
+                <span className="m-2">
+                  <RenderIcon iconName="ActivityIcon" size={28} loading={6} />
+                </span>
                 <span className="font-[poppins]">Activity logs</span>
               </Link>
 
@@ -448,7 +497,9 @@ const MainSideBar = () => {
                     : ""
                 }`}
               >
-                <AccountIcon className="m-2" size={24} />
+                <span className="m-2">
+                  <RenderIcon iconName="AccountIcon" size={28} loading={6} />
+                </span>
                 <span className="font-[poppins]">Account logs</span>
               </Link>
             </>
@@ -460,7 +511,9 @@ const MainSideBar = () => {
               selectedLink === "/account/settings" ? "selected-link" : ""
             }`}
           >
-            <SettingsIcon className="m-2" size={24} />
+            <span className="m-2">
+              <RenderIcon iconName="SettingsIcon" size={28} loading={6} />
+            </span>
             <span className="font-[poppins]">Settings</span>
           </Link>
         </ul>

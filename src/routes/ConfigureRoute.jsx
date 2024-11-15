@@ -21,12 +21,12 @@ const EditGeofence = lazy(
 const ConfigureRoutes = () => (
   <Suspense fallback={<Loader />}>
     <Routes>
-      <Route path="/managers" element={<AllManager />} />
-      <Route path="/pricing" element={<Pricing />} />
-      <Route path="/tax" element={<Tax />} />
-      <Route path="/geofence" element={<AllGeofence />} />
-      <Route path="/geofence/add" element={<AddGeofence />} />
-      <Route path="/geofence/:geofenceId" element={<EditGeofence />} />
+      <Route path="managers" element={<AllManager />} />
+      <Route path="pricing" element={<Pricing />} />
+      <Route path="tax" element={<Tax />} />
+      <Route path="geofence" element={<AllGeofence />} />
+      <Route path="geofence/add" element={<AddGeofence />} />
+      <Route path="geofence/:geofenceId" element={<EditGeofence />} />
     </Routes>
   </Suspense>
 );

@@ -9,8 +9,8 @@ const SignIn = lazy(() => import("../screens/auth/SignIn"));
 const AuthRoutes = () => (
   <Suspense fallback={<Loader />}>
     <Routes>
-      <Route path="/sign-up" element={<SignUp />} />
-      <Route path="/sign-in" element={<SignIn />} />
+      <Route path="sign-up" element={<SignUp />} />
+      <Route path="sign-in" element={<SignIn />} />
     </Routes>
   </Suspense>
 );

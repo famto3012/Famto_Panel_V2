@@ -17,9 +17,9 @@ const Referal = lazy(() => import("../screens/marketing/referal/Referal"));
 const MarketingRoutes = () => (
   <Suspense fallback={<Loader />}>
     <Routes>
-      <Route path="/discount" element={<Discount />} />
+      <Route path="discount" element={<Discount />} />
       <Route
-        path="/ad-banner"
+        path="ad-banner"
         element={
           <ProtectedRoute requiredRole="Admin">
             <AdBanner />
@@ -27,7 +27,7 @@ const MarketingRoutes = () => (
         }
       />
       <Route
-        path="/loyalty-point"
+        path="loyalty-point"
         element={
           <ProtectedRoute requiredRole="Admin">
             <LoyaltyPoint />
@@ -35,7 +35,7 @@ const MarketingRoutes = () => (
         }
       />
       <Route
-        path="/promo-code"
+        path="promo-code"
         element={
           <ProtectedRoute requiredRole="Admin">
             <PromoCode />
@@ -43,7 +43,7 @@ const MarketingRoutes = () => (
         }
       />
       <Route
-        path="/referral"
+        path="referral"
         element={
           <ProtectedRoute requiredRole="Admin">
             <Referal />

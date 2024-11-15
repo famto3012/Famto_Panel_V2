@@ -17,7 +17,7 @@ const AccountRoutes = () => (
   <Suspense fallback={<Loader />}>
     <Routes>
       <Route
-        path="/activity-logs"
+        path="activity-logs"
         element={
           <ProtectedRoute requiredRole="Admin">
             <ActivityLog />
@@ -25,14 +25,14 @@ const AccountRoutes = () => (
         }
       />
       <Route
-        path="/account-logs"
+        path="account-logs"
         element={
           <ProtectedRoute requiredRole="Admin">
             <AccountLog />
           </ProtectedRoute>
         }
       />
-      <Route path="/settings" element={<Setting />} />
+      <Route path="settings" element={<Setting />} />
     </Routes>
   </Suspense>
 );

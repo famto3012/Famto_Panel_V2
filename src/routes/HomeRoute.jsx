@@ -8,7 +8,7 @@ const Home = lazy(() => import("../screens/general/Home/Home"));
 const HomeRoutes = () => (
   <Suspense fallback={<Loader />}>
     <Routes>
-      <Route path="/" element={<Home />} />
+      <Route path="" element={<Home />} />
     </Routes>
   </Suspense>
 );

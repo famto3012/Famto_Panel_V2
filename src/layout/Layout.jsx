@@ -10,7 +10,7 @@ const Layout = () => {
   const path = location.pathname;
 
   const pathsForNoSideBar = ["sign-in", "sign-up"];
-  const pathsForSmallSidebar = ["delivery-management", "payout", "order"];
+  const pathsForSmallSidebar = ["delivery-management", "payout"];
 
   const noSidebar = pathsForNoSideBar.some((p) => path.includes(p));
   const showSmallSidebar = pathsForSmallSidebar.some((p) => path.includes(p));

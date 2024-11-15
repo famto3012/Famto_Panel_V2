@@ -4,7 +4,7 @@ const EditGeofence = () => {
   return (
     <div className="bg-gray-100 h-full">
       <GlobalSearch />
-      <p>Home</p>
+      <p>Edit Geofence</p>
     </div>
   );
 };

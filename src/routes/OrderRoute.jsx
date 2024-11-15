@@ -10,9 +10,9 @@ const CreateOrder = lazy(() => import("../screens/general/order/CreateOrder"));
 const OrderRoutes = () => (
   <Suspense fallback={<Loader />}>
     <Routes>
-      <Route path="/" element={<AllOrders />} />
-      <Route path="/create" element={<CreateOrder />} />
-      <Route path="/:orderId" element={<OrderDetail />} />
+      <Route path="" element={<AllOrders />} />
+      <Route path="create" element={<CreateOrder />} />
+      <Route path=":orderId" element={<OrderDetail />} />
     </Routes>
   </Suspense>
 );

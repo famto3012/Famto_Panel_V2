@@ -5,9 +5,11 @@ import { Spinner } from "@chakra-ui/react";
 
 import { useDraggable } from "../../../hooks/useDraggable";
 
-import { DownloadIcon, SearchIcon } from "../../../utils/icons";
 import { paymentOptions } from "../../../utils/defaultData";
+
 import { role } from "../../../utils/testData";
+
+import RenderIcon from "../../../icons/RenderIcon";
 
 const TakeAway = () => {
   const [takeAwayData, setTakeAwayData] = useState({
@@ -61,7 +63,9 @@ const TakeAway = () => {
                 )}
 
                 {!isMerchantLoading && (
-                  <SearchIcon className="text-xl text-gray-500 absolute top-[30%] right-[10px]" />
+                  <span className="text-gray-500 absolute top-[30%] right-[10px]">
+                    <RenderIcon iconName="SearchIcon" size={20} loading={6} />
+                  </span>
                 )}
 
                 {merchantResults?.length > 0 && (
@@ -127,7 +131,9 @@ const TakeAway = () => {
               )}
 
               {!isProductLoading && (
-                <SearchIcon className="text-xl text-gray-500 absolute top-[30%] right-[10px]" />
+                <span className="text-gray-500 absolute top-[30%] right-[10px]">
+                  <RenderIcon iconName="SearchIcon" size={20} loading={6} />
+                </span>
               )}
 
               {productResults?.length > 0 && (
@@ -296,7 +302,7 @@ const TakeAway = () => {
               type="button"
               onClick={() => {}}
             >
-              <DownloadIcon /> Bill
+              <RenderIcon iconName="DownloadIcon" size={20} loading={6} /> Bill
             </button>
 
             <button

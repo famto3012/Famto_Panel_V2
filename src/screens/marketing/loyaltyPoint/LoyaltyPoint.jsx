@@ -4,7 +4,7 @@ const LoyaltyPoint = () => {
   return (
     <div className="bg-gray-100 h-full">
       <GlobalSearch />
-      <p>Home</p>
+      <p>Loyalty Point</p>
     </div>
   );
 };

@@ -4,7 +4,7 @@ const CommissionLog = () => {
   return (
     <div className="bg-gray-100 h-full">
       <GlobalSearch />
-      <p>Home</p>
+      <p>Commission Logs</p>
     </div>
   );
 };

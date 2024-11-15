@@ -4,7 +4,7 @@ const PromoCode = () => {
   return (
     <div className="bg-gray-100 h-full">
       <GlobalSearch />
-      <p>Home</p>
+      <p>Promo code</p>
     </div>
   );
 };

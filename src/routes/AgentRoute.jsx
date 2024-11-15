@@ -10,9 +10,9 @@ const AgentDetail = lazy(() => import("../screens/general/agent/AgentDetail"));
 const AgentRoutes = () => (
   <Suspense fallback={<Loader />}>
     <Routes>
-      <Route path="/" element={<AllAgents />} />
-      <Route path="/payout" element={<AgentPayout />} />
-      <Route path="/:agentId" element={<AgentDetail />} />
+      <Route path="" element={<AllAgents />} />
+      <Route path="payout" element={<AgentPayout />} />
+      <Route path=":agentId" element={<AgentDetail />} />
     </Routes>
   </Suspense>
 );

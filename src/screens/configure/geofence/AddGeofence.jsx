@@ -4,7 +4,7 @@ const AddGeofence = () => {
   return (
     <div className="bg-gray-100 h-full">
       <GlobalSearch />
-      <p>Home</p>
+      <p>Add Geofence</p>
     </div>
   );
 };

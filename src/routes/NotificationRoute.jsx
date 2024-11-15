@@ -22,9 +22,9 @@ const AlertNotification = lazy(
 const NotificationRoutes = () => (
   <Suspense fallback={<Loader />}>
     <Routes>
-      <Route path="/logs" element={<NotificationLog />} />
+      <Route path="logs" element={<NotificationLog />} />
       <Route
-        path="/push-notification"
+        path="push-notification"
         element={
           <ProtectedRoute requiredRole="Admin">
             <PushNotification />
@@ -32,7 +32,7 @@ const NotificationRoutes = () => (
         }
       />
       <Route
-        path="/settings"
+        path="settings"
         element={
           <ProtectedRoute requiredRole="Admin">
             <NotificationSetting />
@@ -40,7 +40,7 @@ const NotificationRoutes = () => (
         }
       />
       <Route
-        path="/alert-notification"
+        path="alert-notification"
         element={
           <ProtectedRoute requiredRole="Admin">
             <AlertNotification />

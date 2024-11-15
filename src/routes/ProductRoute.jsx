@@ -8,7 +8,7 @@ const Product = lazy(() => import("../screens/general/product/Product"));
 const ProductRoutes = () => (
   <Suspense fallback={<Loader />}>
     <Routes>
-      <Route path="/" element={<Product />} />
+      <Route path="" element={<Product />} />
     </Routes>
   </Suspense>
 );

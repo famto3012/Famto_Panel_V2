@@ -4,11 +4,12 @@ import { Spinner } from "@chakra-ui/react";
 
 import { useDraggable } from "../../../hooks/useDraggable";
 
-import { PlusIcon, SearchIcon } from "../../../utils/icons";
-
 import { role } from "../../../utils/testData";
+
 import NewAddress from "./NewAddress";
 import ShowBill from "./ShowBill";
+
+import RenderIcon from "../../../icons/RenderIcon";
 
 const HomeDelivery = () => {
   const [homeDeliveryData, setHomeDeliveryData] = useState({
@@ -67,7 +68,9 @@ const HomeDelivery = () => {
                 )}
 
                 {!isMerchantLoading && (
-                  <SearchIcon className="text-xl text-gray-500 absolute top-[30%] right-[10px]" />
+                  <span className="text-gray-500 absolute top-[30%] right-[10px]">
+                    <RenderIcon iconName="SearchIcon" size={20} loading={6} />
+                  </span>
                 )}
 
                 {merchantResults.length > 0 && (
@@ -132,7 +135,9 @@ const HomeDelivery = () => {
               )}
 
               {!isProductLoading && (
-                <SearchIcon className="text-xl text-gray-500 absolute top-[30%] right-[10px]" />
+                <span className="text-gray-500 absolute top-[30%] right-[10px]">
+                  <RenderIcon iconName="SearchIcon" size={20} loading={6} />
+                </span>
               )}
 
               {productResults.length > 0 && (
@@ -373,7 +378,7 @@ const HomeDelivery = () => {
                 onClick={() => {}}
               >
                 <span>Add Address</span>
-                <PlusIcon />
+                <RenderIcon iconName="PlusIcon" size={20} loading={6} />
               </button>
             </div>
             {isFormVisible && (
