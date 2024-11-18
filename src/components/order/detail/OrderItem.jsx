@@ -1,9 +1,7 @@
 import { Table } from "@chakra-ui/react";
 
-const OrderItems = () => {
-  const orderDetail = {
-    deliveryMode: "Pick and Drop",
-  };
+const OrderItems = ({ data }) => {
+  const { deliveryMode, items } = data;
 
   return (
     <>
@@ -11,7 +9,7 @@ const OrderItems = () => {
 
       <div className=" max-w-[96%] mx-auto">
         {/* Pick and Drop */}
-        {orderDetail.deliveryMode === "Pick and Drop" && (
+        {deliveryMode === "Pick and Drop" && (
           <Table.Root size="lg">
             <Table.Header>
               <Table.Row className="bg-teal-700 h-[70px]" textAlign="center">
@@ -24,17 +22,30 @@ const OrderItems = () => {
             </Table.Header>
 
             <Table.Body>
-              <Table.Row key={""} className="h-[70px]">
-                <Table.Cell textAlign="center">Name</Table.Cell>
-                <Table.Cell textAlign="center">width</Table.Cell>
-                <Table.Cell textAlign="center">Weight</Table.Cell>
-              </Table.Row>
+              {items?.map((item, index) => (
+                <Table.Row key={index + 1} className="h-[70px]">
+                  <Table.Cell textAlign="center">{item.itemName}</Table.Cell>
+                  <Table.Cell textAlign="center">
+                    {item?.length && item?.width && item?.height ? (
+                      <>
+                        {item?.length} x {item?.width} x {item?.height}{" "}
+                        {item.unit}
+                      </>
+                    ) : (
+                      <small>-</small>
+                    )}
+                  </Table.Cell>
+                  <Table.Cell textAlign="center">
+                    {item?.weight || "-"}
+                  </Table.Cell>
+                </Table.Row>
+              ))}
             </Table.Body>
           </Table.Root>
         )}
 
         {/* Custom Order */}
-        {orderDetail.deliveryMode === "Custom Order" && (
+        {deliveryMode === "Custom Order" && (
           <Table.Root size="lg">
             <Table.Header>
               <Table.Row className="bg-teal-700 h-[70px]" textAlign="center">
@@ -47,19 +58,31 @@ const OrderItems = () => {
             </Table.Header>
 
             <Table.Body>
-              <Table.Row key={""} className="h-[70px]">
-                <Table.Cell textAlign="center">Name</Table.Cell>
-                <Table.Cell textAlign="center">Qty</Table.Cell>
-                <Table.Cell textAlign="center">Unit</Table.Cell>
-                <Table.Cell textAlign="center">Image</Table.Cell>
-              </Table.Row>
+              {items?.map((item, index) => (
+                <Table.Row key={index + 1} className="h-[70px]">
+                  <Table.Cell textAlign="center">{item.itemName}</Table.Cell>
+                  <Table.Cell textAlign="center">
+                    {item.quantity} {item.unit}
+                  </Table.Cell>
+                  <Table.Cell textAlign="center">{item.numOfUnits}</Table.Cell>
+                  <Table.Cell
+                    textAlign="center"
+                    className="flex items-center justify-center"
+                  >
+                    <img
+                      src={item.itemImageURL}
+                      alt={item.itemName}
+                      className="h-[100px] w-[100px] object-contain"
+                    />
+                  </Table.Cell>
+                </Table.Row>
+              ))}
             </Table.Body>
           </Table.Root>
         )}
 
         {/* Home Delivery and Take Away */}
-        {(orderDetail.deliveryMode === "Take Away" ||
-          orderDetail.deliveryMode === "Home Delivery") && (
+        {(deliveryMode === "Take Away" || deliveryMode === "Home Delivery") && (
           <Table.Root size="lg">
             <Table.Header>
               <Table.Row className="bg-teal-700 h-[70px]" textAlign="center">
@@ -72,11 +95,20 @@ const OrderItems = () => {
             </Table.Header>
 
             <Table.Body>
-              <Table.Row key={""} className="h-[70px]">
-                <Table.Cell textAlign="center">Name</Table.Cell>
-                <Table.Cell textAlign="center">Qty</Table.Cell>
-                <Table.Cell textAlign="center">Amount</Table.Cell>
-              </Table.Row>
+              {items?.map((item, index) => (
+                <Table.Row key={index + 1} className="h-[70px]">
+                  <Table.Cell textAlign="center">
+                    {item.itemName}{" "}
+                    {item?.variantTypeName ? (
+                      <>{item?.variantTypeName}</>
+                    ) : (
+                      <>{""}</>
+                    )}
+                  </Table.Cell>
+                  <Table.Cell textAlign="center">{item.quantity}</Table.Cell>
+                  <Table.Cell textAlign="center">{item.price}</Table.Cell>
+                </Table.Row>
+              ))}
             </Table.Body>
           </Table.Root>
         )}

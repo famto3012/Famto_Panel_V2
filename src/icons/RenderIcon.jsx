@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import * as Icons from "./Icons";
 import { SkeletonCircle } from "@/components/ui/skeleton";
 
-const RenderIcon = ({ iconName, size, loadingSize }) => {
+const RenderIcon = ({ iconName, size, loading }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
   const [attempts, setAttempts] = useState(0);
@@ -31,11 +31,13 @@ const RenderIcon = ({ iconName, size, loadingSize }) => {
   return (
     <>
       {isLoading ? (
-        <SkeletonCircle size={6} />
+        <SkeletonCircle size={loading} />
       ) : error ? (
         <div className="w-5 h-5 rounded-full bg-gray-500"></div>
       ) : IconComponent ? (
-        <IconComponent size={size} />
+        <span className="cursor-pointer">
+          <IconComponent size={size} />
+        </span>
       ) : (
         <div className="w-5 h-5 rounded-full bg-gray-500"></div>
       )}

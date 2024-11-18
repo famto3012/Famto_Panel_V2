@@ -5,11 +5,12 @@ import {
   useLocation,
   Navigate,
 } from "react-router-dom";
-import { Suspense, lazy, useEffect } from "react";
+import { Suspense, lazy, useContext, useEffect } from "react";
 
 import ProtectedRoute from "./ProtectedRoutes";
 
 import Loader from "../components/others/Loader";
+import AuthContext from "../context/AuthContext";
 
 // Lazy load each route component
 const AuthRoutes = lazy(() => import("./AuthRoute"));
@@ -28,7 +29,7 @@ const CustomizeRoutes = lazy(() => import("./CustomizeRoute"));
 const AccountRoutes = lazy(() => import("./AccountRoute"));
 
 const Routers = () => {
-  const token = true;
+  const { token } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
 

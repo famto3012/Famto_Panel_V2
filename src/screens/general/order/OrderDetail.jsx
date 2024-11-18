@@ -1,21 +1,40 @@
-import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 
 import { Button } from "@chakra-ui/react";
 
+import AuthContext from "../../../context/AuthContext";
+
 import GlobalSearch from "../../../components/others/GlobalSearch";
+import Loader from "../../../components/others/Loader";
 import Details from "../../../components/order/detail/Details";
 import OrderItems from "../../../components/order/detail/OrderItem";
-
 import OrderBill from "../../../components/order/detail/OrderBill";
 
 import RenderIcon from "../../../icons/RenderIcon";
 
-const OrderDetail = () => {
-  const orderId = "O2345";
+import { getOrderDetail } from "../../../hooks/order/useOrder";
 
+// TODO: Need to connect bill download API
+// TODO: Need to connect order detail stepper UI
+const OrderDetail = () => {
+  const { orderId } = useParams();
+  const { role } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const orderDetail = {};
+  const {
+    data: orderDetail,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["order-detail", orderId],
+    queryFn: () => getOrderDetail(orderId, role, navigate),
+    enabled: !!orderId,
+  });
+
+  if (isLoading) return <Loader />;
+  if (isError) return <div>Error in fetching data</div>;
 
   return (
     <div className="bg-gray-100 h-full">
@@ -28,7 +47,7 @@ const OrderDetail = () => {
           </span>
 
           <p className="font-[600] mb-0 text-[18px]">
-            Order information #{orderId}{" "}
+            Order information #{orderDetail?._id}{" "}
             {orderDetail?.scheduledOrderId && (
               <>
                 <span className="text-black me-2">of</span>
@@ -60,7 +79,7 @@ const OrderDetail = () => {
               Order Status
             </label>
             <p className="text-[14px] text-gray-900 font-[500] text-left w-2/5">
-              {orderDetail.orderStatus}
+              {orderDetail?.orderStatus}
             </p>
           </div>
           <div className="flex justify-between mb-[10px]">
@@ -68,7 +87,7 @@ const OrderDetail = () => {
               Payment Status
             </label>
             <p className="text-[14px] text-gray-900 font-[500] text-left w-2/5">
-              {orderDetail.paymentStatus}
+              {orderDetail?.paymentStatus}
             </p>
           </div>
           <div className="flex justify-between mb-[10px]">
@@ -76,7 +95,7 @@ const OrderDetail = () => {
               Payment Mode
             </label>
             <p className="text-[14px] text-gray-900 font-[500] text-left w-2/5">
-              {orderDetail.paymentMode}
+              {orderDetail?.paymentMode}
             </p>
           </div>
           <div className="flex justify-between mb-[10px]">
@@ -84,7 +103,7 @@ const OrderDetail = () => {
               Delivery Mode
             </label>
             <p className="text-[14px] text-gray-900 font-[500] text-left w-2/5">
-              {orderDetail.deliveryMode}
+              {orderDetail?.deliveryMode}
             </p>
           </div>
         </div>
@@ -97,7 +116,7 @@ const OrderDetail = () => {
               Delivery option
             </label>
             <p className="text-[14px] text-gray-900 font-[500] text-left w-2/5">
-              {orderDetail.deliveryOption}
+              {orderDetail?.deliveryOption}
             </p>
           </div>
           {orderId?.charAt(0) === "O" ? (
@@ -115,7 +134,7 @@ const OrderDetail = () => {
                   Order Time
                 </label>
                 <p className="text-[14px] text-gray-900 font-[500] text-left w-2/5">
-                  {orderDetail.orderTime}
+                  {orderDetail?.orderTime}
                 </p>
               </div>
             </>
@@ -146,17 +165,17 @@ const OrderDetail = () => {
                 : "Next Delivery Time"}
             </label>
             <p className="text-[14px] text-gray-900 font-[500] text-left w-2/5">
-              {orderDetail.deliveryTime}
+              {orderDetail?.deliveryTime}
             </p>
           </div>
         </div>
       </div>
 
-      <Details />
+      <Details data={orderDetail} />
 
-      <OrderItems />
+      <OrderItems data={orderDetail} />
 
-      <OrderBill />
+      <OrderBill data={orderDetail} />
     </div>
   );
 };
