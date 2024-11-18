@@ -2,6 +2,7 @@ import {
   GoHomeFill as HomeIcon,
   GoGift as GiftIcon,
   GoTriangleRight as AngleRightDropDownIcon,
+  GoLock as LockIcon,
 } from "react-icons/go";
 import { GrBook as BookIcon } from "react-icons/gr";
 import { BsShopWindow as ShopIcon } from "react-icons/bs";
@@ -33,6 +34,10 @@ import { ImWhatsapp as WhatsappIcon } from "react-icons/im";
 import {
   IoMdMegaphone as AdBannerIcon,
   IoIosSearch as SearchIcon,
+  IoMdEye as EyeOpenIcon,
+  IoMdEyeOff as EyeCloseIcon,
+  IoIosCheckmarkCircleOutline as CheckIcon,
+  IoIosCloseCircleOutline as CancelIcon,
 } from "react-icons/io";
 import {
   FaTags as LoyaltyPointIcon,
@@ -40,6 +45,7 @@ import {
   FaPlus as PlusIcon,
   FaArrowLeftLong as LeftArrowIcon,
   FaLocationDot as LocationIcon,
+  FaRegUser as SignInUserIcon,
 } from "react-icons/fa6";
 import { FiBell as NotificationIcon } from "react-icons/fi";
 import {
@@ -60,15 +66,20 @@ export {
   AngleRightDropDownIcon,
   BikeIcon,
   BookIcon,
+  CancelIcon,
   CalendarIcon,
+  CheckIcon,
   CustomizationIcon,
   DeleteIcon,
   DownloadIcon,
+  EyeCloseIcon,
+  EyeOpenIcon,
   GiftIcon,
   GeofenceIcon,
   HomeIcon,
   LeftArrowIcon,
   LocationIcon,
+  LockIcon,
   LogoutIcon,
   LoyaltyPointIcon,
   ManagerIcon,
@@ -84,6 +95,7 @@ export {
   ShopIcon,
   SearchIcon,
   SettingsIcon,
+  SignInUserIcon,
   UsersIcon,
   WhatsappIcon,
 };

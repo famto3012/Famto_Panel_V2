@@ -1,12 +1,12 @@
 import { createContext, useEffect, useState } from "react";
 import { EncryptStorage } from "encrypt-storage";
-import axios from "axios"; // Import axios for API calls
+import axios from "axios";
 
 const secretKey = import.meta.env.VITE_APP_LOCALSTORAGE_KEY;
 const BASE_URL = import.meta.env.VITE_APP_BASE_URL;
 
 const encryptStorage = new EncryptStorage(secretKey, {
-  prefix: "FAMTO", // Optional prefix to namespace your storage
+  prefix: "FAMTO",
 });
 
 const AuthContext = createContext();
@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   // Function to save tokens securely
-  const saveTokens = (
+  const saveToStorage = (
     accessToken,
     role,
     userId,
@@ -87,8 +87,8 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Function to clear tokens
-  const clearTokens = () => {
+  // Function to clear storage
+  const clearStorage = () => {
     try {
       setIsLoading(true);
 
@@ -113,40 +113,6 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Function to refresh the access token
-  const refreshAccessToken = async () => {
-    try {
-      if (!refreshToken) {
-        console.log("No refresh token available, logging out");
-        clearTokens();
-        return null;
-      }
-
-      console.log("Refreshing access token...");
-
-      const response = await axios.post(`${BASE_URL}/auth/refresh-token`, {
-        refreshToken,
-      });
-
-      const { accessToken, refreshToken: newRefreshToken } = response.data;
-
-      saveTokens(
-        accessToken,
-        role,
-        userId,
-        username,
-        fcmToken,
-        newRefreshToken
-      );
-
-      console.log("Access token refreshed successfully:", accessToken);
-
-      return accessToken;
-    } catch (error) {
-      console.log("Error refreshing access token:", error.message);
-      clearTokens();
-      return null;
-    }
-  };
 
   // Load tokens once when the app starts
   useEffect(() => {
@@ -162,10 +128,9 @@ export const AuthProvider = ({ children }) => {
         userId,
         fcmToken,
         refreshToken,
-        saveTokens,
-        clearTokens,
+        saveToStorage,
+        clearStorage,
         isLoading,
-        refreshAccessToken,
       }}
     >
       {children}

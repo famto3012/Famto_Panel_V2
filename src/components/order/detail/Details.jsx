@@ -1,7 +1,9 @@
 import { Table } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 
-const Details = () => {
+const Details = ({ data }) => {
+  const { customerDetail, merchantDetail, deliveryAgentDetail } = data;
+
   return (
     <>
       <div className="mt-10">
@@ -29,21 +31,33 @@ const Details = () => {
           </Table.Header>
 
           <Table.Body>
-            <Table.Row key={""} className="h-[70px]">
+            <Table.Row className="h-[70px]">
               <Table.Cell textAlign="center">
                 <Link
-                  to={`/customer/45`}
+                  to={`/customer/${customerDetail._id}`}
                   className="underline underline-offset-2 cursor-pointer"
                 >
-                  O24013
+                  {customerDetail._id}
                 </Link>
               </Table.Cell>
-              <Table.Cell textAlign="center">Pending</Table.Cell>
-              <Table.Cell textAlign="center">Merchant Name</Table.Cell>
-              <Table.Cell textAlign="center">Customer Name</Table.Cell>
-              <Table.Cell textAlign="center">Delivery Mode</Table.Cell>
-              <Table.Cell textAlign="center">Order Time</Table.Cell>
-              <Table.Cell textAlign="center">Delivery Time</Table.Cell>
+              <Table.Cell textAlign="center">{customerDetail.name}</Table.Cell>
+              <Table.Cell textAlign="center">{customerDetail.email}</Table.Cell>
+              <Table.Cell textAlign="center">{customerDetail.phone}</Table.Cell>
+              <Table.Cell textAlign="center">
+                <p> {customerDetail?.address?.fullName}</p>
+                <p> {customerDetail?.address?.flat}</p>
+                <p> {customerDetail?.address?.area}</p>
+                <p> {customerDetail?.address?.landmark}</p>
+                <p> {customerDetail?.address?.phoneNumber}</p>
+              </Table.Cell>
+              <Table.Cell textAlign="center">
+                <p> {customerDetail.ratingsToDeliveryAgent.rating}</p>
+                <p> {customerDetail.ratingsToDeliveryAgent.review}</p>
+              </Table.Cell>
+              <Table.Cell textAlign="center">
+                <p> {customerDetail.ratingsByDeliveryAgent.rating}</p>
+                <p> {customerDetail.ratingsByDeliveryAgent.review}</p>
+              </Table.Cell>
             </Table.Row>
           </Table.Body>
         </Table.Root>
@@ -72,19 +86,25 @@ const Details = () => {
           </Table.Header>
 
           <Table.Body>
-            <Table.Row key={""} className="h-[70px]">
+            <Table.Row className="h-[70px]">
               <Table.Cell textAlign="center">
                 <Link
-                  to={`/customer/45`}
+                  to={`/merchant/${merchantDetail._id}`}
                   className="underline underline-offset-2 cursor-pointer"
                 >
-                  O24013
+                  {merchantDetail._id}
                 </Link>
               </Table.Cell>
-              <Table.Cell textAlign="center">Pending</Table.Cell>
-              <Table.Cell textAlign="center">Merchant Name</Table.Cell>
-              <Table.Cell textAlign="center">Customer Name</Table.Cell>
-              <Table.Cell textAlign="center">Delivery Mode</Table.Cell>
+              <Table.Cell textAlign="center">{merchantDetail.name}</Table.Cell>
+              <Table.Cell textAlign="center">
+                {merchantDetail.instructionByCustomer || "-"}
+              </Table.Cell>
+              <Table.Cell textAlign="center">
+                {merchantDetail.merchantEarnings}
+              </Table.Cell>
+              <Table.Cell textAlign="center">
+                {merchantDetail.famtoEarnings}
+              </Table.Cell>
             </Table.Row>
           </Table.Body>
         </Table.Root>
@@ -115,21 +135,33 @@ const Details = () => {
           </Table.Header>
 
           <Table.Body>
-            <Table.Row key={""} className="h-[70px]">
+            <Table.Row className="h-[70px]">
               <Table.Cell textAlign="center">
                 <Link
-                  to={`/customer/45`}
+                  to={`/agent/${deliveryAgentDetail._id}`}
                   className="underline underline-offset-2 cursor-pointer"
                 >
-                  O24013
+                  {deliveryAgentDetail._id}
                 </Link>
               </Table.Cell>
-              <Table.Cell textAlign="center">Pending</Table.Cell>
-              <Table.Cell textAlign="center">Merchant Name</Table.Cell>
-              <Table.Cell textAlign="center">Customer Name</Table.Cell>
-              <Table.Cell textAlign="center">Delivery Mode</Table.Cell>
-              <Table.Cell textAlign="center">Delivery Mode</Table.Cell>
-              <Table.Cell textAlign="center">Delivery Mode</Table.Cell>
+              <Table.Cell textAlign="center">
+                {deliveryAgentDetail.name}
+              </Table.Cell>
+              <Table.Cell textAlign="center">
+                {deliveryAgentDetail.team}
+              </Table.Cell>
+              <Table.Cell textAlign="center">
+                {deliveryAgentDetail.instructionsByCustomer}
+              </Table.Cell>
+              <Table.Cell textAlign="center">
+                {deliveryAgentDetail.timeTaken}
+              </Table.Cell>
+              <Table.Cell textAlign="center">
+                {deliveryAgentDetail.distanceTravelled}
+              </Table.Cell>
+              <Table.Cell textAlign="center">
+                {deliveryAgentDetail.delayedBy}
+              </Table.Cell>
             </Table.Row>
           </Table.Body>
         </Table.Root>

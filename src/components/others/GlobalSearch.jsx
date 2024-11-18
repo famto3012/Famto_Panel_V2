@@ -1,6 +1,10 @@
+import { useContext } from "react";
 import RenderIcon from "../../icons/RenderIcon";
+import AuthContext from "../../context/AuthContext";
 
 const GlobalSearch = () => {
+  const { clearStorage } = useContext(AuthContext);
+
   return (
     <div className="flex items-center justify-end pt-[20px] pe-[30px] bg-gray-100">
       <div className="relative me-4">
@@ -17,7 +21,7 @@ const GlobalSearch = () => {
         </button>
       </div>
 
-      <span onClick={() => {}} className="cursor-pointer">
+      <span onClick={() => clearStorage()} className="cursor-pointer">
         <RenderIcon iconName="LogoutIcon" size={24} loading={6} />
       </span>
     </div>

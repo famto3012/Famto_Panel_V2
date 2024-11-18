@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-
-import { role } from "../../utils/testData";
+import { useContext, useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 
 import RenderIcon from "../../icons/RenderIcon";
+
+import AuthContext from "../../context/AuthContext";
 
 const MainSideBar = () => {
   const [openDropdown, setOpenDropdown] = useState(null);
@@ -11,6 +11,7 @@ const MainSideBar = () => {
   const [isImageLoaded, setIsImageLoaded] = useState(false);
 
   const location = useLocation();
+  const { role } = useContext(AuthContext);
 
   useEffect(() => {
     setSelectedLink(location.pathname);
@@ -392,13 +393,11 @@ const MainSideBar = () => {
           <div className="dropside" onClick={toggleSidebar("customize")}>
             <span className="font-[poppins]">App Customization</span>
             <button>
-              <button>
-                <RenderIcon
-                  iconName="AngleRightDropDownIcon"
-                  size={24}
-                  loading={2}
-                />
-              </button>
+              <RenderIcon
+                iconName="AngleRightDropDownIcon"
+                size={24}
+                loading={2}
+              />
             </button>
           </div>
           {openDropdown === "customize" && (
@@ -462,13 +461,7 @@ const MainSideBar = () => {
       <div className="dropside" onClick={toggleSidebar("account")}>
         <span className="font-[poppins]">Account</span>
         <button>
-          <button>
-            <RenderIcon
-              iconName="AngleRightDropDownIcon"
-              size={24}
-              loading={2}
-            />
-          </button>
+          <RenderIcon iconName="AngleRightDropDownIcon" size={24} loading={2} />
         </button>
       </div>
       {openDropdown === "account" && (
