@@ -47,7 +47,7 @@ import {
   FaLocationDot as LocationIcon,
   FaRegUser as SignInUserIcon,
 } from "react-icons/fa6";
-import { FiBell as NotificationIcon } from "react-icons/fi";
+import { FiBell as NotificationIcon, FiEdit as EditIcon } from "react-icons/fi";
 import {
   MdCrisisAlert as AlertNotificationIcon,
   MdLocationPin as GeofenceIcon,
@@ -72,6 +72,7 @@ export {
   CustomizationIcon,
   DeleteIcon,
   DownloadIcon,
+  EditIcon,
   EyeCloseIcon,
   EyeOpenIcon,
   GiftIcon,
