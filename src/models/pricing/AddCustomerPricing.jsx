@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Select from "react-select";
+import { HStack } from "@chakra-ui/react";
 
 import {
   DialogRoot,
@@ -12,28 +13,34 @@ import {
   DialogBody,
 } from "@/components/ui/dialog";
 import { toaster } from "@/components/ui/toaster";
+import { Radio, RadioGroup } from "@/components/ui/radio";
 
 import ModalLoader from "../../components/others/ModalLoader";
 
 import { getAllGeofence } from "../../hooks/geofence/useGeofence";
-import { createNewAgentPricing } from "../../hooks/pricing/useAgentPricing";
+import { getAllBusinessCategory } from "../../hooks/businessCategory/useBusinessCategory";
+import { createCustomerPricing } from "../../hooks/pricing/useCustomerPricing";
 
-const AddAgentPricing = ({ isOpen, onClose }) => {
+import { vehicleTypeOptions } from "../../utils/defaultData";
+
+const AddCustomerPricing = ({ isOpen, onClose, pricingId }) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   const [formData, setFormData] = useState({
+    vehicleType: null,
     ruleName: "",
     baseFare: "",
-    baseDistanceFarePerKM: "",
-    waitingFare: "",
+    baseDistance: "",
+    fareAfterBaseDistance: "",
+    baseWeightUpto: "",
+    fareAfterBaseWeight: "",
     waitingTime: "",
+    waitingFare: "",
     purchaseFarePerHour: "",
-    minLoginHours: "",
-    minOrderNumber: "",
-    fareAfterMinLoginHours: "",
-    fareAfterMinOrderNumber: "",
     geofenceId: "",
+    deliveryMode: "Home Delivery",
+    businessCategoryId: null,
   });
 
   const {
@@ -43,25 +50,34 @@ const AddAgentPricing = ({ isOpen, onClose }) => {
   } = useQuery({
     queryKey: ["all-geofence"],
     queryFn: () => getAllGeofence(navigate),
+    enabled: !!isOpen,
+  });
+
+  const { data: allBusinessCategory, isLoading: categoryLoading } = useQuery({
+    queryKey: ["all-businessCategory"],
+    queryFn: () => getAllBusinessCategory(navigate),
+    enabled: !!isOpen,
   });
 
   const handleAddPricing = useMutation({
-    mutationKey: ["new-agent-pricing"],
-    mutationFn: (formData) => createNewAgentPricing(formData, navigate),
+    mutationKey: ["new-customer-pricing"],
+    mutationFn: (formData) => createCustomerPricing(formData, navigate),
     onSuccess: () => {
-      queryClient.invalidateQueries(["all-agent-pricing"]);
+      queryClient.invalidateQueries(["all-customer-pricing"]);
       setFormData({
+        vehicleType: null,
         ruleName: "",
         baseFare: "",
-        baseDistanceFarePerKM: "",
-        waitingFare: "",
+        baseDistance: "",
+        fareAfterBaseDistance: "",
+        baseWeightUpto: "",
+        fareAfterBaseWeight: "",
         waitingTime: "",
+        waitingFare: "",
         purchaseFarePerHour: "",
-        minLoginHours: "",
-        minOrderNumber: "",
-        fareAfterMinLoginHours: "",
-        fareAfterMinOrderNumber: "",
         geofenceId: "",
+        deliveryMode: "Home Delivery",
+        businessCategoryId: null,
       });
       onClose();
       toaster.create({
@@ -82,6 +98,11 @@ const AddAgentPricing = ({ isOpen, onClose }) => {
   const geofenceOptions = allGeofence?.map((geofence) => ({
     label: geofence.name,
     value: geofence._id,
+  }));
+
+  const businessOptions = allBusinessCategory?.map((category) => ({
+    label: category.title,
+    value: category._id,
   }));
 
   const handleInputChange = (e) => {
@@ -114,7 +135,7 @@ const AddAgentPricing = ({ isOpen, onClose }) => {
             </>
           ) : (
             <>
-              <div className="flex flex-col max-h-[30rem] overflow-auto gap-4">
+              <div className="flex flex-col  max-h-[30rem] overflow-auto gap-4 ">
                 <div className="flex items-center">
                   <label className="w-1/3 text-gray-500" htmlFor="ruleName">
                     Rule Name <span className="text-red-500">*</span>
@@ -129,7 +150,6 @@ const AddAgentPricing = ({ isOpen, onClose }) => {
                     onChange={handleInputChange}
                   />
                 </div>
-
                 <div className="flex items-center">
                   <label className="w-1/3 text-gray-500" htmlFor="baseFare">
                     Base Fare <span className="text-red-500">*</span>
@@ -144,56 +164,71 @@ const AddAgentPricing = ({ isOpen, onClose }) => {
                     onChange={handleInputChange}
                   />
                 </div>
-
                 <div className="flex items-center">
-                  <label
-                    className="w-1/3 text-gray-500"
-                    htmlFor="baseDistanceFarePerKM"
-                  >
-                    Base Distance fare per KM{" "}
-                    <span className="text-red-500">*</span>
+                  <label className="w-1/3 text-gray-500" htmlFor="baseDistance">
+                    Base Distance <span className="text-red-500">*</span>
                   </label>
                   <input
                     className="border-2 border-gray-300 rounded p-2 w-2/3 outline-none focus:outline-none"
                     type="text"
                     placeholder="Base Distance"
-                    value={formData.baseDistanceFarePerKM}
-                    id="baseDistanceFarePerKM"
-                    name="baseDistanceFarePerKM"
+                    value={formData.baseDistance}
+                    id="baseDistance"
+                    name="baseDistance"
                     onChange={handleInputChange}
                   />
                 </div>
-
                 <div className="flex items-center">
-                  <label className="w-1/3 text-gray-500" htmlFor="waitingTime">
-                    Waiting Time (minutes)
+                  <label
+                    className="w-1/3 text-gray-500"
+                    htmlFor="fareAfterBaseDistance"
+                  >
+                    Fare After Distance <span className="text-red-500">*</span>
                   </label>
                   <input
                     className="border-2 border-gray-300 rounded p-2 w-2/3 outline-none focus:outline-none"
                     type="text"
-                    placeholder="Waiting Time"
-                    value={formData.waitingTime}
-                    id="waitingTime"
-                    name="waitingTime"
+                    placeholder="Fare After Distance"
+                    value={formData.fareAfterBaseDistance}
+                    id="fareAfterBaseDistance"
+                    name="fareAfterBaseDistance"
                     onChange={handleInputChange}
                   />
                 </div>
-
                 <div className="flex items-center">
-                  <label className="w-1/3 text-gray-500" htmlFor="waitingFare">
-                    Waiting Fare
+                  <label
+                    className="w-1/3 text-gray-500"
+                    htmlFor="baseWeightUpto"
+                  >
+                    Base Weight upto(in kg)
                   </label>
                   <input
                     className="border-2 border-gray-300 rounded p-2 w-2/3 outline-none focus:outline-none"
                     type="text"
-                    placeholder="Waiting Fare"
-                    value={formData.waitingFare}
-                    id="waitingFare"
-                    name="waitingFare"
+                    placeholder="Base Weight"
+                    value={formData.baseWeightUpto}
+                    id="baseWeightUpto"
+                    name="baseWeightUpto"
                     onChange={handleInputChange}
                   />
                 </div>
-
+                <div className="flex items-center">
+                  <label
+                    className="w-1/3 text-gray-500"
+                    htmlFor="fareAfterBaseWeight"
+                  >
+                    Fare after base weight
+                  </label>
+                  <input
+                    className="border-2 border-gray-300 rounded p-2 w-2/3 outline-none focus:outline-none"
+                    type="text"
+                    placeholder="Fare After Weight"
+                    value={formData.fareAfterBaseWeight}
+                    id="fareAfterBaseWeight"
+                    name="fareAfterBaseWeight"
+                    onChange={handleInputChange}
+                  />
+                </div>
                 <div className="flex items-center">
                   <label
                     className="w-1/3 text-gray-500"
@@ -211,74 +246,132 @@ const AddAgentPricing = ({ isOpen, onClose }) => {
                     onChange={handleInputChange}
                   />
                 </div>
-
                 <div className="flex items-center">
-                  <label
-                    className="w-1/3 text-gray-500"
-                    htmlFor="purchaseFarePerHour"
-                  >
-                    Minimum login hours <span className="text-red-500">*</span>
+                  <label className="w-1/3 text-gray-500" htmlFor="waitingFare">
+                    Waiting Fare
                   </label>
                   <input
                     className="border-2 border-gray-300 rounded p-2 w-2/3 outline-none focus:outline-none"
                     type="text"
-                    placeholder="Purchase Fare Hour"
-                    value={formData.minLoginHours}
-                    name="minLoginHours"
+                    placeholder="Waiting Fare"
+                    value={formData.waitingFare}
+                    id="waitingFare"
+                    name="waitingFare"
                     onChange={handleInputChange}
                   />
                 </div>
-
                 <div className="flex items-center">
-                  <label
-                    className="w-1/3 text-gray-500"
-                    htmlFor="purchaseFarePerHour"
-                  >
-                    Minimum order number <span className="text-red-500">*</span>
+                  <label className="w-1/3 text-gray-500" htmlFor="waitingTime">
+                    Waiting Time
                   </label>
                   <input
                     className="border-2 border-gray-300 rounded p-2 w-2/3 outline-none focus:outline-none"
                     type="text"
-                    placeholder="Purchase Fare Hour"
-                    value={formData.minOrderNumber}
-                    name="minOrderNumber"
+                    placeholder="Waiting Time"
+                    value={formData.waitingTime}
+                    id="waitingTime"
+                    name="waitingTime"
                     onChange={handleInputChange}
                   />
                 </div>
 
-                <div className="flex items-center">
-                  <label
-                    className="w-1/3 text-gray-500"
-                    htmlFor="purchaseFarePerHour"
-                  >
-                    Fare after minimum login hours
+                <div className="flex items-center mt-1">
+                  <label className="w-1/3 text-gray-500">
+                    Select Delivery Mode <span className="text-red-500">*</span>
                   </label>
-                  <input
-                    className="border-2 border-gray-300 rounded p-2 w-2/3 outline-none focus:outline-none"
-                    type="text"
-                    placeholder="Purchase Fare Hour"
-                    value={formData.fareAfterMinLoginHours}
-                    name="fareAfterMinLoginHours"
-                    onChange={handleInputChange}
-                  />
+
+                  <RadioGroup
+                    value={formData.deliveryMode}
+                    onValueChange={(e) =>
+                      setFormData({ ...formData, deliveryMode: e.value })
+                    }
+                    className="w-2/3"
+                    size="sm"
+                    colorPalette="teal"
+                    variant="solid"
+                  >
+                    <HStack gap="8" direction="row">
+                      <Radio value="Home Delivery">Home Delivery</Radio>
+                      <Radio value="Pick and Drop">Pick and Drop</Radio>
+                      <Radio value="Custom Order">Custom Order</Radio>
+                    </HStack>
+                  </RadioGroup>
                 </div>
 
-                <div className="flex items-center">
-                  <label
-                    className="w-1/3 text-gray-500"
-                    htmlFor="purchaseFarePerHour"
-                  >
-                    Fare after minimum order number
-                  </label>
-                  <input
-                    className="border-2 border-gray-300 rounded p-2 w-2/3 outline-none focus:outline-none"
-                    type="text"
-                    placeholder="Purchase Fare Hour"
-                    value={formData.fareAfterMinOrderNumber}
-                    name="fareAfterMinOrderNumber"
-                    onChange={handleInputChange}
-                  />
-                </div>
+                {formData.deliveryMode === "Home Delivery" && (
+                  <div className="flex items-center">
+                    <label
+                      className="w-1/3 text-gray-500"
+                      htmlFor="businessCategoryId"
+                    ></label>
+
+                    <Select
+                      options={businessOptions}
+                      value={businessOptions?.find(
+                        (option) =>
+                          option.value === formData?.businessCategoryId
+                      )}
+                      onChange={(option) =>
+                        setFormData({
+                          ...formData,
+                          businessCategoryId: option.value,
+                        })
+                      }
+                      className="rounded outline-none focus:outline-none w-2/3"
+                      placeholder="Select business category"
+                      isSearchable
+                      isMulti={false}
+                      menuPlacement="top"
+                      styles={{
+                        control: (provided) => ({
+                          ...provided,
+                          paddingRight: "",
+                        }),
+                        dropdownIndicator: (provided) => ({
+                          ...provided,
+                          padding: "10px",
+                        }),
+                      }}
+                    />
+                  </div>
+                )}
+
+                {formData.deliveryMode === "Pick and Drop" && (
+                  <div className="flex items-center">
+                    <label
+                      className="w-1/3 text-gray-500"
+                      htmlFor="vehicleType"
+                    ></label>
+
+                    <Select
+                      options={vehicleTypeOptions}
+                      value={vehicleTypeOptions?.find(
+                        (option) => option.value === formData?.vehicleType
+                      )}
+                      onChange={(option) =>
+                        setFormData({
+                          ...formData,
+                          vehicleType: option.value,
+                        })
+                      }
+                      className="rounded outline-none focus:outline-none w-2/3"
+                      placeholder="Select vehicle type"
+                      isSearchable
+                      isMulti={false}
+                      menuPlacement="top"
+                      styles={{
+                        control: (provided) => ({
+                          ...provided,
+                          paddingRight: "",
+                        }),
+                        dropdownIndicator: (provided) => ({
+                          ...provided,
+                          padding: "10px",
+                        }),
+                      }}
+                    />
+                  </div>
+                )}
 
                 <div className="flex items-center">
                   <label className="w-1/3 text-gray-500" htmlFor="geofence">
@@ -287,7 +380,7 @@ const AddAgentPricing = ({ isOpen, onClose }) => {
 
                   <Select
                     options={geofenceOptions}
-                    value={geofenceOptions.find(
+                    value={geofenceOptions?.find(
                       (option) => option.value === formData.geofenceId
                     )}
                     onChange={(option) =>
@@ -298,9 +391,9 @@ const AddAgentPricing = ({ isOpen, onClose }) => {
                     }
                     className="rounded outline-none focus:outline-none w-2/3"
                     placeholder="Select geofence"
-                    isSearchable={true}
+                    isSearchable
                     isMulti={false}
-                    menuPlacement="top"
+                    menuPlacement="auto"
                     styles={{
                       control: (provided) => ({
                         ...provided,
@@ -314,7 +407,6 @@ const AddAgentPricing = ({ isOpen, onClose }) => {
                   />
                 </div>
               </div>
-
               <div className="flex justify-end gap-4 mt-6">
                 <button
                   className="bg-cyan-50 py-2 px-4 rounded-md"
@@ -323,8 +415,8 @@ const AddAgentPricing = ({ isOpen, onClose }) => {
                   Cancel
                 </button>
                 <button
-                  className="bg-teal-700 text-white py-2 px-4 rounded-md"
                   onClick={() => handleAddPricing.mutate(formData)}
+                  className="bg-teal-700 text-white py-2 px-4 rounded-md"
                 >
                   {handleAddPricing.isPending ? `Saving...` : `Save`}
                 </button>
@@ -337,4 +429,4 @@ const AddAgentPricing = ({ isOpen, onClose }) => {
   );
 };
 
-export default AddAgentPricing;
+export default AddCustomerPricing;
