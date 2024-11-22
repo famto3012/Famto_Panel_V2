@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Select from "react-select";
@@ -15,15 +15,18 @@ import {
 import { toaster } from "@/components/ui/toaster";
 import { Radio, RadioGroup } from "@/components/ui/radio";
 
-import ModalLoader from "../../components/others/ModalLoader";
+import ModalLoader from "@/components/others/ModalLoader";
 
-import { getAllGeofence } from "../../hooks/geofence/useGeofence";
-import { getAllBusinessCategory } from "../../hooks/businessCategory/useBusinessCategory";
-import { createCustomerPricing } from "../../hooks/pricing/useCustomerPricing";
+import { getAllGeofence } from "../../../hooks/geofence/useGeofence";
+import { getAllBusinessCategory } from "../../../hooks/businessCategory/useBusinessCategory";
+import {
+  fetchSingleCustomerPricing,
+  updateCustomerPricing,
+} from "../../../hooks/pricing/useCustomerPricing";
 
-import { vehicleTypeOptions } from "../../utils/defaultData";
+import { vehicleTypeOptions } from "../../../utils/defaultData";
 
-const AddCustomerPricing = ({ isOpen, onClose, pricingId }) => {
+const EditCustomerPricing = ({ isOpen, onClose, pricingId }) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -44,24 +47,50 @@ const AddCustomerPricing = ({ isOpen, onClose, pricingId }) => {
   });
 
   const {
+    data: pricingData,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["customer-pricing-detail", pricingId],
+    queryFn: ({ queryKey }) => {
+      const [_, id] = queryKey;
+      return fetchSingleCustomerPricing(id, navigate);
+    },
+    enabled: !!pricingId,
+  });
+
+  const {
     data: allGeofence,
     isLoading: geofenceLoading,
     isError: geofenceError,
   } = useQuery({
     queryKey: ["all-geofence"],
     queryFn: () => getAllGeofence(navigate),
-    enabled: !!isOpen,
+    enabled: !!pricingId,
   });
 
-  const { data: allBusinessCategory, isLoading: categoryLoading } = useQuery({
+  const {
+    data: allBusinessCategory,
+    isLoading: categoryLoading,
+    isError: categoryError,
+  } = useQuery({
     queryKey: ["all-businessCategory"],
     queryFn: () => getAllBusinessCategory(navigate),
-    enabled: !!isOpen,
+    enabled: !!pricingId,
   });
 
-  const handleAddPricing = useMutation({
-    mutationKey: ["new-customer-pricing"],
-    mutationFn: (formData) => createCustomerPricing(formData, navigate),
+  useEffect(() => {
+    pricingData &&
+      setFormData({
+        ...pricingData,
+        geofenceId: pricingData.geofenceId._id,
+      });
+  }, [pricingData]);
+
+  const handleEditPricing = useMutation({
+    mutationKey: ["edit-customer-pricing"],
+    mutationFn: ({ pricingId, formData }) =>
+      updateCustomerPricing(pricingId, formData, navigate),
     onSuccess: () => {
       queryClient.invalidateQueries(["all-customer-pricing"]);
       setFormData({
@@ -82,14 +111,14 @@ const AddCustomerPricing = ({ isOpen, onClose, pricingId }) => {
       onClose();
       toaster.create({
         title: "Success",
-        description: "New rule created successfully",
+        description: "Rule updated successfully",
         type: "success",
       });
     },
     onError: () => {
       toaster.create({
         title: "Error",
-        description: "Error in creating new rule",
+        description: "Error in updating rule",
         type: "error",
       });
     },
@@ -110,8 +139,8 @@ const AddCustomerPricing = ({ isOpen, onClose, pricingId }) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const showLoading = geofenceLoading;
-  const showError = geofenceError;
+  const showLoading = isLoading || categoryLoading || geofenceLoading;
+  const showError = isError || geofenceError || categoryError;
 
   return (
     <DialogRoot
@@ -123,7 +152,9 @@ const AddCustomerPricing = ({ isOpen, onClose, pricingId }) => {
       <DialogContent>
         <DialogCloseTrigger onClick={onClose} />
         <DialogHeader>
-          <DialogTitle className="font-[600] text-[18px]">Add Rule</DialogTitle>
+          <DialogTitle className="font-[600] text-[18px]">
+            Edit Rule
+          </DialogTitle>
         </DialogHeader>
 
         <DialogBody>
@@ -415,10 +446,12 @@ const AddCustomerPricing = ({ isOpen, onClose, pricingId }) => {
                   Cancel
                 </button>
                 <button
-                  onClick={() => handleAddPricing.mutate(formData)}
+                  onClick={() =>
+                    handleEditPricing.mutate({ pricingId, formData })
+                  }
                   className="bg-teal-700 text-white py-2 px-4 rounded-md"
                 >
-                  {handleAddPricing.isPending ? `Saving...` : `Save`}
+                  {handleEditPricing.isPending ? `Saving...` : `Save`}
                 </button>
               </div>
             </>
@@ -429,4 +462,4 @@ const AddCustomerPricing = ({ isOpen, onClose, pricingId }) => {
   );
 };
 
-export default AddCustomerPricing;
+export default EditCustomerPricing;

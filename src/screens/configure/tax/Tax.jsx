@@ -12,9 +12,9 @@ import RenderIcon from "../../../icons/RenderIcon";
 
 import { fetchAllTax, toggleTaxStatus } from "../../../hooks/tax/useTax";
 
-import EditTax from "../../../models/tax/EditTax";
-import AddTax from "../../../models/tax/AddTax";
-import DeleteTax from "../../../models/tax/DeleteTax";
+import EditTax from "../../../models/configure/tax/EditTax";
+import AddTax from "../../../models/configure/tax/AddTax";
+import DeleteTax from "../../../models/configure/tax/DeleteTax";
 
 const Tax = () => {
   const navigate = useNavigate();

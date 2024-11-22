@@ -13,28 +13,28 @@ import {
 } from "@/components/ui/dialog";
 import { toaster } from "@/components/ui/toaster";
 
-import { deleteCustomerPricing } from "../../hooks/pricing/useCustomerPricing";
+import { deleteTax } from "../../../hooks/tax/useTax";
 
-const DeleteCustomerPricing = ({ isOpen, onClose, pricingId }) => {
+const DeleteTax = ({ isOpen, taxId, onClose }) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const handleDeletePricing = useMutation({
-    mutationKey: ["delete-customer-pricing", pricingId],
-    mutationFn: (pricingId) => deleteCustomerPricing(pricingId, navigate),
+  const handleDeleteTax = useMutation({
+    mutationKey: ["delete-tax", taxId],
+    mutationFn: (taxId) => deleteTax(taxId, navigate),
     onSuccess: () => {
-      queryClient.invalidateQueries(["all-customer-pricing"]);
+      queryClient.invalidateQueries(["all-tax"]);
       onClose();
       toaster.create({
         title: "Success",
-        description: "Pricing deleted successfully",
+        description: "Tax deleted successfully",
         type: "success",
       });
     },
     onError: () => {
       toaster.create({
         title: "Error",
-        description: "Error while deleting pricing",
+        description: "Error while deleting tax",
         type: "error",
       });
     },
@@ -51,11 +51,11 @@ const DeleteCustomerPricing = ({ isOpen, onClose, pricingId }) => {
         <DialogCloseTrigger onClick={onClose} />
         <DialogHeader>
           <DialogTitle className="font-[600] text-[18px]">
-            Delete Rule
+            Delete Tax
           </DialogTitle>
         </DialogHeader>
 
-        <DialogBody>Do you want to delete this pricing?</DialogBody>
+        <DialogBody>Do you want to delete this tax?</DialogBody>
         <DialogFooter>
           <Button
             onClick={onClose}
@@ -66,9 +66,9 @@ const DeleteCustomerPricing = ({ isOpen, onClose, pricingId }) => {
 
           <Button
             className="bg-red-500 p-2 text-white"
-            onClick={() => handleDeletePricing.mutate(pricingId)}
+            onClick={() => handleDeleteTax.mutate(taxId)}
           >
-            {handleDeletePricing.isPending ? `Deleting...` : `Delete`}
+            {handleDeleteTax.isPending ? `Deleting...` : `Delete`}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -76,4 +76,4 @@ const DeleteCustomerPricing = ({ isOpen, onClose, pricingId }) => {
   );
 };
 
-export default DeleteCustomerPricing;
+export default DeleteTax;

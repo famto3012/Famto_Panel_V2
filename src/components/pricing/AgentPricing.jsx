@@ -15,9 +15,9 @@ import {
 
 import ShowSpinner from "../others/ShowSpinner";
 
-import AddAgentPricing from "../../models/pricing/AddAgentPricing";
-import EditAgentPricing from "../../models/pricing/EditAgentPricing";
-import DeleteAgentPricing from "../../models/pricing/DeleteAgentPricing";
+import AddAgentPricing from "../../models/configure/pricing/AddAgentPricing";
+import EditAgentPricing from "../../models/configure/pricing/EditAgentPricing";
+import DeleteAgentPricing from "../../models/configure/pricing/DeleteAgentPricing";
 
 const AgentPricing = () => {
   const navigate = useNavigate();

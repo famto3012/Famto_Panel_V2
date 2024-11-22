@@ -13,28 +13,28 @@ import {
 } from "@/components/ui/dialog";
 import { toaster } from "@/components/ui/toaster";
 
-import { deleteCustomerSurge } from "../../hooks/pricing/useCustomerPricing";
+import { deleteCustomerPricing } from "../../../hooks/pricing/useCustomerPricing";
 
-const DeleteCustomerSurge = ({ isOpen, onClose, surgeId }) => {
+const DeleteCustomerPricing = ({ isOpen, onClose, pricingId }) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   const handleDeletePricing = useMutation({
-    mutationKey: ["delete-customer-pricing", surgeId],
-    mutationFn: (surgeId) => deleteCustomerSurge(surgeId, navigate),
+    mutationKey: ["delete-customer-pricing", pricingId],
+    mutationFn: (pricingId) => deleteCustomerPricing(pricingId, navigate),
     onSuccess: () => {
-      queryClient.invalidateQueries(["all-customer-surge"]);
+      queryClient.invalidateQueries(["all-customer-pricing"]);
       onClose();
       toaster.create({
         title: "Success",
-        description: "Surge deleted successfully",
+        description: "Pricing deleted successfully",
         type: "success",
       });
     },
     onError: () => {
       toaster.create({
         title: "Error",
-        description: "Error while deleting surge",
+        description: "Error while deleting pricing",
         type: "error",
       });
     },
@@ -51,11 +51,11 @@ const DeleteCustomerSurge = ({ isOpen, onClose, surgeId }) => {
         <DialogCloseTrigger onClick={onClose} />
         <DialogHeader>
           <DialogTitle className="font-[600] text-[18px]">
-            Delete surge
+            Delete Rule
           </DialogTitle>
         </DialogHeader>
 
-        <DialogBody>Do you want to delete this surge?</DialogBody>
+        <DialogBody>Do you want to delete this pricing?</DialogBody>
         <DialogFooter>
           <Button
             onClick={onClose}
@@ -66,7 +66,7 @@ const DeleteCustomerSurge = ({ isOpen, onClose, surgeId }) => {
 
           <Button
             className="bg-red-500 p-2 text-white"
-            onClick={() => handleDeletePricing.mutate(surgeId)}
+            onClick={() => handleDeletePricing.mutate(pricingId)}
           >
             {handleDeletePricing.isPending ? `Deleting...` : `Delete`}
           </Button>
@@ -76,4 +76,4 @@ const DeleteCustomerSurge = ({ isOpen, onClose, surgeId }) => {
   );
 };
 
-export default DeleteCustomerSurge;
+export default DeleteCustomerPricing;

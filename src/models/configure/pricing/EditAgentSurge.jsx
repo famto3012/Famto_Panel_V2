@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Select from "react-select";
@@ -13,12 +13,15 @@ import {
 } from "@/components/ui/dialog";
 import { toaster } from "@/components/ui/toaster";
 
-import { getAllGeofence } from "../../hooks/geofence/useGeofence";
-import { createNewAgentSurge } from "../../hooks/pricing/useAgentPricing";
+import ModalLoader from "@/components/others/ModalLoader";
 
-import ModalLoader from "../../components/others/ModalLoader";
+import { getAllGeofence } from "../../../hooks/geofence/useGeofence";
+import {
+  editAgentSurge,
+  getSingleAgentSurge,
+} from "../../../hooks/pricing/useAgentPricing";
 
-const AddAgentSurge = ({ isOpen, onClose }) => {
+const EditAgentSurge = ({ isOpen, onClose, surgeId }) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -32,18 +35,37 @@ const AddAgentSurge = ({ isOpen, onClose }) => {
   });
 
   const {
+    data: surgeData,
+    isLoading: surgeLoading,
+    isError: surgeError,
+  } = useQuery({
+    queryKey: ["surge-detail", surgeId],
+    queryFn: ({ queryKey }) => {
+      const [, id] = queryKey;
+      return getSingleAgentSurge(id, navigate);
+    },
+    enabled: !!surgeId,
+  });
+
+  const {
     data: allGeofence,
     isLoading: geofenceLoading,
     isError: geofenceError,
   } = useQuery({
     queryKey: ["all-geofence"],
     queryFn: () => getAllGeofence(navigate),
-    enabled: !!isOpen,
+    enabled: !!surgeId,
   });
 
-  const handelAddSurge = useMutation({
-    mutationKey: ["add-agent-surge"],
-    mutationFn: (formData) => createNewAgentSurge(formData, navigate),
+  useEffect(() => {
+    surgeData &&
+      setFormData({ ...surgeData, geofenceId: surgeData.geofenceId._id });
+  }, [surgeData]);
+
+  const handleEditSurge = useMutation({
+    mutationKey: ["edit-agent-surge", surgeId],
+    mutationFn: ({ surgeId, formData }) =>
+      editAgentSurge(surgeId, formData, navigate),
     onSuccess: () => {
       queryClient.invalidateQueries(["all-agent-surge"]);
       setFormData({
@@ -57,32 +79,31 @@ const AddAgentSurge = ({ isOpen, onClose }) => {
       onClose();
       toaster.create({
         title: "Success",
-        description: "New surge created successfully",
+        description: "Agent surge updated successfully",
         type: "success",
       });
     },
     onError: (data) => {
-      console.log(data);
       toaster.create({
         title: "Error",
-        description: "Error while creating new surge",
+        description: "Error in updating agent surge",
         type: "error",
       });
     },
   });
-
-  const geofenceOptions = allGeofence?.map((geofence) => ({
-    label: geofence.name,
-    value: geofence._id,
-  }));
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const showLoading = geofenceLoading;
-  const showError = geofenceError;
+  const geofenceOptions = allGeofence?.map((geofence) => ({
+    label: geofence.name,
+    value: geofence._id,
+  }));
+
+  const showLoading = surgeLoading || geofenceLoading;
+  const showError = surgeError || geofenceError;
 
   return (
     <DialogRoot
@@ -95,7 +116,7 @@ const AddAgentSurge = ({ isOpen, onClose }) => {
         <DialogCloseTrigger onClick={onClose} />
         <DialogHeader>
           <DialogTitle className="font-[600] text-[18px]">
-            Add Agent Surge
+            Edit Surge
           </DialogTitle>
         </DialogHeader>
 
@@ -191,7 +212,7 @@ const AddAgentSurge = ({ isOpen, onClose }) => {
 
                   <Select
                     className="w-2/3 outline-none focus:outline-none"
-                    value={geofenceOptions.find(
+                    value={geofenceOptions?.find(
                       (option) => option.value === formData.geofenceId
                     )}
                     isMulti={false}
@@ -214,10 +235,10 @@ const AddAgentSurge = ({ isOpen, onClose }) => {
                   Cancel
                 </button>
                 <button
-                  onClick={() => handelAddSurge.mutate(formData)}
+                  onClick={() => handleEditSurge.mutate({ surgeId, formData })}
                   className="bg-teal-700 text-white py-2 px-4 rounded-md"
                 >
-                  {handelAddSurge.isPending ? `Saving...` : `Save`}
+                  {handleEditSurge.isPending ? `Saving...` : `Save`}
                 </button>
               </div>
             </>
@@ -228,4 +249,4 @@ const AddAgentSurge = ({ isOpen, onClose }) => {
   );
 };
 
-export default AddAgentSurge;
+export default EditAgentSurge;

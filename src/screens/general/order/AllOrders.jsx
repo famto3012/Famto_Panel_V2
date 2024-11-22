@@ -15,7 +15,7 @@ import { toaster } from "@/components/ui/toaster";
 import GlobalSearch from "../../../components/others/GlobalSearch";
 import ShowSpinner from "../../../components/others/ShowSpinner";
 
-import RejectOrder from "../../../models/order/RejectOrder";
+import RejectOrder from "../../../models/general/order/RejectOrder";
 
 import {
   deliveryModeOption,
@@ -155,14 +155,6 @@ const AllOrders = () => {
   const closeRejectDialog = () => {
     setSelectedOrderId(null);
     setIsRejectDialogOpen(false);
-  };
-
-  const confirmRejectOrder = (orderId) => {
-    setAllOrders((prev) =>
-      prev.map((order) =>
-        order._id === orderId ? { ...order, orderStatus: "Cancelled" } : order
-      )
-    );
   };
 
   if (isError) return <div>Error loading orders</div>;
@@ -459,10 +451,9 @@ const AllOrders = () => {
       {/* </Table> */}
 
       <RejectOrder
-        isVisible={isRejectDialogOpen}
+        isOpen={isRejectDialogOpen}
         onClose={closeRejectDialog}
         orderId={selectedOrderId}
-        onConfirm={confirmRejectOrder}
       />
     </div>
   );

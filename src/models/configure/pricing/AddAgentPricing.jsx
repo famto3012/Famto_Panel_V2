@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Select from "react-select";
@@ -13,15 +13,12 @@ import {
 } from "@/components/ui/dialog";
 import { toaster } from "@/components/ui/toaster";
 
-import ModalLoader from "../../components/others/ModalLoader";
+import ModalLoader from "@/components/others/ModalLoader";
 
-import { getAllGeofence } from "../../hooks/geofence/useGeofence";
-import {
-  editAgentPricing,
-  getSingleAgentPricing,
-} from "../../hooks/pricing/useAgentPricing";
+import { getAllGeofence } from "../../../hooks/geofence/useGeofence";
+import { createNewAgentPricing } from "../../../hooks/pricing/useAgentPricing";
 
-const EditAgentPricing = ({ isOpen, onClose, pricingId }) => {
+const AddAgentPricing = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -39,15 +36,6 @@ const EditAgentPricing = ({ isOpen, onClose, pricingId }) => {
     geofenceId: "",
   });
 
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["agent-pricing-detail", pricingId],
-    queryFn: ({ queryKey }) => {
-      const [, id] = queryKey;
-      return getSingleAgentPricing(id, navigate);
-    },
-    enabled: !!pricingId,
-  });
-
   const {
     data: allGeofence,
     isLoading: geofenceLoading,
@@ -55,13 +43,12 @@ const EditAgentPricing = ({ isOpen, onClose, pricingId }) => {
   } = useQuery({
     queryKey: ["all-geofence"],
     queryFn: () => getAllGeofence(navigate),
-    enabled: !!pricingId,
+    enabled: !!isOpen,
   });
 
-  const handleEditPricing = useMutation({
-    mutationKey: ["edit-agent-pricing", pricingId],
-    mutationFn: ({ pricingId, formData }) =>
-      editAgentPricing(pricingId, formData, navigate),
+  const handleAddPricing = useMutation({
+    mutationKey: ["new-agent-pricing"],
+    mutationFn: (formData) => createNewAgentPricing(formData, navigate),
     onSuccess: () => {
       queryClient.invalidateQueries(["all-agent-pricing"]);
       setFormData({
@@ -80,22 +67,18 @@ const EditAgentPricing = ({ isOpen, onClose, pricingId }) => {
       onClose();
       toaster.create({
         title: "Success",
-        description: "Agent pricing updated successfully",
+        description: "New rule created successfully",
         type: "success",
       });
     },
     onError: () => {
       toaster.create({
         title: "Error",
-        description: "Error in updating agent pricing",
+        description: "Error in creating new rule",
         type: "error",
       });
     },
   });
-
-  useEffect(() => {
-    data && setFormData({ ...data, geofenceId: data.geofenceId._id });
-  }, [data]);
 
   const geofenceOptions = allGeofence?.map((geofence) => ({
     label: geofence.name,
@@ -107,8 +90,8 @@ const EditAgentPricing = ({ isOpen, onClose, pricingId }) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const showLoading = isLoading || geofenceLoading;
-  const showError = isError || geofenceError;
+  const showLoading = geofenceLoading;
+  const showError = geofenceError;
 
   return (
     <DialogRoot
@@ -120,7 +103,7 @@ const EditAgentPricing = ({ isOpen, onClose, pricingId }) => {
       <DialogContent>
         <DialogCloseTrigger onClick={onClose} />
         <DialogHeader>
-          <DialogTitle className="font-[600] text-[18px]">Edit Tax</DialogTitle>
+          <DialogTitle className="font-[600] text-[18px]">Add Rule</DialogTitle>
         </DialogHeader>
 
         <DialogBody>
@@ -342,11 +325,9 @@ const EditAgentPricing = ({ isOpen, onClose, pricingId }) => {
                 </button>
                 <button
                   className="bg-teal-700 text-white py-2 px-4 rounded-md"
-                  onClick={() =>
-                    handleEditPricing.mutate({ pricingId, formData })
-                  }
+                  onClick={() => handleAddPricing.mutate(formData)}
                 >
-                  {handleEditPricing.isPending ? `Saving...` : `Save`}
+                  {handleAddPricing.isPending ? `Saving...` : `Save`}
                 </button>
               </div>
             </>
@@ -357,4 +338,4 @@ const EditAgentPricing = ({ isOpen, onClose, pricingId }) => {
   );
 };
 
-export default EditAgentPricing;
+export default AddAgentPricing;

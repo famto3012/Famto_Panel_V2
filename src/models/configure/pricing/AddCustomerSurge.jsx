@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Select from "react-select";
@@ -13,15 +13,12 @@ import {
 } from "@/components/ui/dialog";
 import { toaster } from "@/components/ui/toaster";
 
-import ModalLoader from "../../components/others/ModalLoader";
+import ModalLoader from "@/components/others/ModalLoader";
 
-import { getAllGeofence } from "../../hooks/geofence/useGeofence";
-import {
-  editAgentSurge,
-  getSingleAgentSurge,
-} from "../../hooks/pricing/useAgentPricing";
+import { getAllGeofence } from "../../../hooks/geofence/useGeofence";
+import { createCustomerSurge } from "../../../hooks/pricing/useCustomerPricing";
 
-const EditAgentSurge = ({ isOpen, onClose, surgeId }) => {
+const AddCustomerSurge = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -35,39 +32,20 @@ const EditAgentSurge = ({ isOpen, onClose, surgeId }) => {
   });
 
   const {
-    data: surgeData,
-    isLoading: surgeLoading,
-    isError: surgeError,
-  } = useQuery({
-    queryKey: ["surge-detail", surgeId],
-    queryFn: ({ queryKey }) => {
-      const [, id] = queryKey;
-      return getSingleAgentSurge(id, navigate);
-    },
-    enabled: !!surgeId,
-  });
-
-  const {
     data: allGeofence,
     isLoading: geofenceLoading,
     isError: geofenceError,
   } = useQuery({
     queryKey: ["all-geofence"],
     queryFn: () => getAllGeofence(navigate),
-    enabled: !!surgeId,
+    enabled: !!isOpen,
   });
 
-  useEffect(() => {
-    surgeData &&
-      setFormData({ ...surgeData, geofenceId: surgeData.geofenceId._id });
-  }, [surgeData]);
-
-  const handleEditSurge = useMutation({
-    mutationKey: ["edit-agent-surge", surgeId],
-    mutationFn: ({ surgeId, formData }) =>
-      editAgentSurge(surgeId, formData, navigate),
+  const handelAddSurge = useMutation({
+    mutationKey: ["add-customer-surge"],
+    mutationFn: (formData) => createCustomerSurge(formData, navigate),
     onSuccess: () => {
-      queryClient.invalidateQueries(["all-agent-surge"]);
+      queryClient.invalidateQueries(["all-customer-surge"]);
       setFormData({
         ruleName: "",
         baseFare: "",
@@ -79,31 +57,31 @@ const EditAgentSurge = ({ isOpen, onClose, surgeId }) => {
       onClose();
       toaster.create({
         title: "Success",
-        description: "Agent surge updated successfully",
+        description: "New surge created successfully",
         type: "success",
       });
     },
     onError: (data) => {
       toaster.create({
         title: "Error",
-        description: "Error in updating agent surge",
+        description: "Error while creating new surge",
         type: "error",
       });
     },
   });
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
 
   const geofenceOptions = allGeofence?.map((geofence) => ({
     label: geofence.name,
     value: geofence._id,
   }));
 
-  const showLoading = surgeLoading || geofenceLoading;
-  const showError = surgeError || geofenceError;
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const showLoading = geofenceLoading;
+  const showError = geofenceError;
 
   return (
     <DialogRoot
@@ -116,7 +94,7 @@ const EditAgentSurge = ({ isOpen, onClose, surgeId }) => {
         <DialogCloseTrigger onClick={onClose} />
         <DialogHeader>
           <DialogTitle className="font-[600] text-[18px]">
-            Edit Agent Surge
+            Add Surge
           </DialogTitle>
         </DialogHeader>
 
@@ -132,49 +110,43 @@ const EditAgentSurge = ({ isOpen, onClose, surgeId }) => {
               <div className="flex flex-col  max-h-[30rem] overflow-auto gap-4">
                 <div className="flex items-center">
                   <label className="w-1/3 text-gray-500" htmlFor="ruleName">
-                    Rule Name <span className="text-red-600">*</span>
+                    Rule Name <span className="text-red-500">*</span>
                   </label>
                   <input
                     className="border-2 border-gray-300 rounded p-2 w-2/3 outline-none focus:outline-none"
                     type="text"
                     placeholder="Rule Name"
                     value={formData.ruleName}
-                    id="ruleName"
                     name="ruleName"
                     onChange={handleInputChange}
                   />
                 </div>
-
                 <div className="flex items-center">
                   <label className="w-1/3 text-gray-500" htmlFor="baseFare">
-                    Base Fare <span className="text-red-600">*</span>
+                    Base Fare <span className="text-red-500">*</span>
                   </label>
                   <input
                     className="border-2 border-gray-300 rounded p-2 w-2/3 outline-none focus:outline-none"
                     type="text"
                     placeholder="Base Fare"
                     value={formData.baseFare}
-                    id="baseFare"
                     name="baseFare"
                     onChange={handleInputChange}
                   />
                 </div>
-
                 <div className="flex items-center">
                   <label className="w-1/3 text-gray-500" htmlFor="baseDistance">
-                    Base Distance <span className="text-red-600">*</span>
+                    Base Distance <span className="text-red-500">*</span>
                   </label>
                   <input
                     className="border-2 border-gray-300 rounded p-2 w-2/3 outline-none focus:outline-none"
                     type="text"
                     placeholder="Base Distance"
                     value={formData.baseDistance}
-                    id="baseDistance"
                     name="baseDistance"
                     onChange={handleInputChange}
                   />
                 </div>
-
                 <div className="flex items-center">
                   <label className="w-1/3 text-gray-500" htmlFor="waitingFare">
                     Waiting Fare
@@ -184,12 +156,10 @@ const EditAgentSurge = ({ isOpen, onClose, surgeId }) => {
                     type="text"
                     placeholder="Waiting Fare"
                     value={formData.waitingFare}
-                    id="waitingFare"
                     name="waitingFare"
                     onChange={handleInputChange}
                   />
                 </div>
-
                 <div className="flex items-center">
                   <label className="w-1/3 text-gray-500" htmlFor="waitingTime">
                     Waiting Time (minutes)
@@ -199,34 +169,34 @@ const EditAgentSurge = ({ isOpen, onClose, surgeId }) => {
                     type="text"
                     placeholder="Waiting Time"
                     value={formData.waitingTime}
-                    id="waitingTime"
                     name="waitingTime"
                     onChange={handleInputChange}
                   />
                 </div>
-
                 <div className="flex items-center">
                   <label className="w-1/3 text-gray-500" htmlFor="geofenceId">
-                    Geofence <span className="text-red-600">*</span>
+                    Geofence <span className="text-red-500">*</span>
                   </label>
-
                   <Select
                     className="w-2/3 outline-none focus:outline-none"
                     value={geofenceOptions?.find(
                       (option) => option.value === formData.geofenceId
                     )}
                     isMulti={false}
+                    isClearable
                     isSearchable
-                    onChange={(option) => {
-                      setFormData({ ...formData, geofenceId: option.value });
-                    }}
+                    onChange={(option) =>
+                      setFormData({
+                        ...formData,
+                        geofenceId: option.value,
+                      })
+                    }
                     options={geofenceOptions}
                     placeholder="Select geofence"
                     menuPlacement="top"
                   />
                 </div>
               </div>
-
               <div className="flex justify-end gap-4 mt-6">
                 <button
                   className="bg-cyan-50 py-2 px-4 rounded-md"
@@ -235,10 +205,10 @@ const EditAgentSurge = ({ isOpen, onClose, surgeId }) => {
                   Cancel
                 </button>
                 <button
-                  onClick={() => handleEditSurge.mutate({ surgeId, formData })}
+                  onClick={() => handelAddSurge.mutate(formData)}
                   className="bg-teal-700 text-white py-2 px-4 rounded-md"
                 >
-                  {handleEditSurge.isPending ? `Saving...` : `Save`}
+                  {handelAddSurge.isPending ? "Saving..." : "Save"}
                 </button>
               </div>
             </>
@@ -249,4 +219,4 @@ const EditAgentSurge = ({ isOpen, onClose, surgeId }) => {
   );
 };
 
-export default EditAgentSurge;
+export default AddCustomerSurge;

@@ -11,20 +11,12 @@ import RenderIcon from "../../icons/RenderIcon";
 import ShowSpinner from "../others/ShowSpinner";
 
 import {
-  fetchAllAgentSurge,
-  updateAgentSurgeStatus,
-} from "../../hooks/pricing/useAgentPricing";
-
-import AddAgentSurge from "../../models/pricing/AddAgentSurge";
-import EditAgentSurge from "../../models/pricing/EditAgentSurge";
-import DeleteAgentSurge from "../../models/pricing/DeleteAgentSurge";
-import {
   fetchAllCustomerSurge,
   updateCustomerSurgeStatus,
 } from "../../hooks/pricing/useCustomerPricing";
-import AddCustomerSurge from "../../models/pricing/AddCustomerSurge";
-import EditCustomerSurge from "../../models/pricing/EditCustomerSurge";
-import DeleteCustomerSurge from "../../models/pricing/DeleteCustomerSurge";
+import AddCustomerSurge from "../../models/configure/pricing/AddCustomerSurge";
+import EditCustomerSurge from "../../models/configure/pricing/EditCustomerSurge";
+import DeleteCustomerSurge from "../../models/configure/pricing/DeleteCustomerSurge";
 
 const CustomerSurge = () => {
   const navigate = useNavigate();

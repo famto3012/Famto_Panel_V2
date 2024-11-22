@@ -15,9 +15,9 @@ import {
   updateCustomerPricingStatus,
 } from "../../hooks/pricing/useCustomerPricing";
 
-import AddCustomerPricing from "../../models/pricing/AddCustomerPricing";
-import EditCustomerPricing from "../../models/pricing/EditCustomerPricing";
-import DeleteCustomerPricing from "../../models/pricing/DeleteCustomerPricing";
+import AddCustomerPricing from "../../models/configure/pricing/AddCustomerPricing";
+import EditCustomerPricing from "../../models/configure/pricing/EditCustomerPricing";
+import DeleteCustomerPricing from "../../models/configure/pricing/DeleteCustomerPricing";
 
 const CustomerPricing = () => {
   const navigate = useNavigate();

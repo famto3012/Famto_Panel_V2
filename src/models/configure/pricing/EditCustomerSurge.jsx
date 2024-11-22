@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Select from "react-select";
@@ -13,12 +13,15 @@ import {
 } from "@/components/ui/dialog";
 import { toaster } from "@/components/ui/toaster";
 
-import ModalLoader from "../../components/others/ModalLoader";
+import ModalLoader from "@/components/others/ModalLoader";
 
-import { getAllGeofence } from "../../hooks/geofence/useGeofence";
-import { createCustomerSurge } from "../../hooks/pricing/useCustomerPricing";
+import { getAllGeofence } from "../../../hooks/geofence/useGeofence";
+import {
+  fetchSingleCustomerSurge,
+  updateCustomerSurge,
+} from "../../../hooks/pricing/useCustomerPricing";
 
-const AddCustomerSurge = ({ isOpen, onClose }) => {
+const EditCustomerSurge = ({ isOpen, onClose, surgeId }) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -32,6 +35,19 @@ const AddCustomerSurge = ({ isOpen, onClose }) => {
   });
 
   const {
+    data: surgeData,
+    isLoading: surgeLoading,
+    isError: surgeError,
+  } = useQuery({
+    queryKey: ["customer-surge-detail", surgeId],
+    queryFn: ({ queryKey }) => {
+      const [, id] = queryKey;
+      return fetchSingleCustomerSurge(id, navigate);
+    },
+    enabled: !!surgeId,
+  });
+
+  const {
     data: allGeofence,
     isLoading: geofenceLoading,
     isError: geofenceError,
@@ -41,9 +57,10 @@ const AddCustomerSurge = ({ isOpen, onClose }) => {
     enabled: !!isOpen,
   });
 
-  const handelAddSurge = useMutation({
-    mutationKey: ["add-customer-surge"],
-    mutationFn: (formData) => createCustomerSurge(formData, navigate),
+  const handelEditSurge = useMutation({
+    mutationKey: ["edit-customer-surge", surgeId],
+    mutationFn: ({ surgeId, formData }) =>
+      updateCustomerSurge(surgeId, formData, navigate),
     onSuccess: () => {
       queryClient.invalidateQueries(["all-customer-surge"]);
       setFormData({
@@ -61,7 +78,7 @@ const AddCustomerSurge = ({ isOpen, onClose }) => {
         type: "success",
       });
     },
-    onError: (data) => {
+    onError: () => {
       toaster.create({
         title: "Error",
         description: "Error while creating new surge",
@@ -69,6 +86,14 @@ const AddCustomerSurge = ({ isOpen, onClose }) => {
       });
     },
   });
+
+  useEffect(() => {
+    surgeData &&
+      setFormData({
+        ...surgeData,
+        geofenceId: surgeData.geofenceId._id,
+      });
+  }, [surgeData]);
 
   const geofenceOptions = allGeofence?.map((geofence) => ({
     label: geofence.name,
@@ -80,8 +105,8 @@ const AddCustomerSurge = ({ isOpen, onClose }) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const showLoading = geofenceLoading;
-  const showError = geofenceError;
+  const showLoading = surgeLoading || geofenceLoading;
+  const showError = surgeError || geofenceError;
 
   return (
     <DialogRoot
@@ -94,7 +119,7 @@ const AddCustomerSurge = ({ isOpen, onClose }) => {
         <DialogCloseTrigger onClick={onClose} />
         <DialogHeader>
           <DialogTitle className="font-[600] text-[18px]">
-            Add Customer Surge
+            Edit Surge
           </DialogTitle>
         </DialogHeader>
 
@@ -205,10 +230,10 @@ const AddCustomerSurge = ({ isOpen, onClose }) => {
                   Cancel
                 </button>
                 <button
-                  onClick={() => handelAddSurge.mutate(formData)}
+                  onClick={() => handelEditSurge.mutate({ surgeId, formData })}
                   className="bg-teal-700 text-white py-2 px-4 rounded-md"
                 >
-                  {handelAddSurge.isPending ? "Saving..." : "Save"}
+                  {handelEditSurge.isPending ? "Saving..." : "Save"}
                 </button>
               </div>
             </>
@@ -219,4 +244,4 @@ const AddCustomerSurge = ({ isOpen, onClose }) => {
   );
 };
 
-export default AddCustomerSurge;
+export default EditCustomerSurge;

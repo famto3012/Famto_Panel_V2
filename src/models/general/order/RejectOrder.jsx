@@ -1,40 +1,46 @@
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Button } from "@chakra-ui/react";
 
 import {
-  DialogRoot,
-  DialogContent,
-  DialogCloseTrigger,
-  DialogHeader,
-  DialogTitle,
   DialogBody,
+  DialogContent,
   DialogFooter,
+  DialogHeader,
+  DialogRoot,
 } from "@/components/ui/dialog";
 import { toaster } from "@/components/ui/toaster";
+import { Button } from "@chakra-ui/react";
 
-import { deleteAgentPricing } from "../../hooks/pricing/useAgentPricing";
+import AuthContext from "../../../context/AuthContext";
 
-const DeleteAgentPricing = ({ isOpen, onClose, pricingId }) => {
+import { rejectOrder } from "../../../hooks/order/useOrder";
+
+const RejectOrder = ({ isOpen, onClose, orderId }) => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const { role } = useContext(AuthContext);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const handleDeletePricing = useMutation({
-    mutationKey: ["delete-agent-pricing", pricingId],
-    mutationFn: (pricingId) => deleteAgentPricing(pricingId, navigate),
+  const rejectOrderMutation = useMutation({
+    mutationKey: ["rejectOrder"],
+    mutationFn: (orderId) => rejectOrder(orderId, role, navigate),
     onSuccess: () => {
-      queryClient.invalidateQueries(["all-agent-pricing"]);
+      setIsLoading(false);
+      queryClient.invalidateQueries(["orders", "search-order"]);
       onClose();
       toaster.create({
         title: "Success",
-        description: "Pricing deleted successfully",
+        description: "Order rejected",
         type: "success",
       });
     },
     onError: () => {
+      setIsLoading(false);
       toaster.create({
         title: "Error",
-        description: "Error while deleting pricing",
+        description: "Failed to reject order",
         type: "error",
       });
     },
@@ -48,14 +54,8 @@ const DeleteAgentPricing = ({ isOpen, onClose, pricingId }) => {
       motionPreset="slide-in-bottom"
     >
       <DialogContent>
-        <DialogCloseTrigger onClick={onClose} />
-        <DialogHeader>
-          <DialogTitle className="font-[600] text-[18px]">
-            Delete pricing
-          </DialogTitle>
-        </DialogHeader>
-
-        <DialogBody>Do you want to delete this pricing?</DialogBody>
+        <DialogHeader className="text-[16px] font-[600]">Reject?</DialogHeader>
+        <DialogBody>Do you want to reject this order?</DialogBody>
         <DialogFooter>
           <Button
             onClick={onClose}
@@ -66,9 +66,9 @@ const DeleteAgentPricing = ({ isOpen, onClose, pricingId }) => {
 
           <Button
             className="bg-red-500 p-2 text-white"
-            onClick={() => handleDeletePricing.mutate(pricingId)}
+            onClick={() => rejectOrderMutation.mutate(orderId)}
           >
-            {handleDeletePricing.isPending ? `Deleting...` : `Delete`}
+            {rejectOrderMutation.isPending ? `Rejecting...` : `Reject`}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -76,4 +76,4 @@ const DeleteAgentPricing = ({ isOpen, onClose, pricingId }) => {
   );
 };
 
-export default DeleteAgentPricing;
+export default RejectOrder;

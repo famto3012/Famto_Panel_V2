@@ -15,9 +15,9 @@ import {
   updateAgentSurgeStatus,
 } from "../../hooks/pricing/useAgentPricing";
 
-import AddAgentSurge from "../../models/pricing/AddAgentSurge";
-import EditAgentSurge from "../../models/pricing/EditAgentSurge";
-import DeleteAgentSurge from "../../models/pricing/DeleteAgentSurge";
+import AddAgentSurge from "../../models/configure/pricing/AddAgentSurge";
+import EditAgentSurge from "../../models/configure/pricing/EditAgentSurge";
+import DeleteAgentSurge from "../../models/configure/pricing/DeleteAgentSurge";
 
 const AgentSurge = () => {
   const navigate = useNavigate();

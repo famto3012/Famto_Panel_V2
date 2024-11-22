@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Select from "react-select";
@@ -13,12 +13,15 @@ import {
 } from "@/components/ui/dialog";
 import { toaster } from "@/components/ui/toaster";
 
-import ModalLoader from "../../components/others/ModalLoader";
+import ModalLoader from "@/components/others/ModalLoader";
 
-import { getAllGeofence } from "../../hooks/geofence/useGeofence";
-import { createNewAgentPricing } from "../../hooks/pricing/useAgentPricing";
+import { getAllGeofence } from "../../../hooks/geofence/useGeofence";
+import {
+  editAgentPricing,
+  getSingleAgentPricing,
+} from "../../../hooks/pricing/useAgentPricing";
 
-const AddAgentPricing = ({ isOpen, onClose }) => {
+const EditAgentPricing = ({ isOpen, onClose, pricingId }) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -36,6 +39,15 @@ const AddAgentPricing = ({ isOpen, onClose }) => {
     geofenceId: "",
   });
 
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["agent-pricing-detail", pricingId],
+    queryFn: ({ queryKey }) => {
+      const [, id] = queryKey;
+      return getSingleAgentPricing(id, navigate);
+    },
+    enabled: !!pricingId,
+  });
+
   const {
     data: allGeofence,
     isLoading: geofenceLoading,
@@ -43,12 +55,13 @@ const AddAgentPricing = ({ isOpen, onClose }) => {
   } = useQuery({
     queryKey: ["all-geofence"],
     queryFn: () => getAllGeofence(navigate),
-    enabled: !!isOpen,
+    enabled: !!pricingId,
   });
 
-  const handleAddPricing = useMutation({
-    mutationKey: ["new-agent-pricing"],
-    mutationFn: (formData) => createNewAgentPricing(formData, navigate),
+  const handleEditPricing = useMutation({
+    mutationKey: ["edit-agent-pricing", pricingId],
+    mutationFn: ({ pricingId, formData }) =>
+      editAgentPricing(pricingId, formData, navigate),
     onSuccess: () => {
       queryClient.invalidateQueries(["all-agent-pricing"]);
       setFormData({
@@ -67,18 +80,22 @@ const AddAgentPricing = ({ isOpen, onClose }) => {
       onClose();
       toaster.create({
         title: "Success",
-        description: "New rule created successfully",
+        description: "Agent pricing updated successfully",
         type: "success",
       });
     },
     onError: () => {
       toaster.create({
         title: "Error",
-        description: "Error in creating new rule",
+        description: "Error in updating agent pricing",
         type: "error",
       });
     },
   });
+
+  useEffect(() => {
+    data && setFormData({ ...data, geofenceId: data.geofenceId._id });
+  }, [data]);
 
   const geofenceOptions = allGeofence?.map((geofence) => ({
     label: geofence.name,
@@ -90,8 +107,8 @@ const AddAgentPricing = ({ isOpen, onClose }) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const showLoading = geofenceLoading;
-  const showError = geofenceError;
+  const showLoading = isLoading || geofenceLoading;
+  const showError = isError || geofenceError;
 
   return (
     <DialogRoot
@@ -103,7 +120,9 @@ const AddAgentPricing = ({ isOpen, onClose }) => {
       <DialogContent>
         <DialogCloseTrigger onClick={onClose} />
         <DialogHeader>
-          <DialogTitle className="font-[600] text-[18px]">Add Rule</DialogTitle>
+          <DialogTitle className="font-[600] text-[18px]">
+            Edit Rule
+          </DialogTitle>
         </DialogHeader>
 
         <DialogBody>
@@ -288,7 +307,7 @@ const AddAgentPricing = ({ isOpen, onClose }) => {
 
                   <Select
                     options={geofenceOptions}
-                    value={geofenceOptions.find(
+                    value={geofenceOptions?.find(
                       (option) => option.value === formData.geofenceId
                     )}
                     onChange={(option) =>
@@ -325,9 +344,11 @@ const AddAgentPricing = ({ isOpen, onClose }) => {
                 </button>
                 <button
                   className="bg-teal-700 text-white py-2 px-4 rounded-md"
-                  onClick={() => handleAddPricing.mutate(formData)}
+                  onClick={() =>
+                    handleEditPricing.mutate({ pricingId, formData })
+                  }
                 >
-                  {handleAddPricing.isPending ? `Saving...` : `Save`}
+                  {handleEditPricing.isPending ? `Saving...` : `Save`}
                 </button>
               </div>
             </>
@@ -338,4 +359,4 @@ const AddAgentPricing = ({ isOpen, onClose }) => {
   );
 };
 
-export default AddAgentPricing;
+export default EditAgentPricing;

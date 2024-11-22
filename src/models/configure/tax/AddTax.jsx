@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Select from "react-select";
@@ -16,12 +17,11 @@ import {
 import { Radio, RadioGroup } from "@/components/ui/radio";
 import { toaster } from "@/components/ui/toaster";
 
-import ModalLoader from "../../components/others/ModalLoader";
+import ModalLoader from "@/components/others/ModalLoader";
 
-import { getAllGeofence } from "../../hooks/geofence/useGeofence";
-import { getAllBusinessCategory } from "../../hooks/businessCategory/useBusinessCategory";
-import { useState } from "react";
-import { createNewTax } from "../../hooks/tax/useTax";
+import { getAllGeofence } from "../../../hooks/geofence/useGeofence";
+import { getAllBusinessCategory } from "../../../hooks/businessCategory/useBusinessCategory";
+import { createNewTax } from "../../../hooks/tax/useTax";
 
 const AddTax = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
