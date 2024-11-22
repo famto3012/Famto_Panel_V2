@@ -10,8 +10,8 @@ const Pricing = () => {
       <GlobalSearch />
 
       <AgentPricing />
-      {/* <AgentSurge />
-      <CustomerPricing />
+      <AgentSurge />
+      {/*<CustomerPricing />
       <CustomerSurge /> */}
     </div>
   );

@@ -48,7 +48,6 @@ const AddAgentPricing = ({ isOpen, onClose }) => {
   const handleAddPricing = useMutation({
     mutationKey: ["new-agent-pricing"],
     mutationFn: (formData) => createNewAgentPricing(formData, navigate),
-
     onSuccess: () => {
       queryClient.invalidateQueries(["all-agent-pricing"]);
       setFormData({

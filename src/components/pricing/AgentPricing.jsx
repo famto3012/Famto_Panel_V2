@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { HStack, Table } from "@chakra-ui/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -13,7 +14,7 @@ import {
 } from "../../hooks/pricing/useAgentPricing";
 
 import ShowSpinner from "../others/ShowSpinner";
-import { useState } from "react";
+
 import AddAgentPricing from "../../models/pricing/AddAgentPricing";
 import EditAgentPricing from "../../models/pricing/EditAgentPricing";
 import DeleteAgentPricing from "../../models/pricing/DeleteAgentPricing";
