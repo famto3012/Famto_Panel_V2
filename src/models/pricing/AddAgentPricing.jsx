@@ -43,6 +43,7 @@ const AddAgentPricing = ({ isOpen, onClose }) => {
   } = useQuery({
     queryKey: ["all-geofence"],
     queryFn: () => getAllGeofence(navigate),
+    enabled: !!isOpen,
   });
 
   const handleAddPricing = useMutation({

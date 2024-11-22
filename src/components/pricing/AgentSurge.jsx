@@ -14,6 +14,7 @@ import {
   fetchAllAgentSurge,
   updateAgentSurgeStatus,
 } from "../../hooks/pricing/useAgentPricing";
+
 import AddAgentSurge from "../../models/pricing/AddAgentSurge";
 import EditAgentSurge from "../../models/pricing/EditAgentSurge";
 import DeleteAgentSurge from "../../models/pricing/DeleteAgentSurge";

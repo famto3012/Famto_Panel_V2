@@ -12,7 +12,7 @@ const Pricing = () => {
       <AgentPricing />
       <AgentSurge />
       <CustomerPricing />
-      {/*<CustomerSurge /> */}
+      <CustomerSurge />
     </div>
   );
 };
