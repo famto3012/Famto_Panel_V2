@@ -55,6 +55,7 @@ import {
   MdSmartphone as AccountIcon,
   MdOutlineDeleteOutline as DeleteIcon,
   MdBlockFlipped as BlockIcon,
+  MdCameraAlt as CameraIcon,
 } from "react-icons/md";
 import { GrUserManager as ManagerIcon } from "react-icons/gr";
 import { IoSettingsOutline as SettingsIcon } from "react-icons/io5";
@@ -70,6 +71,7 @@ export {
   BikeIcon,
   BlockIcon,
   BookIcon,
+  CameraIcon,
   CancelIcon,
   CalendarIcon,
   CheckIcon,
