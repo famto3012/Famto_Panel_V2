@@ -38,6 +38,7 @@ import {
   IoMdEyeOff as EyeCloseIcon,
   IoIosCheckmarkCircleOutline as CheckIcon,
   IoIosCloseCircleOutline as CancelIcon,
+  IoIosRemove as MinusIcon,
 } from "react-icons/io";
 import {
   FaTags as LoyaltyPointIcon,
@@ -53,9 +54,12 @@ import {
   MdLocationPin as GeofenceIcon,
   MdSmartphone as AccountIcon,
   MdOutlineDeleteOutline as DeleteIcon,
+  MdBlockFlipped as BlockIcon,
+  MdCameraAlt as CameraIcon,
 } from "react-icons/md";
 import { GrUserManager as ManagerIcon } from "react-icons/gr";
 import { IoSettingsOutline as SettingsIcon } from "react-icons/io5";
+import { SlCloudUpload as UploadIcon } from "react-icons/sl";
 
 export {
   AccountIcon,
@@ -65,7 +69,9 @@ export {
   AlertNotificationIcon,
   AngleRightDropDownIcon,
   BikeIcon,
+  BlockIcon,
   BookIcon,
+  CameraIcon,
   CancelIcon,
   CalendarIcon,
   CheckIcon,
@@ -84,6 +90,7 @@ export {
   LogoutIcon,
   LoyaltyPointIcon,
   ManagerIcon,
+  MinusIcon,
   NotificationIcon,
   NotificationSettingsIcon,
   PercentageIcon,
@@ -97,6 +104,7 @@ export {
   SettingsIcon,
   ShopIcon,
   SignInUserIcon,
+  UploadIcon,
   UsersIcon,
   WhatsappIcon,
 };
