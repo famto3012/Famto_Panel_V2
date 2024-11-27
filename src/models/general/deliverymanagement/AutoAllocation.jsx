@@ -13,7 +13,7 @@ import { toaster } from "@/components/ui/toaster";
 import {
   addAutoAllocation,
   getAutoAllocation,
-} from "@/hooks/deliverymanagement/useDeliveryManagement";
+} from "@/hooks/deliveryManagement/useDeliveryManagement";
 
 const AutoAllocation = ({ isOpen, onClose }) => {
   const [formData, setFormData] = useState({

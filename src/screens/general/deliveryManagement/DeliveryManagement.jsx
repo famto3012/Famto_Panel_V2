@@ -1,5 +1,4 @@
 import AutoAllocation from "@/models/general/deliverymanagement/AutoAllocation";
-import { LeftArrowIcon, SettingsIcon } from "@/icons/Icons";
 import { useNavigate } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -13,7 +12,7 @@ import {
   getAuthTokenForDeliveryManagementMap,
   getAutoAllocation,
   updateAutoALlocationStatus,
-} from "@/hooks/deliverymanagement/useDeliveryManagement";
+} from "@/hooks/deliveryManagement/useDeliveryManagement";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { mappls } from "mappls-web-maps";
 import { toaster } from "@/components/ui/toaster";

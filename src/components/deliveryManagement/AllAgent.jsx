@@ -2,7 +2,7 @@ import ShowSpinner from "@/components/others/ShowSpinner";
 import {
   getAgentMyName,
   getAllAgents,
-} from "@/hooks/deliverymanagement/useDeliveryManagement";
+} from "@/hooks/deliveryManagement/useDeliveryManagement";
 import { agentDeliveryManagementStatusOptions } from "@/utils/defaultData";
 import { Card } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";

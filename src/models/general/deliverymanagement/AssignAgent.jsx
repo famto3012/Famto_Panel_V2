@@ -22,7 +22,7 @@ import { useEffect, useState } from "react";
 import {
   assignAgentToTask,
   getAgentsAccordingToGeofence,
-} from "@/hooks/deliverymanagement/useDeliveryManagement";
+} from "@/hooks/deliveryManagement/useDeliveryManagement";
 
 const AssignAgent = ({ isOpen, onClose, taskId }) => {
   const [formData, setFormData] = useState({
