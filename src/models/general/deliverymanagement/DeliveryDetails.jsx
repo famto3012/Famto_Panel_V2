@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button";
 import { DataListItem, DataListRoot } from "@/components/ui/data-list";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { getTaskById } from "@/hooks/deliverymanagement/useDeliveryManagement";
+import { getTaskById } from "@/hooks/deliveryManagement/useDeliveryManagement";
 import { formatDate, formatTime } from "@/utils/formatter";
 import RenderIcon from "@/icons/RenderIcon";
 import { CheckIcon } from "@/icons/Icons";
