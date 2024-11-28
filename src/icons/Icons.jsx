@@ -60,6 +60,8 @@ import {
 import { GrUserManager as ManagerIcon } from "react-icons/gr";
 import { IoSettingsOutline as SettingsIcon } from "react-icons/io5";
 import { SlCloudUpload as UploadIcon } from "react-icons/sl";
+import { AiOutlineEllipsis as ThreeDots } from "react-icons/ai";
+import { BsPalette as PaintPaletteIcon } from "react-icons/bs";
 
 export {
   AccountIcon,
@@ -93,6 +95,7 @@ export {
   MinusIcon,
   NotificationIcon,
   NotificationSettingsIcon,
+  PaintPaletteIcon,
   PercentageIcon,
   ProductIcon,
   PromoCodeIcon,
@@ -104,6 +107,7 @@ export {
   SettingsIcon,
   ShopIcon,
   SignInUserIcon,
+  ThreeDots,
   UploadIcon,
   UsersIcon,
   WhatsappIcon,

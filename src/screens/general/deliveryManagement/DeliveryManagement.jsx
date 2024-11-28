@@ -33,7 +33,7 @@ const DeliveryManagement = () => {
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ["get-auth-token-for-delivery-management-map"],
+    queryKey: ["get-auth-token"],
     queryFn: () => getAuthTokenForDeliveryManagementMap(navigate),
   });
 
