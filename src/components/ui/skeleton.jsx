@@ -1,16 +1,18 @@
 import { Skeleton as ChakraSkeleton, Circle, Stack } from '@chakra-ui/react'
-import { forwardRef } from 'react'
+import * as React from 'react'
 
-export const SkeletonCircle = (props) => {
-  const { size, ...rest } = props
-  return (
-    <Circle size={size} asChild>
-      <ChakraSkeleton {...rest} />
-    </Circle>
-  )
-}
+export const SkeletonCircle = React.forwardRef(
+  function SkeletonCircle(props, ref) {
+    const { size, ...rest } = props
+    return (
+      <Circle size={size} asChild ref={ref}>
+        <ChakraSkeleton {...rest} />
+      </Circle>
+    )
+  },
+)
 
-export const SkeletonText = forwardRef(function SkeletonText(props, ref) {
+export const SkeletonText = React.forwardRef(function SkeletonText(props, ref) {
   const { noOfLines = 3, gap, ...rest } = props
   return (
     <Stack gap={gap} width='full' ref={ref}>
