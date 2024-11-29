@@ -12,9 +12,9 @@ import {
 } from "@/hooks/deliveryManagement/useDeliveryManagement";
 import { taskStatusOptions } from "@/utils/defaultData";
 import AssignAgent from "@/models/general/deliverymanagement/AssignAgent";
-import DeliveryDetails from "@/models/general/deliverymanagement/DeliveryDetails";
 import { Card } from "@chakra-ui/react";
 import ShowSpinner from "@/components/others/ShowSpinner";
+import TaskDetails from "@/models/general/deliverymanagement/TaskDetails";
 
 const AllTask = ({ onShowShopLocationOnMap, onDate }) => {
   const [taskFilter, setTaskFilter] = useState("Unassigned");
@@ -208,7 +208,7 @@ const AllTask = ({ onShowShopLocationOnMap, onDate }) => {
         onClose={closeModal}
         taskId={selectedTask}
       />
-      <DeliveryDetails
+      <TaskDetails
         isOpen={modal.viewDetail}
         onClose={closeModal}
         taskId={selectedTask}

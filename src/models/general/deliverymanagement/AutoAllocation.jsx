@@ -1,5 +1,6 @@
 import {
   DialogBody,
+  DialogCloseTrigger,
   DialogContent,
   DialogFooter,
   DialogHeader,
@@ -88,6 +89,7 @@ const AutoAllocation = ({ isOpen, onClose }) => {
       motionPreset="slide-in-bottom"
     >
       <DialogContent>
+        <DialogCloseTrigger onClick={onClose} />
         <DialogHeader className="text-[18px] font-[600]">
           Auto Allocation
         </DialogHeader>
