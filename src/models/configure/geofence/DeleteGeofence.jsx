@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import {
   DialogBody,
+  DialogCloseTrigger,
   DialogContent,
   DialogFooter,
   DialogHeader,
@@ -42,6 +43,7 @@ const DeleteGeofence = ({ isOpen, onClose, geofenceId }) => {
       motionPreset="slide-in-bottom"
     >
       <DialogContent>
+        <DialogCloseTrigger onClick={onClose} />
         <DialogHeader className="text-[16px] font-[600]">
           Delete geofence
         </DialogHeader>
