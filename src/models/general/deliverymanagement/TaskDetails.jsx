@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/timeline";
 import {
   DialogBody,
+  DialogCloseTrigger,
   DialogContent,
   DialogFooter,
   DialogHeader,
@@ -20,9 +21,8 @@ import { useQuery } from "@tanstack/react-query";
 import { getTaskById } from "@/hooks/deliveryManagement/useDeliveryManagement";
 import { formatDate, formatTime } from "@/utils/formatter";
 import RenderIcon from "@/icons/RenderIcon";
-import { CheckIcon } from "@/icons/Icons";
 
-const DeliveryDetails = ({ isOpen, onClose, taskId }) => {
+const TaskDetails = ({ isOpen, onClose, taskId }) => {
   const navigate = useNavigate();
 
   const {
@@ -44,6 +44,7 @@ const DeliveryDetails = ({ isOpen, onClose, taskId }) => {
       size={"lg"}
     >
       <DialogContent>
+        <DialogCloseTrigger onClick={onClose} />
         <DialogHeader className="text-[18px] font-[600]">
           Task Details
         </DialogHeader>
@@ -249,4 +250,4 @@ const DeliveryDetails = ({ isOpen, onClose, taskId }) => {
   );
 };
 
-export default DeliveryDetails;
+export default TaskDetails;

@@ -1,5 +1,6 @@
 import {
   DialogBody,
+  DialogCloseTrigger,
   DialogContent,
   DialogFooter,
   DialogHeader,
@@ -113,6 +114,7 @@ const AssignAgent = ({ isOpen, onClose, taskId }) => {
       motionPreset="slide-in-bottom"
     >
       <DialogContent>
+        <DialogCloseTrigger onClick={onClose} />
         <DialogHeader className="text-[18px] font-[600]">
           Assign Agent
         </DialogHeader>
