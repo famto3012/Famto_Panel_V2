@@ -52,7 +52,7 @@ const AccountLog = () => {
 
   const toggleStatus = useMutation({
     mutationKey: ["toggle-unblock"],
-    mutationFn: (userId) => unblockUserAccount(userId, navigate),
+    mutationFn: (logId) => unblockUserAccount(logId, navigate),
     onSuccess: () => {
       queryClient.invalidateQueries(["filter-account-logs", filter]);
       toaster.create({
