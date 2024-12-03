@@ -16,18 +16,21 @@ import {
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { mappls } from "mappls-web-maps";
 import { toaster } from "@/components/ui/toaster";
+import useMapplsScript from "@/hooks/mapplsScript/useMapplsScript";
+import { Button } from "@/components/ui/button";
 const mapplsClassObject = new mappls();
 
 const DeliveryManagement = () => {
   const [dateRange, setDateRange] = useState([new Date(), new Date()]);
   const [mapObject, setMapObject] = useState(null);
+  const [isMapLoaded, setIsMapLoaded] = useState(false);
   const [autoAllocationStatus, setAutoAllocationStatus] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const mapContainerRef = useRef(null);
   const navigate = useNavigate();
 
   const [startDate, endDate] = dateRange;
-
+  useMapplsScript();
   const {
     data: authToken,
     isLoading,
@@ -87,6 +90,7 @@ const DeliveryManagement = () => {
         if (map && typeof map.on === "function") {
           map.on("load", () => {
             setMapObject(map); // Save the map object to state
+            setIsMapLoaded(true);
           });
         } else {
           console.error(
@@ -208,6 +212,7 @@ const DeliveryManagement = () => {
     if (authToken) {
       initializeMap();
     }
+
     if (autoAllocation) {
       setAutoAllocationStatus(autoAllocation.isActive);
     }
@@ -336,7 +341,18 @@ const DeliveryManagement = () => {
                 height: "100%",
                 display: "inline-block",
               }}
-            ></div>
+            >
+              {!isMapLoaded && (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Button
+                    onClick={initializeMap}
+                    className="m-2 p-3 bg-teal-600 text-[15px] font-bold text-white"
+                  >
+                    Initialize Map
+                  </Button>
+                </div>
+              )}
+            </div>
           </div>
 
           <AllAgent showAgentLocationOnMap={showAgentLocationOnMap} />
