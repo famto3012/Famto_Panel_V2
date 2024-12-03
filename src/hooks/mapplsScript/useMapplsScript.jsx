@@ -11,25 +11,27 @@ const useMapplsScript = () => {
   });
 
   useEffect(() => {
-    if (!authToken) return; // Wait for the token to be fetched
+    const existingScript = document.querySelector(
+      `script[src="https://apis.mappls.com/advancedmaps/api/${authToken}/map_sdk?layer=vector&v=3.0"]`
+    );
 
-    const mapScriptURL = `https://apis.mappls.com/advancedmaps/api/${authToken}/map_sdk?layer=vector&v=3.0`;
-    const pluginScriptURL = `https://apis.mappls.com/advancedmaps/api/${authToken}/map_sdk_plugins?v=3.0&libraries=search`;
-
-    // Helper function to load a script if it doesn't already exist
-    const loadScript = (url) => {
-      if (document.querySelector(`script[src="${url}"]`)) {
-        return; // Skip if the script already exists
-      }
+    if (!existingScript) {
       const script = document.createElement("script");
-      script.src = url;
+      script.src = `https://apis.mappls.com/advancedmaps/api/${authToken}/map_sdk?layer=vector&v=3.0`;
       script.defer = true;
       script.async = true;
       document.body.appendChild(script);
-    };
+    }
 
-    loadScript(mapScriptURL);
-    loadScript(pluginScriptURL);
+    const pluginScript = document.querySelector(
+      `script[src="https://apis.mappls.com/advancedmaps/api/${authToken}/map_sdk_plugins?v=3.0&libraries=search"]`
+    );
+
+    if (!pluginScript) {
+      const script = document.createElement("script");
+      script.src = `https://apis.mappls.com/advancedmaps/api/${authToken}/map_sdk_plugins?v=3.0&libraries=search`;
+      document.body.appendChild(script);
+    }
   }, [authToken]);
 };
 
