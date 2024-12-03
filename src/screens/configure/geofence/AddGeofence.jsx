@@ -7,6 +7,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { addGeofence, getAllGeofence } from "@/hooks/geofence/useGeofence";
 import { getAuthTokenForDeliveryManagementMap } from "@/hooks/deliveryManagement/useDeliveryManagement";
 import { mappls, mappls_plugin } from "mappls-web-maps";
+import useMapplsScript from "@/hooks/mapplsScript/useMapplsScript";
 
 const mapplsClassObject = new mappls();
 const mapplsPluginObject = new mappls_plugin();
@@ -79,6 +80,7 @@ const AddGeofence = () => {
   const mapContainerRef = useRef(null);
 
   const navigate = useNavigate();
+  useMapplsScript();
 
   const { data: authToken } = useQuery({
     queryKey: ["get-auth-token"],
