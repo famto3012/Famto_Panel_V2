@@ -16,6 +16,7 @@ import { useEffect, useRef, useState } from "react";
 import { mappls } from "mappls-web-maps";
 import DeleteGeofence from "@/models/configure/geofence/DeleteGeofence";
 import ShowSpinner from "@/components/others/ShowSpinner";
+import useMapplsScript from "@/hooks/mapplsScript/useMapplsScript";
 
 const AllGeofence = () => {
   const [mapObject, setMapObject] = useState(null);
@@ -27,6 +28,7 @@ const AllGeofence = () => {
   const navigate = useNavigate();
 
   const mapplsClassObject = new mappls();
+  useMapplsScript();
 
   const { data: authToken } = useQuery({
     queryKey: ["get-auth-token"],
