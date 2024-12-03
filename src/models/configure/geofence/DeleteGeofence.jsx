@@ -9,17 +9,19 @@ import {
 } from "@/components/ui/dialog";
 import { toaster } from "@/components/ui/toaster";
 import { deleteGeofence } from "@/hooks/geofence/useGeofence";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 
 const DeleteGeofence = ({ isOpen, onClose, geofenceId }) => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const deleteGeofenceMutation = useMutation({
     mutationKey: ["delete-geofence"],
     mutationFn: ({ geofenceId }) => deleteGeofence({ geofenceId, navigate }),
     onSuccess: () => {
       onClose();
+      queryClient.invalidateQueries(["all-geofence"]);
       toaster.create({
         title: "Success",
         description: "Geofence deleted successfully",
