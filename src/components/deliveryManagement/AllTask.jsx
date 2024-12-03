@@ -81,7 +81,7 @@ const AllTask = ({ onShowShopLocationOnMap, onDate }) => {
     setTaskFilter(option.value);
   };
 
-  const toggleModal = (type, id = null) => {
+  const toggleModal = (type, id) => {
     setSelectedTask(id);
     setModal((prev) => ({ ...prev, [type]: true }));
   };

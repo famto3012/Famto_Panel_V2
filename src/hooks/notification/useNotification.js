@@ -22,3 +22,116 @@ export const getNotificationLog = async ({ role, page, limit, navigate }) => {
     );
   }
 };
+
+export const addNotificationSettings = async ({
+  notificationSettings,
+  navigate,
+}) => {
+  try {
+    const api = useApiClient(navigate);
+    const res = await api.post(
+      `/admin/notification/notification-setting`,
+      notificationSettings
+    );
+    return res.status === 201 ? res.data : [];
+  } catch (err) {
+    console.error(`Error in adding notification settings: ${err}`);
+    throw new Error(
+      err.response?.data?.message || "Failed to add notification settings."
+    );
+  }
+};
+
+export const getAllNotificationSettings = async (navigate) => {
+  try {
+    const api = useApiClient(navigate);
+
+    const res = await api.get("/admin/notification/notification-setting");
+    return res.status === 200 ? res.data.data : [];
+  } catch (err) {
+    console.error(`Error in fetching notification settings: ${err}`);
+    throw new Error(
+      err.response?.data?.message || "Failed to fetch notification settings."
+    );
+  }
+};
+
+export const updateNotificationSettingsStatus = async ({
+  navigate,
+  notificationId,
+  notificationSettings,
+}) => {
+  try {
+    const api = useApiClient(navigate);
+
+    const res = await api.put(
+      `/admin/notification/notification-setting-status/${notificationId}`,
+      notificationSettings
+    );
+    return res.status === 200 ? res.data : [];
+  } catch (err) {
+    console.error(`Error in updating notification settings status: ${err}`);
+    throw new Error(
+      err.response?.data?.message ||
+        "Failed to update notification settings status."
+    );
+  }
+};
+
+export const getSingleNotificationSettings = async (
+  navigate,
+  notificationId
+) => {
+  console.log("notificationId", notificationId);
+  try {
+    const api = useApiClient(navigate);
+    const res = await api.get(
+      `/admin/notification/notification-setting/${notificationId}`
+    );
+    return res.status === 200 ? res.data.data : [];
+  } catch (err) {
+    console.error(`Error in fetching notification settings: ${err}`);
+    throw new Error(
+      err.response?.data?.message || "Failed to fetch notification settings."
+    );
+  }
+};
+
+export const updateNotificationSettings = async ({
+  navigate,
+  notificationId,
+  notificationSettings,
+}) => {
+  try {
+    const api = useApiClient(navigate);
+
+    const res = await api.put(
+      `/admin/notification/notification-setting/${notificationId}`,
+      notificationSettings
+    );
+    return res.status === 200 ? res.data.data : [];
+  } catch (err) {
+    console.error(`Error in updating notification settings: ${err}`);
+    throw new Error(
+      err.response?.data?.message || "Failed to update notification settings."
+    );
+  }
+};
+
+export const deleteNotificationSettings = async ({
+  navigate,
+  notificationSettingsId,
+}) => {
+  try {
+    const api = useApiClient(navigate);
+    const res = await api.delete(
+      `/admin/notification/notification-setting/${notificationSettingsId}`
+    );
+    return res.status === 200 ? res.data : [];
+  } catch (err) {
+    console.error(`Error in deleting notification settings: ${err}`);
+    throw new Error(
+      err.response?.data?.message || "Failed to delete notification settings."
+    );
+  }
+};

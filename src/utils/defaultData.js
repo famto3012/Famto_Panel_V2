@@ -119,6 +119,63 @@ const paymentOptions = [
   { value: "Cash-on-delivery", label: "Pay on delivery" },
 ];
 
+const addNotificationSettingsOption = [
+  { label: "New Order created", value: "newOrderCreated" },
+  { label: "Order accepted", value: "orderAccepted" },
+  { label: "Order rejected", value: "orderRejected" },
+  { label: "Subscription plan end", value: "subscriptionPlanEnd" },
+  {
+    label: "Agent Order Accepted (For customer)",
+    value: "agentOrderAccepted",
+  },
+  { label: "Agent Order Rejected (For Admin)", value: "agentOrderRejected" }, // TODO: Check if added notification
+  { label: "Sponsorship plan expired", value: "sponsorshipPlanExpired" },
+  {
+    label: "Agent reached delivery Location",
+    value: "reachedDeliveryLocation",
+  },
+  {
+    label: "Agent reached pickup Location",
+    value: "reachedPickupLocation",
+  },
+  {
+    label: "Agent not reached pickup Location",
+    value: "agentNotReachedPickupLocation",
+  },
+  {
+    label: "Agent not reached delivery Location",
+    value: "agentNotReachedDeliveryLocation",
+  },
+  {
+    label: "Agent started delivery",
+    value: "agentDeliveryStarted",
+  },
+  {
+    label: "New order (Agent)",
+    value: "newOrder",
+  },
+  {
+    label: "Scheduled order created",
+    value: "scheduledOrderCreated",
+  },
+  {
+    label: "Order ready (Agent)",
+    value: "orderReadyAgent",
+  },
+  {
+    label: "Order ready (Customer)",
+    value: "orderReadyCustomer",
+  },
+  {
+    label: "Order completed",
+    value: "orderCompleted",
+  },
+  {
+    label: "Cancel custom Order By Agent",
+    value: "cancelCustomOrderByAgent",
+  },
+];
+
 export {
   itemTypes,
   unitOptions,
@@ -138,4 +195,5 @@ export {
   promoCodeModeOptions,
   paymentOptions,
   agentDeliveryManagementStatusOptions,
+  addNotificationSettingsOption,
 };
