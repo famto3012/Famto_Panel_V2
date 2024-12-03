@@ -16,10 +16,10 @@ export const filterAllAccountLogs = async (role, date, query, navigate) => {
   }
 };
 
-export const unblockUserAccount = async (userId, navigate) => {
+export const unblockUserAccount = async (logId, navigate) => {
   try {
     const api = useApiClient(navigate);
-    const res = await api.put(`/admin/account-log/unblock-user/${userId}`, {});
+    const res = await api.put(`/admin/account-log/unblock-user/${logId}`, {});
 
     return res.status === 200 ? res.data : null;
   } catch (err) {
