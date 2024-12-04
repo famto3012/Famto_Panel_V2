@@ -5,7 +5,7 @@ export const fetchAllPromoCodes = async (navigate) => {
     const api = useApiClient(navigate);
     const res = await api.get(`/admin/promocode/get-promocode`);
 
-    return res.status === 200 ? res.data.data : [];
+    return res.status === 200 ? res.data : [];
   } catch (err) {
     console.error(`Error in fetching all promo codes: ${err}`);
     throw new Error(
@@ -35,7 +35,7 @@ export const fetchPromoCodeDetail = async (promoCodeId, navigate) => {
     const api = useApiClient(navigate);
     const res = await api.get(`/admin/promocode/${promoCodeId}`);
 
-    return res.status === 200 ? res.data.data : null;
+    return res.status === 200 ? res.data : null;
   } catch (err) {
     console.error(`Error in fetching promo code detail: ${err}`);
     throw new Error(
