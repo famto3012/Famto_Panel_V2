@@ -21,7 +21,7 @@ import ModalLoader from "../../../components/others/ModalLoader";
 
 import { editTaxDetail, getTaxDetail } from "../../../hooks/tax/useTax";
 import { getAllGeofence } from "../../../hooks/geofence/useGeofence";
-import { getAllBusinessCategory } from "../../../hooks/businessCategory/useBusinessCategory";
+import { getAllBusinessCategory } from "../../../hooks/customerAppCustomization/useBusinessCategory";
 
 const EditTax = ({ isOpen, taxId, onClose }) => {
   const navigate = useNavigate();
