@@ -1,10 +1,13 @@
-import GlobalSearch from "../../../components/others/GlobalSearch";
+import GlobalSearch from "@/components/others/GlobalSearch";
+
+import Service from "@/components/customerAppCustomization/Service";
 
 const CustomerApp = () => {
   return (
     <div className="bg-gray-100 h-full">
       <GlobalSearch />
-      <p>Customer App</p>
+
+      <Service />
     </div>
   );
 };
