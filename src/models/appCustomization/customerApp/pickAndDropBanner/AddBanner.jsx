@@ -14,7 +14,7 @@ import { toaster } from "@/components/ui/toaster";
 
 import RenderIcon from "@/icons/RenderIcon";
 
-import { createNewCustomOrderBanner } from "@/hooks/customerAppCustomization/useCustomOrderBanner";
+import { createNewPickAndDropBanner } from "@/hooks/customerAppCustomization/usePickAndDropBanner";
 
 const AddBanner = ({ isOpen, onClose }) => {
   const [formData, setFormData] = useState({
@@ -28,10 +28,10 @@ const AddBanner = ({ isOpen, onClose }) => {
   const queryClient = useQueryClient();
 
   const handleAddBanner = useMutation({
-    mutationKey: ["add-custom-order-banner"],
-    mutationFn: (data) => createNewCustomOrderBanner(data, navigate),
+    mutationKey: ["add-pick-and-drop-order-banner"],
+    mutationFn: (data) => createNewPickAndDropBanner(data, navigate),
     onSuccess: () => {
-      queryClient.invalidateQueries(["all-custom-order-banner"]);
+      queryClient.invalidateQueries(["all-pick-and-drop-order-banner"]);
       setFormData({
         title: "",
         description: "",
@@ -87,7 +87,7 @@ const AddBanner = ({ isOpen, onClose }) => {
         <DialogCloseTrigger onClick={onClose} />
         <DialogHeader>
           <DialogTitle className="font-[600] text-[18px]">
-            Add Custom Order Banner
+            Add Pick and Drop Order Banner
           </DialogTitle>
         </DialogHeader>
 

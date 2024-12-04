@@ -9,17 +9,16 @@ import RenderIcon from "@/icons/RenderIcon";
 
 import Loader from "@/components/others/Loader";
 import Error from "@/components/others/Error";
-
 import {
-  fetchAllCustomOrderBanners,
-  updateAllCustomOrderBannerStatus,
-} from "@/hooks/customerAppCustomization/useCustomOrderBanner";
+  fetchAllPickAndDropBanners,
+  updateAllPickAndDropBannerStatus,
+} from "@/hooks/customerAppCustomization/usePickAndDropBanner";
 
-import AddBanner from "@/models/appCustomization/customerApp/customOrderBanner/AddBanner";
-import EditBanner from "@/models/appCustomization/customerApp/customOrderBanner/EditBanner";
-import DeleteBanner from "@/models/appCustomization/customerApp/customOrderBanner/DeleteBanner";
+import AddBanner from "@/models/appCustomization/customerApp/pickAndDropBanner/AddBanner";
+import EditBanner from "@/models/appCustomization/customerApp/pickAndDropBanner/EditBanner";
+import DeleteBanner from "@/models/appCustomization/customerApp/pickAndDropBanner/DeleteBanner";
 
-const CustomOrderBanner = () => {
+const PickAndDropBanner = () => {
   const [modal, setModal] = useState({
     add: false,
     edit: false,
@@ -31,15 +30,15 @@ const CustomOrderBanner = () => {
   const queryClient = useQueryClient();
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["all-custom-order-banner"],
-    queryFn: () => fetchAllCustomOrderBanners(navigate),
+    queryKey: ["all-pick-and-drop-order-banner"],
+    queryFn: () => fetchAllPickAndDropBanners(navigate),
   });
 
   const handleToggleMutation = useMutation({
     mutationKey: ["toggle-custom-order-banner"],
-    mutationFn: () => updateAllCustomOrderBannerStatus(navigate),
+    mutationFn: () => updateAllPickAndDropBannerStatus(navigate),
     onSuccess: () => {
-      queryClient.invalidateQueries(["all-custom-order-banner"]);
+      queryClient.invalidateQueries(["all-pick-and-drop-order-banner"]);
       toaster.create({
         title: "Success",
         description: "Banner status updated successfully",
@@ -73,7 +72,7 @@ const CustomOrderBanner = () => {
   return (
     <>
       <div className="mt-10 justify-between flex mx-5">
-        <h1>Custom Order Banners (info)</h1>
+        <h1>Pick and drop banners (info)</h1>
         <p className="w-[45rem] text-gray-500">
           The Purpose of this banner is to educate customer.
         </p>
@@ -152,4 +151,4 @@ const CustomOrderBanner = () => {
   );
 };
 
-export default CustomOrderBanner;
+export default PickAndDropBanner;

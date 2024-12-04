@@ -4,10 +4,11 @@ import Service from "@/components/customerAppCustomization/Service";
 import Toggles from "@/components/customerAppCustomization/Toggles";
 import BusinessCategory from "@/components/customerAppCustomization/BusinessCategory";
 import CustomOrderBanner from "@/components/customerAppCustomization/CustomOrderBanner";
+import PickAndDropBanner from "@/components/customerAppCustomization/PickAndDropBanner";
 
 const CustomerApp = () => {
   return (
-    <div className="bg-gray-100 h-fit">
+    <div className="bg-gray-100 h-fit pb-[50px]">
       <GlobalSearch />
 
       <Toggles />
@@ -17,6 +18,8 @@ const CustomerApp = () => {
       <BusinessCategory />
 
       <CustomOrderBanner />
+
+      <PickAndDropBanner />
     </div>
   );
 };
