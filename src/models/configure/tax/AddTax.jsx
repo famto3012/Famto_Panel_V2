@@ -20,7 +20,7 @@ import { toaster } from "@/components/ui/toaster";
 import ModalLoader from "@/components/others/ModalLoader";
 
 import { getAllGeofence } from "../../../hooks/geofence/useGeofence";
-import { getAllBusinessCategory } from "../../../hooks/businessCategory/useBusinessCategory";
+import { getAllBusinessCategory } from "../../../hooks/customerAppCustomization/useBusinessCategory";
 import { createNewTax } from "../../../hooks/tax/useTax";
 
 const AddTax = ({ isOpen, onClose }) => {

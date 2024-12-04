@@ -2,6 +2,7 @@ import GlobalSearch from "@/components/others/GlobalSearch";
 
 import Service from "@/components/customerAppCustomization/Service";
 import Toggles from "@/components/customerAppCustomization/Toggles";
+import BusinessCategory from "@/components/customerAppCustomization/BusinessCategory";
 
 const CustomerApp = () => {
   return (
@@ -11,6 +12,8 @@ const CustomerApp = () => {
       <Toggles />
 
       <Service />
+
+      <BusinessCategory />
     </div>
   );
 };

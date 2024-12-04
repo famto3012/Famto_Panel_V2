@@ -18,7 +18,7 @@ import { Radio, RadioGroup } from "@/components/ui/radio";
 import ModalLoader from "@/components/others/ModalLoader";
 
 import { getAllGeofence } from "../../../hooks/geofence/useGeofence";
-import { getAllBusinessCategory } from "../../../hooks/businessCategory/useBusinessCategory";
+import { getAllBusinessCategory } from "../../../hooks/customerAppCustomization/useBusinessCategory";
 import {
   fetchSingleCustomerPricing,
   updateCustomerPricing,
