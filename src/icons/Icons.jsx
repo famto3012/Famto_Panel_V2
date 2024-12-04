@@ -13,6 +13,7 @@ import {
 import {
   FaUsers as UsersIcon,
   FaCalendar as CalendarIcon,
+  FaApple as AppleIcon,
 } from "react-icons/fa";
 import {
   LuUserSquare as AgentIcon,
@@ -39,6 +40,7 @@ import {
   IoIosCheckmarkCircleOutline as CheckIcon,
   IoIosCloseCircleOutline as CancelIcon,
   IoIosRemove as MinusIcon,
+  IoLogoGoogle as GoogleIcon,
 } from "react-icons/io";
 import {
   FaTags as LoyaltyPointIcon,
@@ -47,6 +49,7 @@ import {
   FaArrowLeftLong as LeftArrowIcon,
   FaLocationDot as LocationIcon,
   FaRegUser as SignInUserIcon,
+  FaFacebookF as FaceBookIcon,
 } from "react-icons/fa6";
 import { FiBell as NotificationIcon, FiEdit as EditIcon } from "react-icons/fi";
 import {
@@ -71,6 +74,7 @@ export {
   AgentIcon,
   AlertNotificationIcon,
   AngleRightDropDownIcon,
+  AppleIcon,
   BikeIcon,
   BlockIcon,
   BookIcon,
@@ -84,8 +88,10 @@ export {
   EditIcon,
   EyeCloseIcon,
   EyeOpenIcon,
+  FaceBookIcon,
   GiftIcon,
   GeofenceIcon,
+  GoogleIcon,
   HomeIcon,
   LeftArrowIcon,
   LocationIcon,
