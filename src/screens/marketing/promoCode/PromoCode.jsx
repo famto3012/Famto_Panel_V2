@@ -139,7 +139,7 @@ const PromoCode = () => {
             </Table.Row>
           ) : (
             data?.map((item) => (
-              <Table.Row key={item._id} className={`h-[70px]`}>
+              <Table.Row key={item.promoCodeId} className={`h-[70px]`}>
                 <Table.Cell textAlign="center">{item.promoCode}</Table.Cell>
                 <Table.Cell textAlign="center">{item.promoType}</Table.Cell>
                 <Table.Cell textAlign="center">{item.discount}</Table.Cell>
@@ -163,25 +163,26 @@ const PromoCode = () => {
                 <Table.Cell textAlign="center">{item.noOfUserUsed}</Table.Cell>
                 <Table.Cell textAlign="center">
                   <HStack direction="row" gap="4" justify="center">
-                    {toggleStatus.isPending && selectedId === item._id ? (
+                    {toggleStatus.isPending &&
+                    selectedId === item.promoCodeId ? (
                       <ShowSpinner />
                     ) : (
                       <Switch
                         colorPalette="teal"
                         checked={item?.status}
-                        onChange={() => toggleStatus.mutate(item._id)}
+                        onChange={() => toggleStatus.mutate(item.promoCodeId)}
                       />
                     )}
 
                     <span
-                      onClick={() => toggleModal("edit", item._id)}
+                      onClick={() => toggleModal("edit", item.promoCodeId)}
                       className="text-gray-600"
                     >
                       <RenderIcon iconName="EditIcon" size={20} loading={6} />
                     </span>
 
                     <span
-                      onClick={() => toggleModal("delete", item._id)}
+                      onClick={() => toggleModal("delete", item.promoCodeId)}
                       className="text-red-500"
                     >
                       <RenderIcon iconName="DeleteIcon" size={24} loading={6} />
