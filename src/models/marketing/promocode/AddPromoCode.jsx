@@ -32,7 +32,7 @@ import "react-datepicker/dist/react-datepicker.css";
 const AddPromoCode = ({ isOpen, onClose }) => {
   const [formData, setFormData] = useState({
     promoCode: "",
-    promoType: "",
+    promoType: "Flat-discount",
     discount: "",
     description: "",
     fromDate: "",
@@ -41,10 +41,10 @@ const AddPromoCode = ({ isOpen, onClose }) => {
     maxDiscountValue: "",
     minOrderAmount: "",
     maxAllowedUsers: "",
-    appliedOn: "",
+    appliedOn: "Cart-value",
     merchantId: [],
     geofenceId: "",
-    deliveryMode: "Home Delivery",
+    deliveryMode: "Take Away",
   });
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewURL, setPreviewURL] = useState(null);
@@ -164,7 +164,8 @@ const AddPromoCode = ({ isOpen, onClose }) => {
                 <input
                   type="text"
                   name="promoCode"
-                  className="border-2 border-gray-300 rounded p-2 w-2/3 focus:outline-none"
+                  className="border-2 border-gray-300 rounded p-2 w-2/3 focus:outline-none uppercase"
+                  maxLength={20}
                   value={formData.promoCode}
                   onChange={handleInputChange}
                 />
@@ -211,18 +212,19 @@ const AddPromoCode = ({ isOpen, onClose }) => {
                 />
               </div>
 
-              <div className="flex items-center">
+              <div className="flex items-start">
                 <label className="w-1/2 text-gray-500">
                   Description Max 150 characters.
                 </label>
-                <input
-                  type="text"
-                  name="description"
+                <textarea
                   maxLength={150}
-                  className="border-2 border-gray-300 rounded focus:outline-none p-2 w-2/3"
-                  value={formData.description}
                   onChange={handleInputChange}
-                />
+                  name="description"
+                  className="border-2 border-gray-300 rounded focus:outline-none p-2 w-2/3"
+                  rows={5}
+                >
+                  {formData.description}
+                </textarea>
               </div>
 
               <div className="flex items-center">
@@ -360,28 +362,35 @@ const AddPromoCode = ({ isOpen, onClose }) => {
                 </RadioGroup>
               </div>
 
-              <div className="flex items-center">
-                <label className="w-1/2 text-gray-500">Assign Merchant</label>
+              {(formData.deliveryMode === "Take Away" ||
+                formData.deliveryMode === "Home Delivery") && (
+                <div className="flex items-center">
+                  <label className="w-1/2 text-gray-500">
+                    Assign Merchant <span className="text-red-600 ml-2">*</span>
+                  </label>
 
-                <Select
-                  options={merchantOptions}
-                  value={merchantOptions?.filter((option) =>
-                    formData.merchantId?.includes(option.value)
-                  )}
-                  onChange={(selectedOptions) =>
-                    setFormData({
-                      ...formData,
-                      merchantId: selectedOptions.map((option) => option.value),
-                    })
-                  }
-                  className="border-gray-100 rounded focus:outline-none w-2/3"
-                  placeholder="Select merchants"
-                  isSearchable
-                  isMulti
-                  isClearable
-                  menuPlacement="top"
-                />
-              </div>
+                  <Select
+                    options={merchantOptions}
+                    value={merchantOptions?.filter((option) =>
+                      formData.merchantId?.includes(option.value)
+                    )}
+                    onChange={(selectedOptions) =>
+                      setFormData({
+                        ...formData,
+                        merchantId: selectedOptions.map(
+                          (option) => option.value
+                        ),
+                      })
+                    }
+                    className="border-gray-100 rounded focus:outline-none w-2/3"
+                    placeholder="Select merchants"
+                    isSearchable
+                    isMulti
+                    isClearable
+                    menuPlacement="top"
+                  />
+                </div>
+              )}
 
               <div className="flex items-center">
                 <label className="w-1/2 text-gray-500">
@@ -421,7 +430,10 @@ const AddPromoCode = ({ isOpen, onClose }) => {
                   colorPalette="teal"
                   variant="solid"
                 >
-                  <HStack gap="8" direction="row">
+                  <HStack gap="3" direction="row">
+                    <Radio value="Take Away" className="cursor-pointer">
+                      Take Away
+                    </Radio>
                     <Radio value="Home Delivery" className="cursor-pointer">
                       Home Delivery
                     </Radio>
