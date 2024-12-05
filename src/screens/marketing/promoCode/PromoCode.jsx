@@ -87,7 +87,7 @@ const PromoCode = () => {
         </p>
 
         <button
-          className="bg-teal-800 text-white rounded-md px-4 py-2 font-semibold  flex items-center gap-2 outline-none focus:outline-none"
+          className="bg-teal-800 text-white rounded-md px-4 py-2 font-semibold flex items-center gap-2 outline-none focus:outline-none"
           onClick={() => toggleModal("add")}
         >
           <RenderIcon iconName="PlusIcon" size={16} loading={6} />
@@ -100,16 +100,14 @@ const PromoCode = () => {
           <Table.Row className="bg-teal-700 h-14">
             {[
               "Code",
-              "Type",
               "Value",
               "Maximum discount",
               "Minimum order amount",
-              "Start Date",
-              "End Date",
+              "Validity",
               "Description",
               "Promo Application mode",
               "Promo Applied on",
-              "Promo used (No. of Times)",
+              "Current Usage Count / Max Usage Count",
               "Status",
             ].map((header, index) => (
               <Table.ColumnHeader key={index} color="white" textAlign="center">
@@ -141,8 +139,7 @@ const PromoCode = () => {
             data?.map((item) => (
               <Table.Row key={item.promoCodeId} className={`h-[70px]`}>
                 <Table.Cell textAlign="center">{item.promoCode}</Table.Cell>
-                <Table.Cell textAlign="center">{item.promoType}</Table.Cell>
-                <Table.Cell textAlign="center">{item.discount}</Table.Cell>
+                <Table.Cell textAlign="center">{item.promoValue}</Table.Cell>
                 <Table.Cell textAlign="center">
                   {item.maxDiscountValue}
                 </Table.Cell>
@@ -150,17 +147,16 @@ const PromoCode = () => {
                   {item.minOrderAmount}
                 </Table.Cell>
                 <Table.Cell textAlign="center">
-                  {formatDate(item.fromDate)}
-                </Table.Cell>
-                <Table.Cell textAlign="center">
-                  {formatDate(item.toDate)}
+                  {formatDate(item.fromDate)} <br /> {formatDate(item.toDate)}
                 </Table.Cell>
                 <Table.Cell textAlign="center">{item.description}</Table.Cell>
                 <Table.Cell textAlign="center">
                   {item.applicationMode}
                 </Table.Cell>
                 <Table.Cell textAlign="center">{item.appliedOn}</Table.Cell>
-                <Table.Cell textAlign="center">{item.noOfUserUsed}</Table.Cell>
+                <Table.Cell textAlign="center">
+                  {item.noOfUserUsed} / {item.maxAllowedUsers}
+                </Table.Cell>
                 <Table.Cell textAlign="center">
                   <HStack direction="row" gap="4" justify="center">
                     {toggleStatus.isPending &&
