@@ -136,6 +136,17 @@ const EditPromoCode = ({ isOpen, onClose, promoCodeId }) => {
     }
   };
 
+  const handleDeliveryModeChange = (value) => {
+    setFormData({
+      ...formData,
+      deliveryMode: value,
+      appliedOn:
+        value === "Pick and Drop" || value === "Custom Order"
+          ? "Delivery-charge"
+          : formData.appliedOn,
+    });
+  };
+
   const merchantOptions = allMerchants?.map((merchant) => ({
     label: merchant.merchantName,
     value: merchant._id,
@@ -181,8 +192,8 @@ const EditPromoCode = ({ isOpen, onClose, promoCodeId }) => {
                 <input
                   type="text"
                   name="promoCode"
-                  maxLength={20}
                   className="border-2 border-gray-300 rounded p-2 w-2/3 focus:outline-none uppercase"
+                  maxLength={20}
                   value={formData.promoCode}
                   onChange={handleInputChange}
                 />
@@ -203,8 +214,13 @@ const EditPromoCode = ({ isOpen, onClose, promoCodeId }) => {
                   variant="solid"
                 >
                   <HStack gap="8" direction="row">
-                    <Radio value="Flat-discount">Flat discount</Radio>
-                    <Radio value="Percentage-discount">
+                    <Radio value="Flat-discount" className="cursor-pointer">
+                      Flat discount
+                    </Radio>
+                    <Radio
+                      value="Percentage-discount"
+                      className="cursor-pointer"
+                    >
                       Percentage discount
                     </Radio>
                   </HStack>
@@ -228,7 +244,6 @@ const EditPromoCode = ({ isOpen, onClose, promoCodeId }) => {
                 <label className="w-1/2 text-gray-500">
                   Description Max 150 characters.
                 </label>
-
                 <textarea
                   maxLength={150}
                   onChange={handleInputChange}
@@ -351,6 +366,60 @@ const EditPromoCode = ({ isOpen, onClose, promoCodeId }) => {
 
               <div className="flex items-center">
                 <label className="w-1/2 text-gray-500">
+                  Geofence<span className="text-red-600 ml-2">*</span>
+                </label>
+
+                <Select
+                  options={geofenceOptions}
+                  value={geofenceOptions?.find(
+                    (option) => option.value === formData.geofenceId
+                  )}
+                  onChange={(option) =>
+                    setFormData({
+                      ...formData,
+                      geofenceId: option.value,
+                    })
+                  }
+                  className="border-gray-100 rounded focus:outline-none w-2/3"
+                  placeholder="Select geofence"
+                  isSearchable={true}
+                  isMulti={false}
+                  menuPlacement="top"
+                />
+              </div>
+
+              <div className="flex items-center">
+                <label className="w-1/2 text-gray-500">
+                  Delivery Mode<span className="text-red-600 ml-2">*</span>
+                </label>
+
+                <RadioGroup
+                  value={formData.deliveryMode}
+                  onValueChange={(e) => handleDeliveryModeChange(e.value)}
+                  className="w-2/3"
+                  size="sm"
+                  colorPalette="teal"
+                  variant="solid"
+                >
+                  <HStack gap="3" direction="row">
+                    <Radio value="Take Away" className="cursor-pointer">
+                      Take Away
+                    </Radio>
+                    <Radio value="Home Delivery" className="cursor-pointer">
+                      Home Delivery
+                    </Radio>
+                    <Radio value="Pick and Drop" className="cursor-pointer">
+                      Pick and Drop
+                    </Radio>
+                    <Radio value="Custom Order" className="cursor-pointer">
+                      Custom Order
+                    </Radio>
+                  </HStack>
+                </RadioGroup>
+              </div>
+
+              <div className="flex items-center">
+                <label className="w-1/2 text-gray-500">
                   Applied on<span className="text-red-600 ml-2">*</span>
                 </label>
 
@@ -365,8 +434,19 @@ const EditPromoCode = ({ isOpen, onClose, promoCodeId }) => {
                   variant="solid"
                 >
                   <HStack gap="8" direction="row">
-                    <Radio value="Cart-value">Cart value</Radio>
-                    <Radio value="Delivery-charge">Delivery charge</Radio>
+                    <Radio
+                      value="Cart-value"
+                      className="cursor-pointer"
+                      disabled={
+                        formData.deliveryMode === "Pick and Drop" ||
+                        formData.deliveryMode === "Custom Order"
+                      }
+                    >
+                      Cart value
+                    </Radio>
+                    <Radio value="Delivery-charge" className="cursor-pointer">
+                      Delivery charge
+                    </Radio>
                   </HStack>
                 </RadioGroup>
               </div>
@@ -401,74 +481,23 @@ const EditPromoCode = ({ isOpen, onClose, promoCodeId }) => {
                 </div>
               )}
 
-              <div className="flex items-center ">
-                <label className="w-1/2 text-gray-500">
-                  Geofence<span className="text-red-600 ml-2">*</span>
-                </label>
-
-                <Select
-                  options={geofenceOptions}
-                  value={geofenceOptions?.find(
-                    (option) => option.value === formData.geofenceId
-                  )}
-                  onChange={(option) =>
-                    setFormData({
-                      ...formData,
-                      geofenceId: option.value,
-                    })
-                  }
-                  className="border-gray-100 rounded focus:outline-none w-2/3"
-                  placeholder="Select geofence"
-                  isSearchable={true}
-                  isMulti={false}
-                  menuPlacement="top"
-                />
-              </div>
-
-              <div className="flex items-center">
-                <label className="w-1/2 text-gray-500">
-                  Delivery Mode<span className="text-red-600 ml-2">*</span>
-                </label>
-                <RadioGroup
-                  value={formData.deliveryMode}
-                  onValueChange={(e) =>
-                    setFormData({ ...formData, deliveryMode: e.value })
-                  }
-                  className="w-2/3"
-                  size="sm"
-                  colorPalette="teal"
-                  variant="solid"
-                >
-                  <HStack gap="3" direction="row">
-                    <Radio value="Take Away" className="cursor-pointer">
-                      Take Away
-                    </Radio>
-                    <Radio value="Home Delivery" className="cursor-pointer">
-                      Home Delivery
-                    </Radio>
-                    <Radio value="Pick and Drop" className="cursor-pointer">
-                      Pick and Drop
-                    </Radio>
-                    <Radio value="Custom Order" className="cursor-pointer">
-                      Custom Order
-                    </Radio>
-                  </HStack>
-                </RadioGroup>
-              </div>
-
               <div className="flex items-center">
                 <label className=" w-1/2 text-gray-500">
                   Image (342px x 160px)
                   <span className="text-red-600">*</span>
                 </label>
-                <div className=" flex items-center w-2/3 gap-2">
-                  <figure>
-                    <img
-                      src={previewURL || formData?.imageUrl}
-                      alt={formData.promoCode}
-                      className="h-[66px] w-[66px] object-cover rounded-md"
-                    />
-                  </figure>
+                <div className=" flex items-center w-2/3 gap-[30px]">
+                  {!previewURL ? (
+                    <div className="h-[66px] w-[66px] bg-gray-200 rounded-md"></div>
+                  ) : (
+                    <figure>
+                      <img
+                        src={previewURL}
+                        alt={formData.promoCode}
+                        className="h-[66px] w-[66px] object-cover rounded-md"
+                      />
+                    </figure>
+                  )}
 
                   <input
                     type="file"
