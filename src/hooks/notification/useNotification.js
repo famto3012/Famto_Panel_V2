@@ -135,3 +135,35 @@ export const deleteNotificationSettings = async ({
     );
   }
 };
+
+export const sendPushNotifications = async ({ selectedId, navigate }) => {
+  try {
+    const api = useApiClient(navigate);
+    const res = await api.post(
+      `/admin/notification/send-push-notification/${selectedId}`,
+      {}
+    );
+    return res.status === 200 ? res.data : [];
+  } catch (err) {
+    console.error(`Error in sending push notification: ${err}`);
+    throw new Error(
+      err.response?.data?.message || "Failed to send push notification."
+    );
+  }
+};
+
+export const addPushNotifications = async ({ selectedId, navigate }) => {
+  try {
+    const api = useApiClient(navigate);
+    const res = await api.post(
+      `/admin/notification/push-notification`,
+      {}
+    );
+    return res.status === 200 ? res.data : [];
+  } catch (err) {
+    console.error(`Error in sending push notification: ${err}`);
+    throw new Error(
+      err.response?.data?.message || "Failed to send push notification."
+    );
+  }
+};
