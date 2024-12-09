@@ -10,7 +10,7 @@ const CommissionAndSubscription = () => {
   const [selected, setSelected] = useState("Commission");
 
   return (
-    <div className="bg-gray-100 h-full">
+    <div className="bg-gray-100 min-h-full">
       <GlobalSearch />
 
       <div className="flex justify-between mt-[30px] mx-[30px]">
@@ -35,7 +35,9 @@ const CommissionAndSubscription = () => {
           </button>
         ) : (
           <button className="bg-teal-800 p-3 rounded-xl text-white ">
-            <Link to="/subscription/log">View Subscription log</Link>
+            <Link to="/comm-and-subs/subscription-log">
+              View Subscription log
+            </Link>
           </button>
         )}
       </div>

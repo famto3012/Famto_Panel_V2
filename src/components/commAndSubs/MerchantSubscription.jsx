@@ -1,7 +1,7 @@
-import React from "react";
+import MerchantSubscriptionPlans from "@/components/commAndSubs/MerchantSubscriptionPlans";
 
 const MerchantSubscription = () => {
-  return <div>MerchantSubscription</div>;
+  return <MerchantSubscriptionPlans />;
 };
 
 export default MerchantSubscription;

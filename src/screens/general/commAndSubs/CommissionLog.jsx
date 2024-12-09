@@ -1,10 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  keepPreviousData,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import Select from "react-select";
 import DatePicker from "react-datepicker";
 
@@ -48,7 +44,6 @@ const CommissionLog = () => {
 
   const navigate = useNavigate();
   const { role, userId } = useContext(AuthContext);
-  const queryClient = useQueryClient();
 
   const {
     data: logData,
