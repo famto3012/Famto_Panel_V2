@@ -30,7 +30,6 @@ const DeliveryManagement = () => {
   const navigate = useNavigate();
 
   const [startDate, endDate] = dateRange;
-  useMapplsScript();
   const {
     data: authToken,
     isLoading,
