@@ -16,7 +16,6 @@ import {
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { mappls } from "mappls-web-maps";
 import { toaster } from "@/components/ui/toaster";
-import useMapplsScript from "@/hooks/mapplsScript/useMapplsScript";
 import { Button } from "@/components/ui/button";
 const mapplsClassObject = new mappls();
 
