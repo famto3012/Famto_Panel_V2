@@ -34,8 +34,8 @@ const SignIn = () => {
   // Destructure the necessary values from useMutation
   const { mutate, isPending } = useMutation({
     mutationFn: () => signInHandler(formData),
-    onSuccess: ({ token, role }) => {
-      saveToStorage(token, role);
+    onSuccess: ({ token, role, _id, fullName }) => {
+      saveToStorage(token, role, _id, fullName);
       navigate("/home");
     },
     onError: (err) => {

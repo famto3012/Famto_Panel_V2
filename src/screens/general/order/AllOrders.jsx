@@ -311,7 +311,6 @@ const AllOrders = () => {
                 <RenderIcon iconName="CalendarIcon" size={24} loading={2} />
               </span>
             }
-            placeholderText="Select Date range"
             maxDate={new Date()}
           />
 
