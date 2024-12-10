@@ -86,7 +86,7 @@ const AppAdBanner = () => {
         </div>
       </div>
 
-      <div className="mt-5 max-h-[30rem]">
+      <div className="mt-5 max-h-[30rem] overflow-y-auto">
         <Table.Root striped interactive stickyHeader>
           <Table.Header>
             <Table.Row className="bg-teal-700 h-14">
