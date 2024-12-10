@@ -7,8 +7,37 @@ import {
   DialogHeader,
   DialogRoot,
 } from "@/components/ui/dialog";
+import { toaster } from "@/components/ui/toaster";
+import { deletePushNotification } from "@/hooks/notification/useNotification";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 
 const DeleteNotification = ({ isOpen, onClose, selectedId }) => {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const handleDeletePushNotification = useMutation({
+    mutationKey: ["delete-push-notification"],
+    mutationFn: ({ selectedId }) =>
+      deletePushNotification({ selectedId, navigate }),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["filter-push-notification"]);
+      onClose();
+      toaster.create({
+        title: "Success",
+        description: "Notification settings deleted successfully.",
+        type: "success",
+      });
+    },
+    onError: (error) => {
+      toaster.create({
+        title: "Error",
+        description: error || "Failed to delete notification settings.",
+        type: "error",
+      });
+    },
+  });
+
   return (
     <DialogRoot
       open={isOpen}
@@ -32,16 +61,19 @@ const DeleteNotification = ({ isOpen, onClose, selectedId }) => {
               <Button
                 type="button"
                 className="bg-cyan-100 px-5 py-1 rounded-md font-semibold"
-                onClick={handleCancel}
+                onClick={onClose}
               >
                 Cancel
               </Button>
               <Button
-                type="submit"
-                onClick={(e) => sendNotification(e, currentId)}
+                onClick={() =>
+                  handleDeletePushNotification.mutate({ selectedId })
+                }
                 className="bg-red-700 px-5 py-1 rounded-md ml-3 text-white"
               >
-                {dataLoading ? "Deleting..." : "Delete"}
+                {handleDeletePushNotification.isPending
+                  ? "Deleting..."
+                  : "Delete"}
               </Button>
             </form>
           </div>

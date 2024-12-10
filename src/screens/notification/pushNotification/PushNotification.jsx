@@ -2,7 +2,7 @@ import Select from "react-select";
 import GlobalSearch from "../../../components/others/GlobalSearch";
 import { Switch } from "@/components/ui/switch";
 import CropImage from "@/components/others/CropImage";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getAllGeofence } from "@/hooks/geofence/useGeofence";
 import { useNavigate } from "react-router-dom";
 import RenderIcon from "@/icons/RenderIcon";
@@ -10,27 +10,80 @@ import { userTypeForPushNotificationOptions } from "@/utils/defaultData";
 import { useRef, useState } from "react";
 import { Table } from "@chakra-ui/react";
 import ShowSpinner from "@/components/others/ShowSpinner";
+import SendNotification from "@/models/notification/pushNotification/SendNotification";
+import DeleteNotification from "@/models/notification/pushNotification/DeleteNotification";
+import {
+  addPushNotifications,
+  filterPushNotification,
+} from "@/hooks/notification/useNotification";
+import { toaster } from "@/components/ui/toaster";
+import { Button } from "@/components/ui/button";
 
 const PushNotification = () => {
   const [pushNotification, setPushNotification] = useState({
     title: "",
     description: "",
-    geofenceId: "",
+    geofenceId: null,
     customer: false,
     merchant: false,
     driver: false,
-    pushNotificationImage: "",
+  });
+  const [modal, setModal] = useState({
+    sendPushNotification: false,
+    deletePushNotification: false,
+    cropImage: false,
   });
   const [imgSrc, setImgSrc] = useState("");
-  const [type, setType] = useState("");
   const [croppedFile, setCroppedFile] = useState(null);
   const previewCanvasRef = useRef(null);
   const [img, setImg] = useState(null);
+  const [selectedId, setSelectedId] = useState(null);
+  const [selectedFilter, setSelectedFilter] = useState({
+    type: "",
+    query: "",
+  });
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const { data: geofences } = useQuery({
     queryKey: ["all-geofence"],
     queryFn: () => getAllGeofence(navigate),
+  });
+
+  const { data: pushNotificationData, isLoading: pushNotificationLoading } =
+    useQuery({
+      queryKey: ["filter-push-notification", selectedFilter],
+      queryFn: () => filterPushNotification(navigate, selectedFilter),
+    });
+
+  const handleAddPushNotification = useMutation({
+    mutationKey: ["add-push-notification"],
+    mutationFn: ({ pushNotification }) =>
+      addPushNotifications({ addPushNotification: pushNotification, navigate }),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["filter-push-notification"]);
+      setPushNotification({
+        title: "",
+        description: "",
+        geofenceId: null,
+        customer: false,
+        merchant: false,
+        driver: false,
+      });
+      setCroppedFile(null);
+      toaster.create({
+        title: "Success",
+        description: "Push notification added successfully.",
+        type: "success",
+      });
+    },
+    onError: () => {
+      toaster.create({
+        title: "Error",
+        description: "Error adding push notification.",
+        type: "error",
+      });
+    },
   });
 
   const geofenceOptions = geofences?.map((geofence) => ({
@@ -48,8 +101,15 @@ const PushNotification = () => {
   const onChange = (name, checked) => {
     setPushNotification({
       ...pushNotification,
-      [name]: checked ? true : false,
-    }); //INFO: Changed
+      [name]: checked.checked ? true : false,
+    });
+  };
+
+  const onFilterChange = (name, value) => {
+    setSelectedFilter({
+      ...selectedFilter,
+      [name]: value,
+    });
   };
 
   function onSelectFile(e) {
@@ -65,12 +125,24 @@ const PushNotification = () => {
 
   const handleCropComplete = (croppedFile) => {
     setCroppedFile(croppedFile);
-    // setSelectedFile(croppedFile); // Get the cropped image file
-    console.log("Cropped image file:", croppedFile);
+    setModal({ ...modal, cropImage: false });
+    setImg(null);
   };
 
-  const handleModalClose = () => {
-    setCroppedFile(null); // Reset the selected file to allow new selection
+  const toggleModal = (type, id) => {
+    setSelectedId(id);
+    setModal((prev) => ({ ...prev, [type]: true }));
+  };
+
+  const handleSave = () => {
+    const formDataObject = new FormData();
+
+    Object.entries(pushNotification).forEach(([key, value]) => {
+      formDataObject.append(key, value);
+    });
+    croppedFile && formDataObject.append("pushNotificationImage", croppedFile);
+
+    handleAddPushNotification.mutate({ pushNotification: formDataObject });
   };
 
   return (
@@ -82,7 +154,7 @@ const PushNotification = () => {
         <header className="font-bold ml-5">Push Notifications</header>
 
         <div className="bg-white text-[16px] mx-5 rounded-lg mt-5 text-gray-700">
-          <form onSubmit={submitAction}>
+          <form>
             <div className="flex">
               <label className="mt-10 ml-10">
                 Title<span className="text-red-500 ms-2">*</span>
@@ -125,7 +197,7 @@ const PushNotification = () => {
                     geofenceId: option.value,
                   })
                 }
-                className=" rounded ml-52 mt-10 w-96 focus:outline-none"
+                className="rounded ml-52 mt-10 w-96 focus:outline-none"
                 placeholder="Select geofence"
                 isSearchable={true}
                 isMulti={false}
@@ -170,16 +242,21 @@ const PushNotification = () => {
                 />
                 <label
                   htmlFor="pushNotificationImage"
-                  className="cursor-pointer "
+                  className=" bg-teal-800 text-white flex justify-center items-center h-20 w-20 mt-10 rounded cursor-pointer"
+                  onClick={() => toggleModal("cropImage")}
                 >
-                  <RenderIcon iconName="CameraIcon" size={16} loading={6} />
+                  <RenderIcon iconName="CameraIcon" size={28} loading={6} />
                 </label>
                 {imgSrc && (
                   <CropImage
                     selectedImage={img}
                     aspectRatio={16 / 9} // Optional, set aspect ratio (1:1 here)
                     onCropComplete={handleCropComplete}
-                    onClose={handleModalClose} // Pass the handler to close the modal and reset the state
+                    isOpen={modal.cropImage}
+                    onClose={() => {
+                      setModal({ ...modal, cropImage: false });
+                      setImg(null);
+                    }} // Pass the handler to close the modal and reset the state
                   />
                 )}
               </div>
@@ -198,31 +275,34 @@ const PushNotification = () => {
               <label className="mt-10 ml-10">Merchant App</label>
               <Switch
                 className="mt-11 ml-[185px]"
-                onChange={(checked) => onChange("merchant", checked)}
+                onCheckedChange={(checked) => onChange("merchant", checked)}
                 name="merchant"
+                checked={pushNotification?.merchant}
+                colorPalette="teal"
+                variant="solid"
               />
             </div>
             <div className="flex">
               <label className="mt-10 ml-10">Driver App</label>
               <Switch
                 className="mt-11 ml-[210px]"
-                onChange={(checked) => onChange("driver", checked)}
+                onCheckedChange={(checked) => onChange("driver", checked)}
                 name="driver"
+                checked={pushNotification?.driver}
+                colorPalette="teal"
+                variant="solid"
               />
             </div>
             <div className="flex justify-end  mb-10 gap-4">
-              <button
-                className="bg-gray-200 rounded-lg px-8 py-2 right-10 mb-5 mr-5 font-semibold justify-end"
-                type="submit"
-              >
+              <Button className="bg-gray-200 rounded-lg px-8 py-2 right-10 mb-5 mr-5 font-semibold justify-end">
                 Cancel
-              </button>
-              <button
+              </Button>
+              <Button
                 className="bg-teal-800 rounded-lg px-8 py-2 right-5 mb-5 mr-10 text-white font-semibold justify-end"
-                type="submit"
+                onClick={handleSave}
               >
-                {isDataLoading ? "Adding..." : "Add"}
-              </button>
+                {handleAddPushNotification.isPending ? "Adding..." : "Add"}
+              </Button>
             </div>
           </form>
         </div>
@@ -233,9 +313,9 @@ const PushNotification = () => {
           <Select
             options={userTypeForPushNotificationOptions}
             value={userTypeForPushNotificationOptions.find(
-              (option) => option.value === type
+              (option) => option.value === selectedFilter.type
             )}
-            onChange={(option) => onTypeChange(option.value)}
+            onChange={(option) => onFilterChange("type", option.value)}
             className=" bg-cyan-50 min-w-[10rem]"
             placeholder="Type of user"
             isSearchable={false}
@@ -257,8 +337,8 @@ const PushNotification = () => {
               name="search"
               placeholder="Search push notification name"
               className="bg-gray-100 p-3 rounded-3xl focus:outline-none outline-none text-[14px] ps-[20px] ml-5 w-72"
-              value={searchFilter}
-              onChange={onSearchChange}
+              value={selectedFilter.query}
+              onChange={(e) => onFilterChange("query", e.target.value)}
             />
           </div>
         </div>
@@ -286,7 +366,7 @@ const PushNotification = () => {
             </Table.Row>
           </Table.Header>
           <Table.Body>
-            {isLoading && (
+            {pushNotificationLoading && (
               <Table.Row className="h-[70px]">
                 <Table.Cell colSpan={6} textAlign="center">
                   <ShowSpinner /> Loading...
@@ -294,7 +374,7 @@ const PushNotification = () => {
               </Table.Row>
             )}
 
-            {!isLoading && data?.length === 0 && (
+            {!pushNotificationLoading && pushNotificationData?.length === 0 && (
               <Table.Row className="h-[70px]">
                 <Table.Cell colSpan={6} textAlign="center">
                   No data available
@@ -302,8 +382,8 @@ const PushNotification = () => {
               </Table.Row>
             )}
 
-            {!isLoading &&
-              data?.map((data) => (
+            {!pushNotificationLoading &&
+              pushNotificationData?.map((data) => (
                 <Table.Row
                   key={data?._id}
                   className="text-center h-20 even:bg-gray-200"
@@ -311,7 +391,7 @@ const PushNotification = () => {
                   <Table.Cell textAlign="center">
                     {data?.customer && data?.driver && data?.merchant
                       ? "All"
-                      : type}
+                      : selectedFilter?.type}
                   </Table.Cell>
                   <Table.Cell textAlign="center">
                     {" "}
@@ -319,7 +399,13 @@ const PushNotification = () => {
                       ? `${data?.description?.substring(0, 30)}...`
                       : data?.description}
                   </Table.Cell>
-                  <Table.Cell textAlign="center">
+                  <Table.Cell
+                    textAlign="center"
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                    height="100%"
+                  >
                     <figure className="h-[70px] w-[100px]">
                       <img
                         src={data?.imageUrl}
@@ -328,41 +414,68 @@ const PushNotification = () => {
                     </figure>
                   </Table.Cell>
                   <Table.Cell textAlign="center">
-                    <Switch checked={data?.customer} />
+                    <Switch
+                      checked={data?.customer}
+                      colorPalette="teal"
+                      variant="solid"
+                    />
                   </Table.Cell>
                   <Table.Cell textAlign="center">
-                    <Switch checked={data?.driver} />
+                    <Switch
+                      checked={data?.driver}
+                      colorPalette="teal"
+                      variant="solid"
+                    />
                   </Table.Cell>
                   <Table.Cell textAlign="center">
-                    <Switch checked={data?.merchant} />
+                    <Switch
+                      checked={data?.merchant}
+                      colorPalette="teal"
+                      variant="solid"
+                    />
                   </Table.Cell>
                   <Table.Cell textAlign="center">
                     <div className="flex items-center justify-center gap-3">
-                      <button onClick={() => showModal(data?._id)}>
+                      <Button
+                        onClick={() =>
+                          toggleModal("sendPushNotification", data?._id)
+                        }
+                        className="bg-green-100 text-green-500 text-[35px] p-2  rounded-lg"
+                      >
                         <RenderIcon
                           iconName="UploadIcon"
                           size={16}
                           loading={6}
-                          className="bg-green-100 text-green-500 text-[35px] p-2  rounded-lg"
                         />
-                      </button>
-                      <button
-                        className="outline-none focus:outline-none"
-                        onClick={() => showModalDelete(data?._id)}
+                      </Button>
+                      <Button
+                        onClick={() =>
+                          toggleModal("deletePushNotification", data?._id)
+                        }
+                        className="outline-none focus:outline-none text-red-900 rounded-lg bg-red-100 p-2 text-[35px]"
                       >
                         <RenderIcon
                           iconName="DeleteIcon"
                           size={16}
                           loading={6}
-                          className="text-red-900 rounded-lg bg-red-100 p-2 text-[35px]"
                         />
-                      </button>
+                      </Button>
                     </div>
                   </Table.Cell>
                 </Table.Row>
               ))}
           </Table.Body>
         </Table.Root>
+        <SendNotification
+          isOpen={modal.sendPushNotification}
+          onClose={() => setModal({ ...modal, sendPushNotification: false })}
+          selectedId={selectedId}
+        />
+        <DeleteNotification
+          isOpen={modal.deletePushNotification}
+          onClose={() => setModal({ ...modal, deletePushNotification: false })}
+          selectedId={selectedId}
+        />
       </div>
     </>
   );

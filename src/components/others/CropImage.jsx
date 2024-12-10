@@ -39,11 +39,9 @@ export default function CropImage({
   const [crop, setCrop] = useState(null);
   const [completedCrop, setCompletedCrop] = useState(null);
   const [aspect, setAspect] = useState(aspectRatio || 1 / 1);
-  const [isVisible, setIsVisible] = useState(!!selectedImage);
 
   useEffect(() => {
     if (selectedImage) {
-      setIsVisible(true);
       const reader = new FileReader();
       reader.onload = () => setImgSrc(reader.result);
       reader.readAsDataURL(selectedImage);
@@ -91,13 +89,11 @@ export default function CropImage({
       setImgSrc(null);
       setCrop(null);
       setCompletedCrop(null);
-      setIsVisible(false);
       handleClose();
     });
   }
 
   const handleClose = () => {
-    setIsVisible(false);
     setImgSrc(null);
     setCrop(null);
     setCompletedCrop(null);
