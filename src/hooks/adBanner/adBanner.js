@@ -2,10 +2,10 @@ import useApiClient from "@/api/apiClient";
 
 // Individual Merchant Banner
 // ===================
-export const fetchAllIndividualBanner = async (navigate) => {
+export const fetchAllIndividualBanner = async (merchantId, navigate) => {
   try {
     const api = useApiClient(navigate);
-    const res = await api.get(`/admin/banner/get-banner`);
+    const res = await api.get(`/admin/banner/get-banner/${merchantId}`);
 
     return res.status === 200 ? res.data.data : [];
   } catch (err) {
@@ -162,9 +162,6 @@ export const updateAppBannerStatus = async (bannerId, navigate) => {
 
 export const updateAppBannerDetail = async (bannerId, bannerData, navigate) => {
   try {
-    console.log("bannerId", bannerId);
-    console.log("bannerData", bannerData);
-
     const api = useApiClient(navigate);
     const res = await api.put(
       `/admin/app-banner/edit-app-banner/${bannerId}`,

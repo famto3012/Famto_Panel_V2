@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { HStack, Table } from "@chakra-ui/react";
+import Select from "react-select";
 
 import { toaster } from "@/components/ui/toaster";
 import { Switch } from "@/components/ui/switch";
@@ -14,6 +15,7 @@ import {
   fetchAllIndividualBanner,
   updateIndividualBannerStatus,
 } from "@/hooks/adBanner/adBanner";
+import { fetchMerchantsForDropDown } from "@/hooks/merchant/useMerchant";
 
 import AddIndividualBanner from "@/models/marketing/adBanner/AddIndividualBanner";
 import EditIndividualBanner from "@/models/marketing/adBanner/EditIndividualBanner";
@@ -26,13 +28,24 @@ const IndividualBanner = () => {
     edit: false,
     delete: false,
   });
+  const [selectedMerchant, setSelectedMerchant] = useState(null);
 
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
+  const {
+    data: allMerchants,
+    isLoading: merchantLoading,
+    isError: merchantError,
+  } = useQuery({
+    queryKey: ["merchant-dropdown"],
+    queryFn: () => fetchMerchantsForDropDown(navigate),
+  });
+
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["all-individual-banner"],
-    queryFn: () => fetchAllIndividualBanner(navigate),
+    queryKey: ["all-individual-banner", selectedMerchant],
+    queryFn: () => fetchAllIndividualBanner(selectedMerchant, navigate),
+    enabled: selectedMerchant ? true : false,
   });
 
   const toggleStatus = useMutation({
@@ -55,6 +68,20 @@ const IndividualBanner = () => {
     },
   });
 
+  useEffect(() => {
+    allMerchants && setSelectedMerchant(allMerchants[0]?._id);
+  }, [allMerchants]);
+
+  const merchantOptions = [
+    { label: "All", value: "all" },
+    ...(Array.isArray(allMerchants)
+      ? allMerchants.map((merchant) => ({
+          label: merchant.merchantName,
+          value: merchant._id,
+        }))
+      : []),
+  ];
+
   const toggleModal = (type, id = null) => {
     setSelectedId(id);
     setModal((prev) => ({ ...prev, [type]: true }));
@@ -69,12 +96,30 @@ const IndividualBanner = () => {
     });
   };
 
+  const showLoading = isLoading || merchantLoading;
+  const showError = isError || merchantError;
+
   return (
     <>
       <div className="flex items-center justify-between mx-10 mt-10">
-        <h1 className="text-lg font-bold outline-none focus:outline-none">
-          Individual Merchant Ad Banner
-        </h1>
+        <div className="flex items-center gap-4">
+          <h1 className="text-lg font-bold outline-none focus:outline-none">
+            Individual Merchant Ad Banner
+          </h1>
+
+          <Select
+            className="w-[200px]"
+            value={merchantOptions?.find(
+              (option) => option.value === selectedMerchant
+            )}
+            isSearchable={true}
+            options={merchantOptions}
+            placeholder="Select Merchant"
+            onChange={(option) => setSelectedMerchant(option.value)}
+            menuPlacement="top"
+          />
+        </div>
+
         <div>
           <button
             className="bg-teal-800 text-white rounded-md flex items-center px-9 py-2 mb-7"
@@ -86,7 +131,7 @@ const IndividualBanner = () => {
         </div>
       </div>
 
-      <div className="mt-5 max-h-[30rem]">
+      <div className="mt-5 max-h-[30rem] overflow-y-auto">
         <Table.Root striped interactive stickyHeader>
           <Table.Header>
             <Table.Row className="bg-teal-700 h-14">
@@ -109,22 +154,22 @@ const IndividualBanner = () => {
             </Table.Row>
           </Table.Header>
           <Table.Body>
-            {isLoading ? (
+            {showLoading ? (
               <Table.Row className="h-[70px]">
                 <Table.Cell colSpan={6} textAlign="center">
                   <ShowSpinner /> Loading...
+                </Table.Cell>
+              </Table.Row>
+            ) : showError ? (
+              <Table.Row className="h-[70px]">
+                <Table.Cell colSpan={6} textAlign="center">
+                  Error in fetching App Banner.
                 </Table.Cell>
               </Table.Row>
             ) : data?.length === 0 ? (
               <Table.Row className="h-[70px]">
                 <Table.Cell colSpan={6} textAlign="center">
                   No App Banner Available
-                </Table.Cell>
-              </Table.Row>
-            ) : isError ? (
-              <Table.Row className="h-[70px]">
-                <Table.Cell colSpan={6} textAlign="center">
-                  Error in fetching App Banner.
                 </Table.Cell>
               </Table.Row>
             ) : (
