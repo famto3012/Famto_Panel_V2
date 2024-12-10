@@ -18,7 +18,7 @@ const DeleteNotificationSetting = ({ isOpen, onClose, notificationSettingsId }) 
   const navigate = useNavigate();
 
   const handleDeleteNotificationSettings = useMutation({
-    mutationKey: ["rejectOrder"],
+    mutationKey: ["delete-notification-settings"],
     mutationFn: ({ notificationSettingsId }) =>
       deleteNotificationSettings({ notificationSettingsId, navigate }),
     onSuccess: () => {

@@ -135,3 +135,72 @@ export const deleteNotificationSettings = async ({
     );
   }
 };
+
+export const sendPushNotifications = async ({ selectedId, navigate }) => {
+  try {
+    const api = useApiClient(navigate);
+    const res = await api.post(
+      `/admin/notification/send-push-notification/${selectedId}`,
+      {}
+    );
+    return res.status === 200 ? res.data : [];
+  } catch (err) {
+    console.error(`Error in sending push notification: ${err}`);
+    throw new Error(
+      err.response?.data?.message || "Failed to send push notification."
+    );
+  }
+};
+
+export const addPushNotifications = async ({
+  addPushNotification,
+  navigate,
+}) => {
+  try {
+    const api = useApiClient(navigate);
+    const res = await api.post(
+      `/admin/notification/push-notification`,
+      addPushNotification
+    );
+    return res.status === 201 ? res.data : {};
+  } catch (err) {
+    console.error(`Error in adding push notification: ${err}`);
+    throw new Error(
+      err.response?.data?.message || "Failed to add push notification."
+    );
+  }
+};
+
+export const deletePushNotification = async ({
+  navigate,
+  selectedId,
+}) => {
+  try {
+    const api = useApiClient(navigate);
+    const res = await api.delete(
+      `/admin/notification/push-notification/${selectedId}`
+    );
+    return res.status === 200 ? res.data : [];
+  } catch (err) {
+    console.error(`Error in deleting push notification: ${err}`);
+    throw new Error(
+      err.response?.data?.message || "Failed to delete push notification."
+    );
+  }
+};
+
+export const filterPushNotification = async (navigate, selectedType) => {
+  try {
+    const api = useApiClient(navigate);
+
+    const res = await api.get("/admin/notification/filter-push-notification", {
+      params: selectedType,
+    });
+    return res.status === 200 ? res.data.data : [];
+  } catch (err) {
+    console.error(`Error in fetching push notification: ${err}`);
+    throw new Error(
+      err.response?.data?.message || "Failed to fetch push notification."
+    );
+  }
+};

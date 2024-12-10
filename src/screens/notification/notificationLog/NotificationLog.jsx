@@ -83,7 +83,7 @@ const NotificationLog = () => {
               ) : notificationLogData?.length === 0 ? (
                 <Table.Row className="h-[70px]">
                   <Table.Cell colSpan={6} textAlign="center">
-                    No Account logs available
+                    No notification logs available
                   </Table.Cell>
                 </Table.Row>
               ) : (
