@@ -204,3 +204,56 @@ export const filterPushNotification = async (navigate, selectedType) => {
     );
   }
 };
+
+export const addAlertNotifications = async ({
+  alertNotification,
+  navigate,
+}) => {
+  try {
+    const api = useApiClient(navigate);
+    const res = await api.post(
+      `/admin/notification/alert-notification`,
+      alertNotification
+    );
+    return res.status === 201 ? res.data : {};
+  } catch (err) {
+    console.error(`Error in adding alert notification: ${err}`);
+    throw new Error(
+      err.response?.data?.message || "Failed to add alert notification."
+    );
+  }
+};
+
+export const deleteAlertNotification = async ({
+  navigate,
+  selectedId,
+}) => {
+  try {
+    const api = useApiClient(navigate);
+    const res = await api.delete(
+      `/admin/notification/alert-notification/${selectedId}`
+    );
+    return res.status === 200 ? res.data : [];
+  } catch (err) {
+    console.error(`Error in deleting alert notification: ${err}`);
+    throw new Error(
+      err.response?.data?.message || "Failed to delete alert notification."
+    );
+  }
+};
+
+export const filterAlertNotification = async (navigate, selectedType) => {
+  try {
+    const api = useApiClient(navigate);
+
+    const res = await api.get("/admin/notification/filter-alert-notification", {
+      params: selectedType,
+    });
+    return res.status === 200 ? res.data : [];
+  } catch (err) {
+    console.error(`Error in fetching alert notification: ${err}`);
+    throw new Error(
+      err.response?.data?.message || "Failed to fetch alert notification."
+    );
+  }
+};
