@@ -44,7 +44,6 @@ export const getTaskById = async (taskId, navigate) => {
 
 export const getAgentsAccordingToGeofence = async (taskId, data, navigate) => {
   try {
-    console.log("Here", taskId, data);
     const api = useApiClient(navigate);
     const res = await api.post(
       `/admin/delivery-management/agents-in-geofence/${taskId}`,
@@ -63,11 +62,15 @@ export const getAgentsAccordingToGeofence = async (taskId, data, navigate) => {
 export const getTaskAccordingToFilter = async (filter, navigate) => {
   try {
     const api = useApiClient(navigate);
-    const res = await api.get(`/admin/delivery-management/task`, {
+    const res = await api.get(`/admin/delivery-management/task-filter`, {
       params: {
-        filter,
+        filter: filter.filter,
+        orderId: filter.orderId,
+        startDate: filter.startDate,
+        endDate: filter.endDate,
       },
     });
+    console.log(res.data);
     return res.status === 201 ? res.data.data : [];
   } catch (err) {
     console.error(`Error in fetching task according to filter: ${err}`);
@@ -77,70 +80,21 @@ export const getTaskAccordingToFilter = async (filter, navigate) => {
   }
 };
 
-export const searchTaskAccordingToOrderId = async (orderId, navigate) => {
+export const getAllAgents = async (selectedFilter, navigate) => {
   try {
     const api = useApiClient(navigate);
-    const res = await api.post(`/admin/delivery-management/get-order-id`, {
-      orderId,
-    });
-    return res.status === 200 ? res.data.data : [];
-  } catch (err) {
-    console.error(`Error in fetching task according to order id: ${err}`);
-    throw new Error(
-      err.response?.data?.message ||
-        "Failed to fetch task according to order id"
-    );
-  }
-};
-
-export const getAllAgents = async (selectedStatus, navigate) => {
-  try {
-    const api = useApiClient(navigate);
-    const res = await api.get(`/admin/delivery-management/agent`, {
+    const res = await api.get(`/admin/delivery-management/agent-filter`, {
       params: {
-        filter: selectedStatus,
+        filter: selectedFilter.filter,
+        fullName: selectedFilter.fullName,
       },
     });
-    return res.status === 201 ? res.data.data : [];
+    return res.status === 200 ? res.data.data : [];
   } catch (err) {
     console.error(`Error in fetching all agents: ${err}`);
     throw new Error(
       err.response?.data?.message || "Failed to fetch all agents"
     );
-  }
-};
-
-export const getAgentMyName = async (agentName, navigate) => {
-  try {
-    const api = useApiClient(navigate);
-    const res = await api.get(`/admin/delivery-management/agent-name`, {
-      params: {
-        fullName: agentName,
-      },
-    });
-    return res.status === 200 ? res.data : [];
-  } catch (err) {
-    console.error(`Error in fetching agent: ${err}`);
-    throw new Error(
-      err.response?.data?.message ||
-        `Failed to fetch agent by name ${agentName}`
-    );
-  }
-};
-
-export const getTaskByDateRange = async (startDate, endDate, navigate) => {
-  try {
-    const api = useApiClient(navigate);
-    const res = await api.get(`/admin/delivery-management/task-date`, {
-      params: {
-        startDate,
-        endDate,
-      },
-    });
-    return res.status === 200 ? res.data : [];
-  } catch (err) {
-    console.error(`Error in fetching task: ${err}`);
-    throw new Error(err.response?.data?.message || `Failed to fetching task`);
   }
 };
 

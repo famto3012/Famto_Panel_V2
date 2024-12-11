@@ -1,8 +1,5 @@
 import ShowSpinner from "@/components/others/ShowSpinner";
-import {
-  getAgentMyName,
-  getAllAgents,
-} from "@/hooks/deliveryManagement/useDeliveryManagement";
+import { getAllAgents } from "@/hooks/deliveryManagement/useDeliveryManagement";
 import { agentDeliveryManagementStatusOptions } from "@/utils/defaultData";
 import { Card } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
@@ -11,10 +8,11 @@ import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 
 const AllAgent = ({ showAgentLocationOnMap }) => {
-  const [agentFilter, setAgentFilter] = useState("Free");
+  const [agentFilter, setAgentFilter] = useState({
+    filter: "Free",
+    fullName: "",
+  });
   const [agentData, setAgentData] = useState([]);
-  const [agentName, setAgentName] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
   const navigate = useNavigate();
 
   const { data: filteredAgentData, isLoading: filterAgentLoading } = useQuery({
@@ -23,34 +21,34 @@ const AllAgent = ({ showAgentLocationOnMap }) => {
     enabled: !!agentFilter,
   });
 
-  const { data: searchedAgentData, isLoading: searchAgentLoading } = useQuery({
-    queryKey: ["get-agent-by-name", agentName],
-    queryFn: () => (debouncedSearch ? getAgentMyName(agentName, navigate) : []),
-    enabled: !!debouncedSearch,
-  });
+  // const { data: searchedAgentData, isLoading: searchAgentLoading } = useQuery({
+  //   queryKey: ["get-agent-by-name", agentName],
+  //   queryFn: () => (debouncedSearch ? getAgentMyName(agentName, navigate) : []),
+  //   enabled: !!debouncedSearch,
+  // });
 
   const selectChange = (option) => {
     const selectedTask = option.value;
-    setAgentFilter(selectedTask);
+    setAgentFilter((prevFilter) => ({
+      ...prevFilter,
+      filter: selectedTask,
+    }));
   };
 
   useEffect(() => {
-    if (debouncedSearch) {
-      setAgentData(searchedAgentData);
-    } else {
-      setAgentData(filteredAgentData);
-    }
-  }, [filteredAgentData, searchedAgentData, debouncedSearch]);
+    setAgentData(filteredAgentData);
+  }, [filteredAgentData]);
 
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedSearch(agentName);
-    }, 500);
+  const handleSearchInputChange = (e) => {
+    const value = e.target.value;
+    // Update the orderId in taskFilter only when there's input
+    setAgentFilter((prevFilter) => ({
+      ...prevFilter,
+      fullName: value,
+    }));
+  };
 
-    return () => clearTimeout(handler);
-  }, [agentName]);
-
-  const isLoading = filterAgentLoading || searchAgentLoading;
+  const isLoading = filterAgentLoading;
 
   return (
     <div className="w-1/4 rounded-lg bg-white  pb-5">
@@ -65,7 +63,7 @@ const AllAgent = ({ showAgentLocationOnMap }) => {
         <Select
           options={agentDeliveryManagementStatusOptions}
           value={agentDeliveryManagementStatusOptions.find(
-            (option) => option.value === agentFilter
+            (option) => option.value === agentFilter.filter
           )}
           onChange={selectChange}
           className="rounded-lg w-full focus:outline-none mt-4 outline-none"
@@ -88,10 +86,9 @@ const AllAgent = ({ showAgentLocationOnMap }) => {
           type="search"
           className="border-2 border-zinc-200 bg-white rounded-lg mt-5 p-2 w-full focus:outline-none"
           name="search"
+          value={agentFilter.fullName}
           placeholder="Search agent name"
-          onChange={(e) => {
-            setAgentName(e?.target?.value);
-          }}
+          onChange={handleSearchInputChange}
         />
       </div>
 

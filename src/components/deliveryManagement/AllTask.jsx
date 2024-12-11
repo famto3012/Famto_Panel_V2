@@ -1,15 +1,10 @@
 import Select from "react-select";
 import { Button } from "@/components/ui/button";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { useEffect, useState, useCallback } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { toaster } from "@/components/ui/toaster";
 import { formatDate, formatTime } from "@/utils/formatter";
-import {
-  getTaskAccordingToFilter,
-  getTaskByDateRange,
-  searchTaskAccordingToOrderId,
-} from "@/hooks/deliveryManagement/useDeliveryManagement";
+import { getTaskAccordingToFilter } from "@/hooks/deliveryManagement/useDeliveryManagement";
 import { taskStatusOptions } from "@/utils/defaultData";
 import AssignAgent from "@/models/general/deliverymanagement/AssignAgent";
 import { Card } from "@chakra-ui/react";
@@ -17,9 +12,12 @@ import ShowSpinner from "@/components/others/ShowSpinner";
 import TaskDetails from "@/models/general/deliverymanagement/TaskDetails";
 
 const AllTask = ({ onShowShopLocationOnMap, onDate }) => {
-  const [taskFilter, setTaskFilter] = useState("Unassigned");
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
+  const [taskFilter, setTaskFilter] = useState({
+    filter: "Unassigned",
+    orderId: "",
+    startDate: new Date(),
+    endDate: new Date(),
+  });
   const [taskData, setTaskData] = useState([]);
   const [searchInput, setSearchInput] = useState("");
   const [modal, setModal] = useState({
@@ -27,7 +25,6 @@ const AllTask = ({ onShowShopLocationOnMap, onDate }) => {
     viewDetail: false,
   });
   const [selectedTask, setSelectedTask] = useState(null);
-  const [datesAvailable, setDatesAvailable] = useState(false);
 
   const navigate = useNavigate();
 
@@ -37,48 +34,36 @@ const AllTask = ({ onShowShopLocationOnMap, onDate }) => {
     enabled: !!taskFilter,
   });
 
-  const { data: taskDataByDate, isLoading: isDateLoading } = useQuery({
-    queryKey: ["get-task-by-date", startDate, endDate],
-    queryFn: () => getTaskByDateRange(startDate, endDate, navigate),
-    enabled: datesAvailable,
-  });
+  useEffect(() => {
+    if (onDate) {
+      setTaskFilter((prevFilter) => ({
+        ...prevFilter,
+        startDate: new Date(onDate[0]),
+        endDate: new Date(onDate[1]),
+      }));
+    }
 
-  const handleSearchTaskByOrderId = useMutation({
-    mutationKey: ["search-task-by-order-id"],
-    mutationFn: (orderId) => searchTaskAccordingToOrderId(orderId, navigate),
-    onSuccess: (data) => {
-      setTaskData(data || []);
-    },
-    onError: (error) => {
-      toaster.create({
-        title: "Error",
-        description: error.message || "Error fetching tasks.",
-        type: "error",
-      });
-    },
-  });
+    if (filteredTaskData) {
+      setTaskData(filteredTaskData);
+    }
+  }, [filteredTaskData, onDate]);
 
-  const debounce = (callback, delay) => {
-    let timer;
-    return (...args) => {
-      clearTimeout(timer);
-      timer = setTimeout(() => {
-        callback(...args);
-      }, delay);
-    };
+  const handleSearchInputChange = (e) => {
+    const value = e.target.value;
+    setSearchInput(value);
+
+    // Update the orderId in taskFilter only when there's input
+    setTaskFilter((prevFilter) => ({
+      ...prevFilter,
+      orderId: value,
+    }));
   };
 
-  const debouncedSearch = useCallback(
-    debounce((orderId) => {
-      if (orderId.trim()) {
-        handleSearchTaskByOrderId.mutate(orderId);
-      }
-    }, 300),
-    []
-  );
-
   const selectChange = (option) => {
-    setTaskFilter(option.value);
+    setTaskFilter((prevFilter) => ({
+      ...prevFilter,
+      filter: option.value,
+    }));
   };
 
   const toggleModal = (type, id) => {
@@ -91,24 +76,7 @@ const AllTask = ({ onShowShopLocationOnMap, onDate }) => {
     setModal({ assignAgent: false, viewDetail: false });
   };
 
-  useEffect(() => {
-    if (onDate) {
-      setStartDate(new Date(onDate[0]));
-      setEndDate(new Date(onDate[1]));
-      setDatesAvailable(true);
-    }
-
-    if (datesAvailable && taskDataByDate) {
-      setTaskData(
-        taskDataByDate.filter((item) => item.taskStatus === taskFilter)
-      );
-    } else if (filteredTaskData) {
-      setTaskData(filteredTaskData);
-    }
-  }, [filteredTaskData, onDate, taskDataByDate, taskFilter, datesAvailable]);
-
-  const isLoading =
-    isFilterLoading || isDateLoading || handleSearchTaskByOrderId.isPending;
+  const isLoading = isFilterLoading;
 
   return (
     <>
@@ -124,7 +92,7 @@ const AllTask = ({ onShowShopLocationOnMap, onDate }) => {
           <Select
             options={taskStatusOptions}
             value={taskStatusOptions.find(
-              (option) => option.value === taskFilter
+              (option) => option.value === taskFilter.filter
             )}
             onChange={selectChange}
             className="rounded-lg w-full"
@@ -137,10 +105,7 @@ const AllTask = ({ onShowShopLocationOnMap, onDate }) => {
             className="border-2 border-zinc-200 bg-white rounded-lg mt-5 mb-5 p-2 w-full focus:outline-none"
             placeholder="Search order Id"
             value={searchInput}
-            onChange={(e) => {
-              setSearchInput(e.target.value);
-              debouncedSearch(e.target.value);
-            }}
+            onChange={handleSearchInputChange}
           />
 
           <div className="bg-white max-h-[300px] overflow-y-auto">

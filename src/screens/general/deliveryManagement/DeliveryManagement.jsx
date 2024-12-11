@@ -29,11 +29,7 @@ const DeliveryManagement = () => {
   const navigate = useNavigate();
 
   const [startDate, endDate] = dateRange;
-  const {
-    data: authToken,
-    isLoading,
-    isError,
-  } = useQuery({
+  const { data: authToken } = useQuery({
     queryKey: ["get-auth-token"],
     queryFn: () => getAuthTokenForDeliveryManagementMap(navigate),
   });
