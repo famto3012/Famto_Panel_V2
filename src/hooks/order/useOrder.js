@@ -1,43 +1,34 @@
 import useApiClient from "../../api/apiClient";
 
-// To find
-export const fetchAllOrders = async (
-  selectedOption,
-  status,
-  paymentMode,
-  deliveryMode,
-  selectedMerchant,
-  startDate,
-  endDate,
-  navigate
-) => {
+export const fetchAllOrders = async (filter, navigate) => {
   try {
     const api = useApiClient(navigate);
 
-    const route =
-      selectedOption === "order"
-        ? `/orders/admin/filter`
-        : `/orders/admin/filter-scheduled`;
+    console.log(filter.date);
 
-    const formattedStartDate = startDate
-      ? startDate.toLocaleDateString("en-CA")
-      : "";
-    const formattedEndDate = endDate ? endDate.toLocaleDateString("en-CA") : "";
+    const route =
+      filter.selectedOption === "order"
+        ? `/orders/admin/get-orders`
+        : `/orders/admin/get-scheduled-orders`;
 
     const res = await api.get(route, {
       params: {
-        status,
-        paymentMode,
-        deliveryMode,
-        startDate: formattedStartDate,
-        endDate: formattedEndDate,
-        merchantId: selectedMerchant,
+        status: filter.status,
+        paymentMode: filter.paymentMode,
+        deliveryMode: filter.deliveryMode,
+        startDate: filter.date[0]
+          ? filter.date[0].toLocaleDateString("en-CA")
+          : null,
+        endDate: filter.date[1]
+          ? filter.date[1].toLocaleDateString("en-CA")
+          : null,
+        merchantId: filter.selectedMerchant,
+        orderId: filter.orderId,
       },
     });
 
-    return res.status === 200 ? res.data.data : [];
+    return res.status === 200 ? res.data : [];
   } catch (err) {
-    console.error(`Error in fetching orders: ${err}`);
     throw new Error(err.response?.data?.message || "Failed to fetch orders.");
   }
 };
