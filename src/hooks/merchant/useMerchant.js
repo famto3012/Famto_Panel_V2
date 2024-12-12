@@ -188,3 +188,146 @@ export const updateMerchant = async (role, merchantId, data, navigate) => {
     );
   }
 };
+
+export const fetchMerchantPayout = async (filter, page, limit, navigate) => {
+  try {
+    const api = useApiClient(navigate);
+    const res = await api.get(`/merchants/admin/payout`, {
+      params: {
+        page,
+        limit,
+        paymentStatus: filter.status,
+        merchantId: filter.merchantId,
+        geofenceId: filter.geofenceId,
+        query: filter.name,
+        startDate: filter.date[0]
+          ? filter.date[0].toLocaleDateString("en-CA")
+          : null,
+        endDate: filter.date[1]
+          ? filter.date[1].toLocaleDateString("en-CA")
+          : null,
+      },
+    });
+
+    return res.status === 200 ? res.data : null;
+  } catch (err) {
+    throw new Error(
+      err.response?.data?.message || "Failed to fetch all merchant payout"
+    );
+  }
+};
+
+export const approveMerchantPayout = async (merchantId, payoutId, navigate) => {
+  try {
+    const api = useApiClient(navigate);
+    const res = await api.patch(
+      `/merchants/admin/payout/${merchantId}/${payoutId}`,
+      {}
+    );
+
+    return res.status === 200 ? res.data.message : null;
+  } catch (err) {
+    throw new Error(
+      err.response?.data?.message || "Failed to approve merchant payout"
+    );
+  }
+};
+
+export const fetchMerchantPayoutDetail = async (date, merchantId, navigate) => {
+  try {
+    const api = useApiClient(navigate);
+    const res = await api.get(`/merchants/admin/payout-detail`, {
+      params: {
+        date,
+        merchantId,
+        timezoneOffset: 0,
+      },
+    });
+
+    return res.status === 200 ? res.data.data : null;
+  } catch (err) {
+    throw new Error(
+      err.response?.data?.message || "Failed to fetch merchant payout detail"
+    );
+  }
+};
+
+export const downloadMerchantPayoutCSV = async (filter, navigate) => {
+  try {
+    const api = useApiClient(navigate);
+    const res = await api.get(`/merchants/admin/payout-csv`, {
+      params: {
+        paymentStatus: filter.status,
+        merchantId: filter.merchantId,
+        geofenceId: filter.geofenceId,
+        query: filter.name,
+        startDate: filter.date[0]
+          ? filter.date[0].toLocaleDateString("en-CA")
+          : null,
+        endDate: filter.date[1]
+          ? filter.date[1].toLocaleDateString("en-CA")
+          : null,
+      },
+      responseType: "blob",
+    });
+
+    return res.status === 200 ? res.data : null;
+  } catch (err) {
+    throw new Error(
+      err.response?.data?.message || "Failed to download merchant payout csv"
+    );
+  }
+};
+
+export const downloadSampleMerchantCSV = async (navigate) => {
+  try {
+    const api = useApiClient(navigate);
+    const res = await api.get(`/merchants/admin/download-sample-merchant-csv`, {
+      responseType: "blob",
+    });
+
+    return res.status === 200 ? res.data : null;
+  } catch (err) {
+    throw new Error(
+      err.response?.data?.message || "Failed to download sample merchant csv"
+    );
+  }
+};
+
+export const downloadAllMerchantCSV = async (filter, navigate) => {
+  try {
+    const api = useApiClient(navigate);
+    const res = await api.post(
+      `/merchants/admin/download-csv`,
+      {},
+      {
+        params: {
+          name: filter.name,
+          serviceable: filter.status,
+          businessCategory: filter.businessCategory,
+          geofence: filter.geofence,
+        },
+        responseType: "blob",
+      }
+    );
+
+    return res.status === 200 ? res.data.message : null;
+  } catch (err) {
+    throw new Error(
+      err.response?.data?.message || "Failed to download sample merchant csv"
+    );
+  }
+};
+
+export const uploadMerchantCSV = async (data, navigate) => {
+  try {
+    const api = useApiClient(navigate);
+    const res = await api.post(`/merchants/admin/upload-merchant-csv`, data);
+
+    return res.status === 200 ? res.data.message : null;
+  } catch (err) {
+    throw new Error(
+      err.response?.data?.message || "Failed to upload merchant csv"
+    );
+  }
+};

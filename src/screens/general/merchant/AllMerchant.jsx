@@ -216,7 +216,7 @@ const AllMerchant = () => {
 
       {/* Modal */}
       <AddMerchant isOpen={modal.add} onClose={closeModal} />
-      <CSVOperation isOpen={modal.csv} onClose={closeModal} />
+      <CSVOperation isOpen={modal.csv} onClose={closeModal} filter={filter} />
     </div>
   );
 };
