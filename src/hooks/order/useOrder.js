@@ -4,8 +4,6 @@ export const fetchAllOrders = async (filter, navigate) => {
   try {
     const api = useApiClient(navigate);
 
-    console.log(filter.date);
-
     const route =
       filter.selectedOption === "order"
         ? `/orders/admin/get-orders`
@@ -33,26 +31,6 @@ export const fetchAllOrders = async (filter, navigate) => {
   }
 };
 
-// To search by Id
-export const searchOrder = async (search, selectedOption, navigate) => {
-  try {
-    const api = useApiClient(navigate);
-
-    const route =
-      selectedOption === "order"
-        ? `/orders/admin/search-order?query=${search}`
-        : `/orders/admin/search-scheduled-order?query=${search}`;
-
-    const res = await api.get(route);
-
-    return res.status === 200 ? res.data.data : [];
-  } catch (err) {
-    console.error(err);
-    throw new Error(err.response?.data?.message || "Failed to search orders.");
-  }
-};
-
-// To accept order
 export const acceptOrder = async (orderId, role, navigate) => {
   try {
     const route =
@@ -70,7 +48,6 @@ export const acceptOrder = async (orderId, role, navigate) => {
   }
 };
 
-// To reject order
 export const rejectOrder = async (orderId, role, navigate) => {
   try {
     const route =
@@ -88,7 +65,6 @@ export const rejectOrder = async (orderId, role, navigate) => {
   }
 };
 
-// To get single order detail
 export const getOrderDetail = async (orderId, role, navigate) => {
   try {
     const route =
@@ -103,5 +79,87 @@ export const getOrderDetail = async (orderId, role, navigate) => {
     throw new Error(
       err?.response?.data?.message || "Failed to fetch order detail."
     );
+  }
+};
+
+export const searchCustomerForOrder = async (role, query, navigate) => {
+  try {
+    const api = useApiClient(navigate);
+
+    const route =
+      role === "Admin"
+        ? `/admin/customers/search-for-order?query=${query}`
+        : `/admin/customers/search-customer-of-merchant-for-order?query=${query}`;
+
+    const res = await api.get(route);
+
+    return res.status === 200 ? res.data : [];
+  } catch (err) {
+    throw new Error(
+      err.response?.data?.message || "Failed to search customers for ordering."
+    );
+  }
+};
+
+export const searchMerchantForOrder = async (query, navigate) => {
+  try {
+    const api = useApiClient(navigate);
+    const res = await api.get(`/merchants/admin/search?query=${query}`);
+
+    return res.status === 200 ? res.data.data : [];
+  } catch (err) {
+    throw new Error(
+      err.response?.data?.message || "Failed to search merchants for ordering."
+    );
+  }
+};
+
+export const searchProductToOrder = async (
+  merchantId,
+  categoryId,
+  query,
+  navigate
+) => {
+  try {
+    const api = useApiClient(navigate);
+    const res = await api.get(
+      `/customers/search-products/${merchantId}/${categoryId}?query=${query}`
+    );
+
+    return res.status === 200 ? res.data.data : [];
+  } catch (err) {
+    throw new Error(
+      err.response?.data?.message || "Failed to search products for ordering."
+    );
+  }
+};
+
+export const createInvoice = async (role, data, navigate) => {
+  try {
+    const route =
+      role === "Admin"
+        ? `/orders/admin/create-order-invoice`
+        : `/orders/create-order-invoice`;
+
+    const api = useApiClient(navigate);
+    const res = await api.post(route, data);
+
+    return res.status === 200 ? res.data.data : {};
+  } catch (err) {
+    throw new Error(err.response?.data?.message || "Failed to create invoice.");
+  }
+};
+
+export const createOrder = async (role, data, navigate) => {
+  try {
+    const route =
+      role === "Admin" ? `/orders/admin/create-order` : `/orders/create-order`;
+
+    const api = useApiClient(navigate);
+    const res = await api.post(route, data);
+
+    return res.status === 201 ? res.data.message : null;
+  } catch (err) {
+    throw new Error(err.response?.data?.message || "Failed to create order.");
   }
 };

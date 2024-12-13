@@ -10,6 +10,8 @@ import {
   PaginationRoot,
 } from "@/components/ui/pagination";
 
+import RenderIcon from "@/icons/RenderIcon";
+
 import Error from "@/components/others/Error";
 import ShowSpinner from "@/components/others/ShowSpinner";
 
