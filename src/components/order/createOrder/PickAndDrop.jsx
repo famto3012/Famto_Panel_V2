@@ -5,7 +5,7 @@ import { useDraggable } from "../../../hooks/useDraggable";
 import { itemTypes } from "../../../utils/defaultData";
 
 import NewAddress from "./NewAddress";
-import ShowBill from "./ShowBill";
+import ShowBill from "./common/ShowBill";
 
 import RenderIcon from "../../../icons/RenderIcon";
 

@@ -132,7 +132,7 @@ const SelectProduct = ({ merchantId, categoryId, onProductSelect }) => {
             name="product"
             id="product"
             placeholder="Product"
-            className="h-10 ps-3 text-sm border-2 w-full outline-none focus:outline-none"
+            className="h-10 ps-3 text-sm border-2 w-full outline-none focus:outline-none rounded-md"
             value={debounce}
             onChange={(e) => setDebounce(e.target.value)}
           />

@@ -5,7 +5,7 @@ import RenderIcon from "../../../icons/RenderIcon";
 
 import { useDraggable } from "../../../hooks/useDraggable";
 
-import ShowBill from "./ShowBill";
+import ShowBill from "./common/ShowBill";
 import MapModal from "./MapModal";
 
 import { unitOptions } from "../../../utils/defaultData";

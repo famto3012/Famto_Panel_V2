@@ -52,7 +52,7 @@ const SelectMerchant = ({ onMerchantSelect }) => {
           type="text"
           name="merchantName"
           placeholder="Search merchant"
-          className="h-10 ps-3 text-sm border-2 w-full outline-none focus:outline-none"
+          className="h-10 ps-3 text-sm border-2 w-full outline-none focus:outline-none rounded-md"
           value={selectedMerchantName || debounce}
           onChange={(e) => {
             setDebounce(e.target.value);

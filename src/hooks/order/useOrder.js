@@ -141,6 +141,8 @@ export const createInvoice = async (role, data, navigate) => {
         ? `/orders/admin/create-order-invoice`
         : `/orders/create-order-invoice`;
 
+    console.log(data);
+
     const api = useApiClient(navigate);
     const res = await api.post(route, data);
 
@@ -161,5 +163,18 @@ export const createOrder = async (role, data, navigate) => {
     return res.status === 201 ? res.data.message : null;
   } catch (err) {
     throw new Error(err.response?.data?.message || "Failed to create order.");
+  }
+};
+
+export const fetchMapplsAuthToken = async (navigate) => {
+  try {
+    const api = useApiClient(navigate);
+    const res = await api.get(`/token/get-auth-token`);
+
+    return res.status === 200 ? res.data.data : null;
+  } catch (err) {
+    throw new Error(
+      err.response?.data?.message || "Failed to fetch mappls token"
+    );
   }
 };

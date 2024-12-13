@@ -38,7 +38,7 @@ const CustomerSelection = ({ onCustomerSelect }) => {
     setSearch("");
     setDebounce("");
     setSelectedCustomerName(customer.fullName);
-    onCustomerSelect(customer.customerId);
+    onCustomerSelect(customer);
     setAllCustomers([]);
   };
 

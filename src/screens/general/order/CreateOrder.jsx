@@ -19,17 +19,19 @@ import DeliveryModeAndOption from "@/components/order/createOrder/common/Deliver
 const CreateOrder = () => {
   const [topData, setTopData] = useState({
     customerId: null,
-    customerAddress: {},
-    newCustomer: {},
+    customerAddress: null,
+    newCustomer: null,
   });
+  const [address, setAddress] = useState([]);
 
   const [isFormVisible, setIsFormVisible] = useState(false);
 
   const navigate = useNavigate();
   const { role } = useContext(AuthContext);
 
-  const handleSelectCustomer = (customerId) => {
-    setTopData({ ...topData, customerId });
+  const handleSelectCustomer = (customer) => {
+    setTopData({ ...topData, customerId: customer.customerId });
+    setAddress(customer.address);
   };
 
   const handleDeliveryModeAndOption = (data) => {
@@ -93,7 +95,7 @@ const CreateOrder = () => {
           {topData?.deliveryMode === "Take Away" && <TakeAway data={topData} />}
 
           {topData?.deliveryMode === "Home Delivery" && (
-            <HomeDelivery data={topData} />
+            <HomeDelivery data={topData} address={address} />
           )}
 
           {role === "Admin" && (
