@@ -210,7 +210,7 @@ const Toggles = () => {
         </div>
       </div>
 
-      <div className="flex mx-5 mt-10 pb-5">
+      <div className="flex mx-5 mt-5">
         <div className="w-1/5 ">Sign up and Sign in Settings</div>
 
         <div className="w-4/5 flex flex-col justify-start">
