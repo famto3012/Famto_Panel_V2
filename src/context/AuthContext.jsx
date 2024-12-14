@@ -1,9 +1,7 @@
 import { createContext, useEffect, useState } from "react";
 import { EncryptStorage } from "encrypt-storage";
-import axios from "axios";
 
 const secretKey = import.meta.env.VITE_APP_LOCALSTORAGE_KEY;
-const BASE_URL = import.meta.env.VITE_APP_BASE_URL;
 
 const encryptStorage = new EncryptStorage(secretKey, {
   prefix: "FAMTO",

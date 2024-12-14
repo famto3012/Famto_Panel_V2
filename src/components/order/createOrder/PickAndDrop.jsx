@@ -42,18 +42,6 @@ const PickAndDrop = ({ data, address }) => {
   }, [data]);
 
   const handleSelectPickAddress = (data) => {
-    if (
-      data.type === pickAndDropData?.deliveryAddressType &&
-      data.otherAddressId === pickAndDropData?.deliveryAddressOtherAddressId
-    ) {
-      toaster.create({
-        title: "Error",
-        description: "Pick-up Address and Delivery Address cannot be the same",
-        type: "error",
-      });
-      return;
-    }
-
     setPickAndDropData({
       ...pickAndDropData,
       pickUpAddressType: data.type,
@@ -62,18 +50,6 @@ const PickAndDrop = ({ data, address }) => {
   };
 
   const handleSelectDropAddress = (data) => {
-    if (
-      data.type === pickAndDropData?.pickUpAddressType &&
-      data.otherAddressId === pickAndDropData?.pickUpAddressOtherAddressId
-    ) {
-      toaster.create({
-        title: "Error",
-        description: "Pick-up Address and Delivery Address cannot be the same",
-        type: "error",
-      });
-      return;
-    }
-
     setPickAndDropData({
       ...pickAndDropData,
       deliveryAddressType: data.type,

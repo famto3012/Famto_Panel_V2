@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+
+import AddressContext from "@/context/AddressContext";
 
 import { HStack } from "@chakra-ui/react";
 import {
@@ -6,6 +8,7 @@ import {
   RadioCardLabel,
   RadioCardRoot,
 } from "@/components/ui/radio-card";
+import { toaster } from "@/components/ui/toaster";
 
 const AddressSelection = ({ address, onAddressSelect, label }) => {
   const [selectedAddress, setSelectedAddress] = useState({
@@ -13,16 +16,39 @@ const AddressSelection = ({ address, onAddressSelect, label }) => {
     otherAddressId: null,
   });
 
+  const { addressType, setAddressType, otherAddressId, setOtherAddressId } =
+    useContext(AddressContext);
+
   useEffect(() => {
     onAddressSelect(selectedAddress);
   }, [selectedAddress]);
 
   const handleSelectAddressType = (type) => {
-    setSelectedAddress({ ...selectedAddress, type, otherAddressId: null });
+    if (type === addressType && type !== "other") {
+      toaster.create({
+        title: "Error",
+        description: "Pick-up Address and Delivery Address cannot be the same",
+        type: "error",
+      });
+      return;
+    }
+
+    setAddressType(type);
+    setSelectedAddress({ type, otherAddressId: null });
   };
 
-  const handleSelectOtherAddress = (otherAddressId) => {
-    setSelectedAddress({ ...selectedAddress, otherAddressId });
+  const handleSelectOtherAddress = (id) => {
+    if (id === otherAddressId) {
+      toaster.create({
+        title: "Error",
+        description: "Pick-up Address and Delivery Address cannot be the same",
+        type: "error",
+      });
+      return;
+    }
+
+    setOtherAddressId(id);
+    setSelectedAddress((prev) => ({ ...prev, otherAddressId: id }));
   };
 
   return (
@@ -33,12 +59,12 @@ const AddressSelection = ({ address, onAddressSelect, label }) => {
             {label}
           </label>
 
-          <div className="">
+          <div>
             {address?.map((address, index) => (
               <input
                 key={index}
                 type="button"
-                className={`py-2 px-4 me-2 rounded border capitalize ${
+                className={`py-2 px-4 me-2 rounded border capitalize cursor-pointer ${
                   selectedAddress.type === address.type
                     ? "bg-gray-300"
                     : "bg-white"
