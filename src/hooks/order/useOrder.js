@@ -1,67 +1,36 @@
 import useApiClient from "../../api/apiClient";
 
-// To find
-export const fetchAllOrders = async (
-  selectedOption,
-  status,
-  paymentMode,
-  deliveryMode,
-  selectedMerchant,
-  startDate,
-  endDate,
-  navigate
-) => {
+export const fetchAllOrders = async (filter, navigate) => {
   try {
     const api = useApiClient(navigate);
 
     const route =
-      selectedOption === "order"
-        ? `/orders/admin/filter`
-        : `/orders/admin/filter-scheduled`;
-
-    const formattedStartDate = startDate
-      ? startDate.toLocaleDateString("en-CA")
-      : "";
-    const formattedEndDate = endDate ? endDate.toLocaleDateString("en-CA") : "";
+      filter.selectedOption === "order"
+        ? `/orders/admin/get-orders`
+        : `/orders/admin/get-scheduled-orders`;
 
     const res = await api.get(route, {
       params: {
-        status,
-        paymentMode,
-        deliveryMode,
-        startDate: formattedStartDate,
-        endDate: formattedEndDate,
-        merchantId: selectedMerchant,
+        status: filter.status,
+        paymentMode: filter.paymentMode,
+        deliveryMode: filter.deliveryMode,
+        startDate: filter.date[0]
+          ? filter.date[0].toLocaleDateString("en-CA")
+          : null,
+        endDate: filter.date[1]
+          ? filter.date[1].toLocaleDateString("en-CA")
+          : null,
+        merchantId: filter.selectedMerchant,
+        orderId: filter.orderId,
       },
     });
 
-    return res.status === 200 ? res.data.data : [];
+    return res.status === 200 ? res.data : [];
   } catch (err) {
-    console.error(`Error in fetching orders: ${err}`);
     throw new Error(err.response?.data?.message || "Failed to fetch orders.");
   }
 };
 
-// To search by Id
-export const searchOrder = async (search, selectedOption, navigate) => {
-  try {
-    const api = useApiClient(navigate);
-
-    const route =
-      selectedOption === "order"
-        ? `/orders/admin/search-order?query=${search}`
-        : `/orders/admin/search-scheduled-order?query=${search}`;
-
-    const res = await api.get(route);
-
-    return res.status === 200 ? res.data.data : [];
-  } catch (err) {
-    console.error(err);
-    throw new Error(err.response?.data?.message || "Failed to search orders.");
-  }
-};
-
-// To accept order
 export const acceptOrder = async (orderId, role, navigate) => {
   try {
     const route =
@@ -79,7 +48,6 @@ export const acceptOrder = async (orderId, role, navigate) => {
   }
 };
 
-// To reject order
 export const rejectOrder = async (orderId, role, navigate) => {
   try {
     const route =
@@ -97,7 +65,6 @@ export const rejectOrder = async (orderId, role, navigate) => {
   }
 };
 
-// To get single order detail
 export const getOrderDetail = async (orderId, role, navigate) => {
   try {
     const route =
@@ -111,6 +78,103 @@ export const getOrderDetail = async (orderId, role, navigate) => {
     console.error("Error in getOrderDetail:", err?.response?.data || err);
     throw new Error(
       err?.response?.data?.message || "Failed to fetch order detail."
+    );
+  }
+};
+
+export const searchCustomerForOrder = async (role, query, navigate) => {
+  try {
+    const api = useApiClient(navigate);
+
+    const route =
+      role === "Admin"
+        ? `/admin/customers/search-for-order?query=${query}`
+        : `/admin/customers/search-customer-of-merchant-for-order?query=${query}`;
+
+    const res = await api.get(route);
+
+    return res.status === 200 ? res.data : [];
+  } catch (err) {
+    throw new Error(
+      err.response?.data?.message || "Failed to search customers for ordering."
+    );
+  }
+};
+
+export const searchMerchantForOrder = async (query, navigate) => {
+  try {
+    const api = useApiClient(navigate);
+    const res = await api.get(`/merchants/admin/search?query=${query}`);
+
+    return res.status === 200 ? res.data.data : [];
+  } catch (err) {
+    throw new Error(
+      err.response?.data?.message || "Failed to search merchants for ordering."
+    );
+  }
+};
+
+export const searchProductToOrder = async (
+  merchantId,
+  categoryId,
+  query,
+  navigate
+) => {
+  try {
+    const api = useApiClient(navigate);
+    const res = await api.get(
+      `/customers/search-products/${merchantId}/${categoryId}?query=${query}`
+    );
+
+    return res.status === 200 ? res.data.data : [];
+  } catch (err) {
+    throw new Error(
+      err.response?.data?.message || "Failed to search products for ordering."
+    );
+  }
+};
+
+export const createInvoice = async (role, data, navigate) => {
+  try {
+    const route =
+      role === "Admin"
+        ? `/orders/admin/create-order-invoice`
+        : `/orders/create-order-invoice`;
+
+    console.log(data);
+
+    const api = useApiClient(navigate);
+    const res = await api.post(route, data);
+
+    return res.status === 200 ? res.data.data : {};
+  } catch (err) {
+    throw new Error(err.response?.data?.message || "Failed to create invoice.");
+  }
+};
+
+export const createOrder = async (role, data, navigate) => {
+  try {
+    const route =
+      role === "Admin" ? `/orders/admin/create-order` : `/orders/create-order`;
+
+    const api = useApiClient(navigate);
+    const res = await api.post(route, data);
+
+    return res.status === 201 ? res.data.message : null;
+  } catch (err) {
+    throw new Error(err.response?.data?.message || "Failed to create order.");
+  }
+};
+
+export const fetchMapplsAuthToken = async (navigate) => {
+  try {
+    const api = useApiClient(navigate);
+    const res = await api.get(`/token/get-auth-token`);
+
+    return res.status === 200 ? res.data.data : null;
+  } catch (err) {
+    throw new Error(
+      err.response?.data?.message || "Failed to fetch mappls token"
     );
   }
 };

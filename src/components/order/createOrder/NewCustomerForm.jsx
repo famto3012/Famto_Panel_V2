@@ -1,8 +1,9 @@
 import { useState } from "react";
+
 import { toaster } from "@/components/ui/toaster";
 
 const NewCustomerForm = ({ toggleNewCustomerForm, onAddCustomer }) => {
-  const [newCustomer, setNewCustomer] = useState({
+  const [formData, setFormData] = useState({
     fullName: "",
     email: "",
     phoneNumber: "",
@@ -11,23 +12,34 @@ const NewCustomerForm = ({ toggleNewCustomerForm, onAddCustomer }) => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setNewCustomer({ ...newCustomer, [name]: value });
+    setFormData({ ...formData, [name]: value });
   };
 
   const handleAddCustomer = () => {
-    if (
-      !newCustomer.fullName ||
-      !newCustomer.email ||
-      !newCustomer.phoneNumber
-    ) {
+    const missingFields = Object.keys(formData).filter(
+      (field) => !formData[field]
+    );
+
+    if (missingFields.length > 0) {
+      const errorMessages = missingFields.map((field) => {
+        const formattedField = field
+          .replace(/([A-Z])/g, " $1")
+          .replace(/^./, (str) => str.toUpperCase());
+
+        return `${formattedField} is required`;
+      });
+
+      const formattedErrors = errorMessages.map((msg) => `• ${msg}`).join("\n");
+
       toaster.create({
         title: "Error",
-        description: "Please fill all details of customer",
+        description: formattedErrors,
         type: "error",
       });
       return;
     }
-    onAddCustomer(newCustomer);
+
+    onAddCustomer(formData);
     setShowButtons(false);
   };
 
@@ -51,10 +63,20 @@ const NewCustomerForm = ({ toggleNewCustomerForm, onAddCustomer }) => {
                 name="fullName"
                 placeholder="Name"
                 className="w-2/3 px-3 py-2 bg-white rounded focus:outline-none outline-none"
-                value={newCustomer.fullName}
+                value={formData.fullName}
                 onChange={handleInputChange}
+                onKeyDown={(e) => {
+                  if (
+                    !/^[A-z]$/.test(e.key) &&
+                    e.key !== "Backspace" &&
+                    e.key !== "Tab"
+                  ) {
+                    e.preventDefault();
+                  }
+                }}
               />
             </div>
+
             <div className="flex items-center">
               <label className="w-1/3 text-md font-medium">Email</label>
               <input
@@ -62,10 +84,11 @@ const NewCustomerForm = ({ toggleNewCustomerForm, onAddCustomer }) => {
                 name="email"
                 placeholder="Email"
                 className="w-2/3 px-3 py-2 bg-white rounded focus:outline-none outline-none"
-                value={newCustomer.email}
+                value={formData.email}
                 onChange={handleInputChange}
               />
             </div>
+
             <div className="flex items-center">
               <label className="w-1/3 text-md font-medium">Phone</label>
               <input
@@ -73,11 +96,21 @@ const NewCustomerForm = ({ toggleNewCustomerForm, onAddCustomer }) => {
                 name="phoneNumber"
                 placeholder="Phone number"
                 className="w-2/3 px-3 py-2 bg-white rounded focus:outline-none outline-none"
-                value={newCustomer.phoneNumber}
+                value={formData.phoneNumber}
                 onChange={handleInputChange}
+                onKeyDown={(e) => {
+                  if (
+                    !/^[0-9]$/.test(e.key) &&
+                    e.key !== "Backspace" &&
+                    e.key !== "Tab"
+                  ) {
+                    e.preventDefault();
+                  }
+                }}
               />
             </div>
           </div>
+
           {showButtons && (
             <div className="flex justify-between mt-5 gap-3">
               <button
