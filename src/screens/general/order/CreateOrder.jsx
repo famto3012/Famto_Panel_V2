@@ -105,7 +105,7 @@ const CreateOrder = () => {
               )}
 
               {topData?.deliveryMode === "Custom Order" && (
-                <CustomOrder data={topData} />
+                <CustomOrder data={topData} address={address} />
               )}
             </>
           )}

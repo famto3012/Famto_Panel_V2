@@ -1,16 +1,29 @@
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Select from "react-select";
+import { useMutation } from "@tanstack/react-query";
 
-import RenderIcon from "../../../icons/RenderIcon";
+import AuthContext from "@/context/AuthContext";
 
-import { useDraggable } from "../../../hooks/useDraggable";
+import RenderIcon from "@/icons/RenderIcon";
 
-import ShowBill from "./common/ShowBill";
-import MapModal from "./MapModal";
+import { toaster } from "@/components/ui/toaster";
 
-import { unitOptions } from "../../../utils/defaultData";
+import Map from "@/models/common/Map";
 
-const CustomOrder = () => {
+import { unitOptions } from "@/utils/defaultData";
+import {
+  deleteFileFromFirebase,
+  uploadFileToFirebase,
+} from "@/utils/imageOperation";
+
+import AddressSelection from "@/components/order/createOrder/common/AddressSelection";
+import AddAddress from "@/components/order/createOrder/common/AddAddress";
+import ShowBill from "@/components/order/createOrder/common/ShowBill";
+
+import { createInvoice } from "@/hooks/order/useOrder";
+
+const CustomOrder = ({ data, address }) => {
   const [customOrderData, setCustomOrderData] = useState({
     latitude: null,
     longitude: null,
@@ -19,64 +32,171 @@ const CustomOrder = () => {
     deliveryAddressType: "",
     deliveryAddressOtherAddressId: "",
     addedTip: "",
-    newDeliveryAddress: {},
+    newDeliveryAddress: null,
   });
-  const [selectedAddress, setSelectedAddress] = useState(null);
-  const [isFormVisible, setIsFormVisible] = useState(null);
+  const [showMap, setShowMap] = useState(false);
+  const [cartData, setCartData] = useState({});
+  const [showBill, setShowBill] = useState(false);
 
-  const coordinates = {};
+  const navigate = useNavigate();
+  const { role } = useContext(AuthContext);
 
-  const {
-    isDragging,
-    handleMouseDown,
-    handleMouseLeave,
-    handleMouseUp,
-    handleMouseMove,
-  } = useDraggable();
+  useEffect(() => {
+    setCustomOrderData({ ...customOrderData, ...data });
+  }, [data]);
 
-  const allCustomerAddress = [];
+  const handlePickupLocation = (data) => {
+    setCustomOrderData({
+      ...customOrderData,
+      latitude: data[0],
+      longitude: data[1],
+    });
+  };
 
-  const cartData = {};
+  const handleAddItem = () => {
+    const newItem = { itemName: "", quantity: "", numOfUnits: "", unit: "" };
+    setCustomOrderData({
+      ...customOrderData,
+      items: [...customOrderData.items, newItem],
+    });
+  };
+
+  const handleItemChange = (index, eventOrOption) => {
+    const updatedItems = [...customOrderData.items];
+
+    if (eventOrOption.target) {
+      const { name, value } = eventOrOption.target;
+      updatedItems[index] = { ...updatedItems[index], [name]: value };
+    } else {
+      updatedItems[index] = {
+        ...updatedItems[index],
+        unit: eventOrOption.value,
+      };
+    }
+
+    setCustomOrderData({ ...customOrderData, items: updatedItems });
+  };
+
+  const handleRemoveItem = async (index) => {
+    const updatedItems = [...customOrderData.items];
+    const itemToRemove = updatedItems[index];
+
+    if (itemToRemove && itemToRemove.itemImageURL) {
+      try {
+        await deleteFileFromFirebase(itemToRemove.itemImageURL);
+      } catch (error) {
+        toaster.create({
+          title: "Error",
+          description: "Error while removing item",
+          type: "error",
+        });
+      }
+    }
+
+    // Remove the item from the array
+    updatedItems.splice(index, 1);
+
+    // Update the state with the new items array
+    setCustomOrderData({ ...customOrderData, items: updatedItems });
+  };
+
+  const handleImageChange = async (index, e) => {
+    const file = e.target.files[0];
+    if (file) {
+      try {
+        const itemImageURL = await uploadFileToFirebase(
+          file,
+          "Custom-order-item-Image"
+        );
+
+        const updatedItems = [...customOrderData.items];
+        updatedItems[index] = {
+          ...updatedItems[index],
+          itemImageURL,
+        };
+        setCustomOrderData({ ...customOrderData, items: updatedItems });
+      } catch (error) {
+        toaster.create({
+          title: "Error",
+          description: "Error while uploading item image",
+          type: "error",
+        });
+      }
+    }
+  };
+
+  const handleSelectAddress = (data) => {
+    setCustomOrderData({
+      ...customOrderData,
+      deliveryAddressType: data.type,
+      deliveryAddressOtherAddressId: data.otherAddressId,
+    });
+  };
+
+  const handleNewDeliveryAddress = (data) => {
+    setCustomOrderData({
+      ...customOrderData,
+      newDeliveryAddress: data,
+      deliveryAddressType: null,
+      deliveryAddressOtherAddressId: null,
+    });
+  };
+
+  const handleCreateInvoice = useMutation({
+    mutationKey: ["custom-order-invoice"],
+    mutationFn: () => createInvoice(role, customOrderData, navigate),
+    onSuccess: (data) => {
+      setCartData(data);
+      setShowBill(true);
+      toaster.create({
+        title: "Success",
+        description: "Invoice created successfully",
+        type: "success",
+      });
+    },
+    onError: (data) => {
+      toaster.create({
+        title: "Error",
+        description: data?.message || "Error while creating invoice",
+        type: "error",
+      });
+    },
+  });
 
   return (
-    <div className="bg-white mt-5 rounded">
-      <form onSubmit={() => {}}>
+    <>
+      <div className="bg-white mt-5 rounded">
         <div className="flex flex-col gap-6">
           <div className="flex items-center">
-            <label className="w-1/3 px-6" htmlFor="location">
+            <label className="w-1/3 px-6 text-gray-700" htmlFor="location">
               Search for a location
             </label>
 
             <div className="w-1/3">
               <button
                 type="button"
-                onClick={() => {}}
+                onClick={() => setShowMap(true)}
                 className={` ${
-                  coordinates?.latitude && coordinates?.longitude
+                  customOrderData?.latitude && customOrderData?.longitude
                     ? `bg-teal-700 text-white`
                     : `bg-transparent text-teal-700`
                 } flex items-center justify-center font-medium border border-teal-700 w-4/5 rounded-md me-auto py-2 gap-2`}
               >
-                {coordinates?.latitude && coordinates?.longitude ? (
+                {customOrderData?.latitude && customOrderData?.longitude ? (
                   `Location selected`
                 ) : (
                   <>
-                    Mark location
+                    <span>Mark location</span>
                     <RenderIcon iconName="LocationIcon" size={20} loading={6} />
                   </>
                 )}
               </button>
 
-              {isFormVisible && (
-                <MapModal
-                  isVisible={""}
-                  onClose={""}
-                  setCoordinates={""}
-                  BASE_URL={""}
-                  token={""}
-                  modelId={1}
-                />
-              )}
+              <Map
+                isOpen={showMap}
+                onClose={() => setShowMap(false)}
+                onLocationSelect={handlePickupLocation}
+              />
             </div>
           </div>
 
@@ -84,20 +204,16 @@ const CustomOrder = () => {
             <h1 className="w-1/3 px-6 invisible">Add Items</h1>
             <div className="w-2/3">
               <button
-                className="bg-gray-300 rounded-md flex items-center justify-center font-semibold p-3 w-[40%] "
-                type="button"
-                onClick={() => {}}
+                className="bg-gray-300 rounded-md flex items-center justify-center font-semibold p-3 w-[40%] gap-x-2"
+                onClick={handleAddItem}
               >
-                <span className="mr-3">
-                  <RenderIcon iconName="PlusIcon" size={20} loading={6} />
-                </span>
-                Add Item
+                <RenderIcon iconName="PlusIcon" size={20} loading={6} />
+                <span>Add Item</span>
               </button>
             </div>
           </div>
 
           <div className="flex flex-col items-center w-full max-h-[500px] overflow-auto ">
-            {/* <span className="w-1/3"></span> */}
             {customOrderData.items.map((item, index) => (
               <div
                 key={index}
@@ -109,7 +225,7 @@ const CustomOrder = () => {
                     type="text"
                     name="itemName"
                     value={item.itemName}
-                    onChange={(e) => {}}
+                    onChange={(e) => handleItemChange(index, e)}
                     className="flex-grow p-3 outline-none rounded-md focus:outline-none border border-gray-300"
                   />
                 </div>
@@ -120,7 +236,16 @@ const CustomOrder = () => {
                     name="quantity"
                     type="text"
                     value={item.quantity}
-                    onChange={(e) => {}}
+                    onChange={(e) => handleItemChange(index, e)}
+                    onKeyDown={(e) => {
+                      if (
+                        !/^[0-9]$/.test(e.key) &&
+                        e.key !== "Backspace" &&
+                        e.key !== "Tab"
+                      ) {
+                        e.preventDefault();
+                      }
+                    }}
                     className="flex-grow p-2.5 me-3 rounded-md outline-none focus:outline-none border border-gray-300"
                   />
 
@@ -129,12 +254,27 @@ const CustomOrder = () => {
                     value={unitOptions.find(
                       (option) => option.value === item.unit
                     )}
-                    onChange={(option) => {}}
+                    onChange={(option) => handleItemChange(index, option)}
                     options={unitOptions}
                     placeholder="Unit"
-                    isClearable={false}
-                    isSearchable={false}
                     menuPortalTarget={document.body}
+                    styles={{
+                      control: (base) => ({
+                        ...base,
+                        padding: "5px",
+                        borderColor: "#d1d5db",
+                        borderRadius: "0.375rem",
+                        boxShadow: "none",
+                        "&:hover": {
+                          borderColor: "#a1a1aa",
+                        },
+                      }),
+                      valueContainer: (base) => ({
+                        ...base,
+                        padding: "0 8px",
+                      }),
+                      menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                    }}
                   />
                 </div>
 
@@ -144,7 +284,16 @@ const CustomOrder = () => {
                     name="numOfUnits"
                     type="text"
                     value={item.numOfUnits}
-                    onChange={(e) => {}}
+                    onChange={(e) => handleItemChange(index, e)}
+                    onKeyDown={(e) => {
+                      if (
+                        !/^[0-9]$/.test(e.key) &&
+                        e.key !== "Backspace" &&
+                        e.key !== "Tab"
+                      ) {
+                        e.preventDefault();
+                      }
+                    }}
                     className="flex-grow p-2.5 rounded-md outline-none focus:outline-none border border-gray-300"
                   />
                 </div>
@@ -164,13 +313,15 @@ const CustomOrder = () => {
                 <div className="flex justify-between mt-3 gap-3">
                   <input
                     type="file"
-                    name="adImage"
-                    id={`adImage-${index}`}
+                    name="itemImage"
+                    id={`itemImage-${index}`}
                     className="hidden"
-                    onChange={(e) => {}}
+                    accept="image/*"
+                    onChange={(e) => handleImageChange(index, e)}
                   />
+
                   <label
-                    htmlFor={`adImage-${index}`}
+                    htmlFor={`itemImage-${index}`}
                     className="bg-gray-300 w-1/2 rounded-md p-2 flex items-center justify-center gap-2 cursor-pointer"
                   >
                     <RenderIcon iconName="PlusIcon" size={20} loading={6} />
@@ -178,9 +329,8 @@ const CustomOrder = () => {
                   </label>
 
                   <button
-                    type="button"
                     className="bg-red-100 w-1/2 rounded-md p-2 flex items-center justify-center gap-2"
-                    onClick={() => {}}
+                    onClick={() => handleRemoveItem(index)}
                   >
                     <span className="text-red-500">
                       <RenderIcon iconName="DeleteIcon" size={20} loading={6} />
@@ -192,157 +342,35 @@ const CustomOrder = () => {
             ))}
           </div>
 
-          <div className="flex items-center">
-            <label className="w-1/3 px-6" htmlFor="agentinstructions">
-              Instructions to Delivery Agent
-            </label>
-            <input
-              className="h-10 ps-3 text-sm border-2 w-1/2 outline-none focus:outline-none"
+          <div className="flex items-start">
+            <label className="w-1/3 px-6">Instructions to Delivery Agent</label>
+            <textarea
+              row={5}
+              className="ps-3 pt-3 text-sm border-2 w-1/2 outline-none focus:outline-none resize-y overflow-auto rounded-md"
               type="text"
               placeholder="Instruction to agent"
               id="instructionInDelivery"
               name="instructionInDelivery"
               value={customOrderData.instructionInDelivery}
-              onChange={() => {}}
+              onChange={(e) =>
+                setCustomOrderData({
+                  ...customOrderData,
+                  instructionInDelivery: e.target.value,
+                })
+              }
             />
           </div>
 
-          <div className="flex items-center ">
-            <label className="w-1/3 px-6" htmlFor="address">
-              Select Delivery Address
-            </label>
+          <AddressSelection
+            address={address}
+            onAddressSelect={handleSelectAddress}
+            label="Select Delivery Address"
+          />
 
-            {allCustomerAddress?.length === 0 && <p>No address found</p>}
-
-            {allCustomerAddress?.length > 0 && (
-              <div className="">
-                {allCustomerAddress?.map((address, index) => (
-                  <input
-                    key={index}
-                    type="button"
-                    className={`py-2 px-4 me-2 rounded border capitalize cursor-pointer ${
-                      selectedAddress === address.type
-                        ? "bg-gray-300"
-                        : "bg-white"
-                    }`}
-                    value={address.type}
-                    onClick={() => {}}
-                  />
-                ))}
-
-                {selectedAddress === "other" && (
-                  <div
-                    className={`flex items-center gap-[20px] mt-[14px] py-2 max-w-[550px] overflow-x-auto ${
-                      isDragging ? "cursor-grabbing" : "cursor-grab"
-                    }`}
-                    onMouseDown={handleMouseDown}
-                    onMouseLeave={handleMouseLeave}
-                    onMouseUp={handleMouseUp}
-                    onMouseMove={handleMouseMove}
-                  >
-                    {data?.customerAddress
-                      .find((addr) => addr.type === "other")
-                      ?.otherAddress?.map((otherAddr) => (
-                        <div
-                          key={otherAddr.id}
-                          className="flex items-center gap-2 bg-gray-100 p-3 border-2 border-gray-300 rounded-md"
-                        >
-                          <input
-                            type="radio"
-                            name="otherAddress"
-                            value={otherAddr.id}
-                            checked={selectedOtherAddressId === otherAddr.id}
-                            onChange={() => {}}
-                          />
-                          <span className="flex flex-col w-[150px] gap-1 ms-2">
-                            <span>{otherAddr.flat}</span>
-                            <span>{otherAddr.area}</span>
-                            <span>{otherAddr.landmark}</span>
-                          </span>
-                        </div>
-                      ))}
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-
-          {selectedAddress === "home" && (
-            <div className="px-6 py-2 border-2 rounded-md ms-[33%] bg-gray-100 w-fit">
-              {data?.customerAddress.find((addr) => addr.type === "home")
-                ?.homeAddress && (
-                <div className="flex flex-col gap-1">
-                  <span>
-                    {
-                      data.customerAddress.find((addr) => addr.type === "home")
-                        .homeAddress.flat
-                    }
-                  </span>
-                  <span>
-                    {
-                      data.customerAddress.find((addr) => addr.type === "home")
-                        .homeAddress.area
-                    }
-                  </span>
-                  <span>
-                    {
-                      data.customerAddress.find((addr) => addr.type === "home")
-                        .homeAddress.landmark
-                    }
-                  </span>
-                </div>
-              )}
-            </div>
-          )}
-
-          {selectedAddress === "work" && (
-            <div className="px-6 py-2 border-2 rounded-md ms-[33%] bg-gray-100 w-fit">
-              {data?.customerAddress.find((addr) => addr.type === "work")
-                ?.workAddress && (
-                <div className="flex flex-col gap-1">
-                  <span>
-                    {
-                      data.customerAddress.find((addr) => addr.type === "work")
-                        .workAddress.flat
-                    }
-                  </span>
-                  <span>
-                    {
-                      data.customerAddress.find((addr) => addr.type === "work")
-                        .workAddress.area
-                    }
-                  </span>
-                  <span>
-                    {
-                      data.customerAddress.find((addr) => addr.type === "work")
-                        .workAddress.landmark
-                    }
-                  </span>
-                </div>
-              )}
-            </div>
-          )}
-
-          <div>
-            <div className=" flex">
-              <label className="w-1/3"></label>
-              <button
-                type="button"
-                className="w-1/2 bg-gray-200 font-semibold py-2 rounded flex justify-between items-center px-4 border border-gray-300"
-                onClick={() => {}}
-              >
-                <span>Add Address</span>
-                <renderIcon iconName="PlusIcon" size={20} loading={6} />
-              </button>
-            </div>
-
-            {isFormVisible && (
-              <MapModal onAddCustomerAddress={""} BASE_URL={""} token={""} />
-            )}
-          </div>
+          <AddAddress onNewAddress={handleNewDeliveryAddress} />
 
           <div className="flex items-center">
-            <label className="w-1/3 px-6" htmlFor="tips">
+            <label className="w-1/3 px-6 text-gray-700" htmlFor="tips">
               Tips
             </label>
             <input
@@ -351,24 +379,37 @@ const CustomOrder = () => {
               placeholder="Add Tip"
               name="addedTip"
               value={customOrderData.addedTip}
-              onChange={() => {}}
+              onChange={(e) =>
+                setCustomOrderData({
+                  ...customOrderData,
+                  addedTip: e.target.value,
+                })
+              }
+              onKeyDown={(e) => {
+                if (
+                  !/^[0-9]$/.test(e.key) &&
+                  e.key !== "Backspace" &&
+                  e.key !== "Tab"
+                ) {
+                  e.preventDefault();
+                }
+              }}
             />
           </div>
         </div>
 
         <div className="flex justify-end">
           <button
-            type="submit"
-            onClick={() => {}}
+            onClick={() => handleCreateInvoice.mutate()}
             className="ms-auto me-[6rem] xl:me-[12rem] my-[30px] bg-teal-700 text-white py-2 px-4 rounded-md capitalize"
           >
-            Create invoice
+            {handleCreateInvoice.isPending ? `Creating...` : `Create invoice`}
           </button>
         </div>
-      </form>
+      </div>
 
-      {cartData?.items && <ShowBill data={cartData} />}
-    </div>
+      {showBill && <ShowBill data={cartData} />}
+    </>
   );
 };
 
