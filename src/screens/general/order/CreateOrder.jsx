@@ -101,7 +101,7 @@ const CreateOrder = () => {
           {role === "Admin" && (
             <>
               {topData?.deliveryMode === "Pick and Drop" && (
-                <PickAndDrop data={topData} />
+                <PickAndDrop data={topData} address={address} />
               )}
 
               {topData?.deliveryMode === "Custom Order" && (

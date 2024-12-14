@@ -155,6 +155,7 @@ const HomeDelivery = ({ data, address }) => {
         <AddressSelection
           address={address}
           onAddressSelect={handleSelectAddress}
+          label="Select Delivery Address"
         />
 
         <AddAddress onNewAddress={handleNewCustomerAddress} />

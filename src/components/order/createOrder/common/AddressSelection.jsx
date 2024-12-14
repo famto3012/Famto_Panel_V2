@@ -7,7 +7,7 @@ import {
   RadioCardRoot,
 } from "@/components/ui/radio-card";
 
-const AddressSelection = ({ address, onAddressSelect }) => {
+const AddressSelection = ({ address, onAddressSelect, label }) => {
   const [selectedAddress, setSelectedAddress] = useState({
     type: null,
     otherAddressId: null,
@@ -28,9 +28,9 @@ const AddressSelection = ({ address, onAddressSelect }) => {
   return (
     <>
       {address?.length > 0 && (
-        <div className="flex items-start ">
+        <div className="flex items-start mb-5">
           <label className="w-1/3 px-6" htmlFor="address">
-            Select Delivery Address
+            {label}
           </label>
 
           <div className="">
