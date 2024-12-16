@@ -1,6 +1,8 @@
-import { useState, useRef, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import ReactCrop, { centerCrop, makeAspectCrop } from "react-image-crop";
+
 import "react-image-crop/dist/ReactCrop.css";
+
 import {
   DialogBody,
   DialogCloseTrigger,
@@ -11,7 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
-function centerAspectCrop(mediaWidth, mediaHeight, aspect) {
+const centerAspectCrop = (mediaWidth, mediaHeight, aspect) => {
   return centerCrop(
     makeAspectCrop(
       {
@@ -25,25 +27,29 @@ function centerAspectCrop(mediaWidth, mediaHeight, aspect) {
     mediaWidth,
     mediaHeight
   );
-}
+};
 
-export default function CropImage({
+const CropImage = ({
+  isOpen,
+  onClose,
   selectedImage,
   aspectRatio,
   onCropComplete,
-  isOpen,
-  onClose,
-}) {
+}) => {
   const [imgSrc, setImgSrc] = useState(null);
-  const imgRef = useRef(null);
   const [crop, setCrop] = useState(null);
   const [completedCrop, setCompletedCrop] = useState(null);
-  const [aspect, setAspect] = useState(aspectRatio || 1 / 1);
+
+  const imgRef = useRef(null);
+  const aspect = aspectRatio || 1 / 1;
 
   useEffect(() => {
     if (selectedImage) {
       const reader = new FileReader();
-      reader.onload = () => setImgSrc(reader.result);
+      reader.onload = () => {
+        setImgSrc(reader.result);
+        document.querySelector('input[type="file"]').value = "";
+      };
       reader.readAsDataURL(selectedImage);
     }
   }, [selectedImage]);
@@ -55,7 +61,7 @@ export default function CropImage({
     }
   }
 
-  async function handleCropConfirm() {
+  const handleCropConfirm = () => {
     if (!imgRef.current || !completedCrop) return;
 
     const canvas = document.createElement("canvas");
@@ -79,19 +85,17 @@ export default function CropImage({
 
     canvas.toBlob((blob) => {
       if (!blob) return;
+
       const croppedImageFile = new File(
         [blob],
-        `${blob.size}-croppedImage.png`,
+        `${blob.size}-${selectedImage.name}.png`,
         { type: "image/png" }
       );
-      onCropComplete(croppedImageFile);
 
-      setImgSrc(null);
-      setCrop(null);
-      setCompletedCrop(null);
+      onCropComplete(croppedImageFile);
       handleClose();
     });
-  }
+  };
 
   const handleClose = () => {
     setImgSrc(null);
@@ -100,46 +104,44 @@ export default function CropImage({
   };
 
   return (
-    selectedImage && (
-      <DialogRoot
-        open={isOpen}
-        onInteractOutside={onClose}
-        placement="center"
-        motionPreset="slide-in-bottom"
-      >
-        <DialogContent>
-          <DialogCloseTrigger onClick={onClose} />
-          <DialogHeader className="text-[16px] font-[600]">
-            Crop image
-          </DialogHeader>
-          <DialogBody>
-            {!!imgSrc && (
-              <ReactCrop
-                crop={crop}
-                onChange={(_, percentCrop) => setCrop(percentCrop)}
-                onComplete={(c) => setCompletedCrop(c)}
-                aspect={aspect}
-              >
-                <img
-                  ref={imgRef}
-                  alt="Crop me"
-                  src={imgSrc}
-                  style={{ maxWidth: "100%" }}
-                  onLoad={onImageLoad}
-                />
-              </ReactCrop>
-            )}
-          </DialogBody>
-          <DialogFooter>
-            <Button
-              onClick={handleCropConfirm}
-              className="h-[30px] w-[100px] bg-teal-500 text-white rounded-md mt-4"
+    <DialogRoot
+      open={isOpen}
+      onInteractOutside={onClose}
+      placement="center"
+      motionPreset="slide-in-bottom"
+    >
+      <DialogContent>
+        <DialogCloseTrigger onClick={onClose} />
+        <DialogHeader></DialogHeader>
+        <DialogBody>
+          {imgSrc && (
+            <ReactCrop
+              crop={crop}
+              onChange={(_, percentCrop) => setCrop(percentCrop)}
+              onComplete={(c) => setCompletedCrop(c)}
+              aspect={aspect}
             >
-              Confirm
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </DialogRoot>
-    )
+              <img
+                ref={imgRef}
+                alt="Crop"
+                src={imgSrc}
+                style={{ maxWidth: "100%" }}
+                onLoad={onImageLoad}
+              />
+            </ReactCrop>
+          )}
+        </DialogBody>
+        <DialogFooter>
+          <Button
+            onClick={handleCropConfirm}
+            className="h-[30px] w-[100px] bg-teal-500 text-white rounded-md mt-4"
+          >
+            Confirm
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </DialogRoot>
   );
-}
+};
+
+export default CropImage;

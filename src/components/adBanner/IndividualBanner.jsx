@@ -72,15 +72,10 @@ const IndividualBanner = () => {
     allMerchants && setSelectedMerchant(allMerchants[0]?._id);
   }, [allMerchants]);
 
-  const merchantOptions = [
-    { label: "All", value: "all" },
-    ...(Array.isArray(allMerchants)
-      ? allMerchants.map((merchant) => ({
-          label: merchant.merchantName,
-          value: merchant._id,
-        }))
-      : []),
-  ];
+  const merchantOptions = allMerchants?.map((merchant) => ({
+    label: merchant.merchantName,
+    value: merchant._id,
+  }));
 
   const toggleModal = (type, id = null) => {
     setSelectedId(id);

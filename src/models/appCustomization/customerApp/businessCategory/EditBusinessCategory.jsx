@@ -10,11 +10,14 @@ import {
   DialogHeader,
   DialogTitle,
   DialogBody,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { toaster } from "@/components/ui/toaster";
+import { Button } from "@/components/ui/button";
 
 import RenderIcon from "@/icons/RenderIcon";
 
+import CropImage from "@/components/others/CropImage";
 import ModalLoader from "@/components/others/ModalLoader";
 import Error from "@/components/others/Error";
 
@@ -30,8 +33,9 @@ const EditBusinessCategory = ({ isOpen, onClose, categoryId }) => {
     geofenceId: [],
     bannerImageURL: "",
   });
-  const [previewURL, setPreviewURL] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [croppedFile, setCroppedFile] = useState(null);
+  const [showCrop, setShowCrop] = useState(false);
 
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -66,8 +70,7 @@ const EditBusinessCategory = ({ isOpen, onClose, categoryId }) => {
         title: "",
         geofenceId: [],
       });
-      setPreviewURL(null);
-      setSelectedFile(null);
+      setCroppedFile(null);
       onClose();
       toaster.create({
         title: "Success",
@@ -75,11 +78,16 @@ const EditBusinessCategory = ({ isOpen, onClose, categoryId }) => {
         type: "success",
       });
     },
-    onError: (data) => {
+    onError: (error) => {
+      const errorData = error || { message: "An unexpected error occurred" };
+
+      const formattedErrors = Object.entries(errorData)
+        .map(([_, msg]) => `• ${msg}`)
+        .join("\n");
+
       toaster.create({
         title: "Error",
-        description:
-          data?.message || "Error while updating business category detail",
+        description: formattedErrors,
         type: "error",
       });
     },
@@ -98,7 +106,7 @@ const EditBusinessCategory = ({ isOpen, onClose, categoryId }) => {
       }
     });
 
-    selectedFile && formDataObject.append("bannerImage", selectedFile);
+    croppedFile && formDataObject.append("bannerImage", croppedFile);
 
     handleEditCategory.mutate({ categoryId, formDataObject });
   };
@@ -109,13 +117,21 @@ const EditBusinessCategory = ({ isOpen, onClose, categoryId }) => {
   }));
 
   const handleSelectFile = (e) => {
-    e.preventDefault();
     const file = e.target.files[0];
-
     if (file) {
       setSelectedFile(file);
-      setPreviewURL(URL.createObjectURL(file));
+      setShowCrop(true);
     }
+  };
+
+  const handleCropImage = (file) => {
+    setCroppedFile(file);
+    cancelCrop();
+  };
+
+  const cancelCrop = () => {
+    setSelectedFile(null);
+    setShowCrop(false);
   };
 
   const showLoading = geofenceLoading || isLoading;
@@ -187,7 +203,11 @@ const EditBusinessCategory = ({ isOpen, onClose, categoryId }) => {
                 <div className="flex items-center w-2/3 gap-[30px]">
                   <figure className="h-16 w-16 rounded-md">
                     <img
-                      src={previewURL || formData?.bannerImageURL}
+                      src={
+                        croppedFile
+                          ? URL.createObjectURL(croppedFile)
+                          : formData?.bannerImageURL
+                      }
                       alt={formData?.title}
                       className="h-full w-full object-cover rounded-md"
                     />
@@ -209,25 +229,33 @@ const EditBusinessCategory = ({ isOpen, onClose, categoryId }) => {
                   </label>
                 </div>
               </div>
-
-              <div className="flex justify-end mt-[20px] gap-4">
-                <button
-                  className="bg-gray-300 rounded-lg px-6 py-2 font-semibold justify-end"
-                  onClick={onClose}
-                >
-                  Cancel
-                </button>
-                <button
-                  disabled={handleEditCategory.isPending}
-                  className="bg-teal-800 rounded-lg px-6 py-2 text-white font-semibold justify-end"
-                  onClick={handleSave}
-                >
-                  {handleEditCategory.isPending ? `Saving...` : `Save`}
-                </button>
-              </div>
             </div>
           )}
+
+          {/* Crop Modal */}
+          <CropImage
+            isOpen={showCrop && selectedFile}
+            onClose={() => {
+              setSelectedFile(null);
+              setShowCrop(false);
+            }}
+            selectedImage={selectedFile}
+            onCropComplete={handleCropImage}
+          />
         </DialogBody>
+
+        <DialogFooter>
+          <Button
+            onClick={onClose}
+            className="bg-gray-200 p-2 text-black outline-none focus:outline-none"
+          >
+            Cancel
+          </Button>
+
+          <Button className="bg-teal-700 p-2 text-white" onClick={handleSave}>
+            {handleEditCategory.isPending ? `Saving...` : `Save`}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </DialogRoot>
   );

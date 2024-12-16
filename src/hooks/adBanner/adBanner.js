@@ -5,7 +5,9 @@ import useApiClient from "@/api/apiClient";
 export const fetchAllIndividualBanner = async (merchantId, navigate) => {
   try {
     const api = useApiClient(navigate);
-    const res = await api.get(`/admin/banner/get-banner/${merchantId}`);
+    const res = await api.get(
+      `/admin/banner/get-banner/merchant/${merchantId}`
+    );
 
     return res.status === 200 ? res.data.data : [];
   } catch (err) {
@@ -25,18 +27,21 @@ export const createNewIndividualBanner = async (bannerData, navigate) => {
 
     return res.status === 201 ? res.data.message : null;
   } catch (err) {
-    console.error(`Error in creating new merchant banner: ${err}`);
-    throw new Error(
-      err.response?.data?.message || "Failed to update new merchant banner"
+    throw (
+      err.response?.data?.errors || {
+        message: "Failed to update new merchant banner",
+      }
     );
   }
 };
 
 export const fetchSingleIndividualBanner = async (bannerId, navigate) => {
   try {
+    console.log(bannerId);
     const api = useApiClient(navigate);
     const res = await api.get(`/admin/banner/get-banner/${bannerId}`);
 
+    console.log(res.data);
     return res.status === 200 ? res.data.data : null;
   } catch (err) {
     console.error(`Error in fetching merchant banner detail: ${err}`);

@@ -28,6 +28,7 @@ import {
   fetchSingleProductDetail,
   updateProductDetail,
 } from "@/hooks/product/useProduct";
+import CropImage from "@/components/others/CropImage";
 
 const EditProduct = ({ isOpen, onClose, merchantId }) => {
   const [formData, setFormData] = useState({
@@ -46,10 +47,13 @@ const EditProduct = ({ isOpen, onClose, merchantId }) => {
     type: "",
     availableQuantity: "",
     alert: "",
+    productImageURL: "",
   });
+  const [croppedFile, setCroppedFile] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
-  const [previewURL, setPreviewURL] = useState(null);
   const [tagValue, setTagValue] = useState("");
+
+  const [showCrop, setShowCrop] = useState(false);
 
   const inputRef = useRef(null);
 
@@ -81,6 +85,7 @@ const EditProduct = ({ isOpen, onClose, merchantId }) => {
 
   useEffect(() => {
     productData && setFormData(productData);
+    console.log(productData);
   }, [productData]);
 
   const discountOptions = discountData?.map((discount) => ({
@@ -138,8 +143,18 @@ const EditProduct = ({ isOpen, onClose, merchantId }) => {
     const file = e.target.files[0];
     if (file) {
       setSelectedFile(file);
-      setPreviewURL(URL.createObjectURL(file));
+      setShowCrop(true);
     }
+  };
+
+  const handleCropImage = (file) => {
+    setCroppedFile(file);
+    cancelCrop();
+  };
+
+  const cancelCrop = () => {
+    setSelectedFile(null);
+    setShowCrop(false);
   };
 
   const handleEditProduct = useMutation({
@@ -148,6 +163,8 @@ const EditProduct = ({ isOpen, onClose, merchantId }) => {
       updateProductDetail(selectedProduct.productId, data, navigate),
     onSuccess: () => {
       queryClient.invalidateQueries(["all-product"]);
+      setFormData({});
+      setCroppedFile(null);
       onClose();
       toaster.create({
         title: "Success",
@@ -187,7 +204,7 @@ const EditProduct = ({ isOpen, onClose, merchantId }) => {
       }
     }
 
-    selectedFile && formDataObject.append("productImage", selectedFile);
+    croppedFile && formDataObject.append("productImage", croppedFile);
 
     Object.entries(formData).forEach(([key, value]) => {
       appendFormData(value, key);
@@ -474,12 +491,16 @@ const EditProduct = ({ isOpen, onClose, merchantId }) => {
                 </label>
 
                 <div className=" flex items-center gap-[30px]">
-                  {!previewURL ? (
-                    <div className="h-[66px] w-[66px] bg-gray-200 rounded-md "></div>
+                  {!croppedFile && !formData?.productImageURL ? (
+                    <div className="h-[66px] w-[66px] bg-gray-300 rounded-md "></div>
                   ) : (
                     <figure className="h-[66px] w-[66px] rounded-md">
                       <img
-                        src={previewURL}
+                        src={
+                          croppedFile
+                            ? URL?.createObjectURL(croppedFile)
+                            : formData?.productImageURL
+                        }
                         alt={formData.productName}
                         className="w-full h-full object-cover"
                       />
@@ -503,6 +524,18 @@ const EditProduct = ({ isOpen, onClose, merchantId }) => {
               </div>
             </div>
           )}
+
+          {/* Crop Modal */}
+          <CropImage
+            isOpen={showCrop && selectedFile}
+            onClose={() => {
+              s;
+              setSelectedFile(null);
+              setShowCrop(false);
+            }}
+            selectedImage={selectedFile}
+            onCropComplete={handleCropImage}
+          />
         </DialogBody>
 
         <DialogFooter>

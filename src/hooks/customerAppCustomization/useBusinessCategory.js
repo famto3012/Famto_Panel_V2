@@ -41,8 +41,10 @@ export const createNewBusinessCategory = async (data, navigate) => {
     return res.status === 201 ? res.data.message : null;
   } catch (err) {
     console.error(`Error in creating new business category: ${err}`);
-    throw new Error(
-      err.response?.data?.message || "Failed to create new business category"
+    throw (
+      err.response?.data?.errors || {
+        message: "Failed to create new business category",
+      }
     );
   }
 };
@@ -78,9 +80,10 @@ export const updateBusinessCategoryDetail = async (
 
     return res.status === 200 ? res.data.message : null;
   } catch (err) {
-    console.error(`Error in updating business category detail: ${err}`);
-    throw new Error(
-      err.response?.data?.message || "Failed to update business category detail"
+    throw (
+      err.response?.data?.errors || {
+        message: "Failed to update business category",
+      }
     );
   }
 };

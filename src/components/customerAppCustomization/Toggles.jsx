@@ -9,6 +9,7 @@ import { toaster } from "@/components/ui/toaster";
 
 import Loader from "@/components/others/Loader";
 import Error from "@/components/others/Error";
+import CropImage from "@/components/others/CropImage";
 
 import RenderIcon from "@/icons/RenderIcon";
 
@@ -42,8 +43,9 @@ const Toggles = () => {
       taxId: null,
     },
   });
-  const [previewURL, setPreviewURL] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [croppedFile, setCroppedFile] = useState(null);
+  const [showCrop, setShowCrop] = useState(false);
   const [showButton, setShowButton] = useState(false);
 
   const navigate = useNavigate();
@@ -71,7 +73,9 @@ const Toggles = () => {
     mutationKey: ["update-customer-app-customization"],
     mutationFn: (data) => updateCustomizationData(data, navigate),
     onSuccess: () => {
-      queryClient.invalidateQueries(["all-service"]);
+      setCroppedFile(null);
+      queryClient.invalidateQueries(["customer-app-customization"]);
+      setShowButton(false);
       toaster.create({
         title: "Success",
         description: "Customization updated",
@@ -103,7 +107,7 @@ const Toggles = () => {
       }
     });
 
-    selectedFile && formData.append("splashScreenImage", selectedFile);
+    croppedFile && formDataObject.append("splashScreenImage", croppedFile);
 
     handleUpdateMutation.mutate(formDataObject);
   };
@@ -113,13 +117,16 @@ const Toggles = () => {
   }, [data]);
 
   useEffect(() => {
-    if (data) {
+    if (data || croppedFile) {
       const isModified = Object.keys(formData).some(
         (key) => formData[key] !== data[key]
       );
-      setShowButton(isModified);
+
+      const haveCroppedFile = !!croppedFile;
+
+      setShowButton(isModified || haveCroppedFile);
     }
-  }, [formData, data]);
+  }, [formData, data, croppedFile]);
 
   const taxOptions = allTax?.map((tax) => ({
     label: tax.taxName,
@@ -127,13 +134,21 @@ const Toggles = () => {
   }));
 
   const handleSelectFile = (e) => {
-    e.preventDefault();
     const file = e.target.files[0];
-
     if (file) {
       setSelectedFile(file);
-      setPreviewURL(URL.createObjectURL(file));
+      setShowCrop(true);
     }
+  };
+
+  const handleCropImage = (file) => {
+    setCroppedFile(file);
+    cancelCrop();
+  };
+
+  const cancelCrop = () => {
+    setSelectedFile(null);
+    setShowCrop(false);
   };
 
   const toggleChange = (type) => {
@@ -159,12 +174,16 @@ const Toggles = () => {
         </div>
 
         <div className="flex w-44 gap-[30px]">
-          {!formData?.splashScreenUrl ? (
+          {!croppedFile && !formData?.splashScreenUrl ? (
             <div className="h-[66px] w-[66px] bg-gray-200 rounded-md"></div>
           ) : (
             <figure className="h-16 w-16 rounded-md">
               <img
-                src={previewURL || formData?.splashScreenUrl}
+                src={
+                  croppedFile
+                    ? URL.createObjectURL(croppedFile)
+                    : formData?.splashScreenUrl
+                }
                 alt="Splash screen"
                 className="w-full rounded h-full object-cover"
               />
@@ -514,6 +533,18 @@ const Toggles = () => {
           {handleUpdateMutation.isPending ? "Saving..." : "Save Changes"}
         </button>
       </div>
+
+      {/* Crop Modal */}
+      <CropImage
+        isOpen={showCrop && selectedFile}
+        onClose={() => {
+          setSelectedFile(null);
+          setShowCrop(false);
+        }}
+        aspectRatio={9 / 16}
+        selectedImage={selectedFile}
+        onCropComplete={handleCropImage}
+      />
     </>
   );
 };

@@ -10,13 +10,16 @@ import {
   DialogHeader,
   DialogTitle,
   DialogBody,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { toaster } from "@/components/ui/toaster";
+import { Button } from "@/components/ui/button";
 
 import RenderIcon from "@/icons/RenderIcon";
 
 import ModalLoader from "@/components/others/ModalLoader";
 import Error from "@/components/others/Error";
+import CropImage from "@/components/others/CropImage";
 
 import { getAllGeofence } from "@/hooks/geofence/useGeofence";
 import { createNewBusinessCategory } from "@/hooks/customerAppCustomization/useBusinessCategory";
@@ -26,8 +29,9 @@ const AddBusinessCategory = ({ isOpen, onClose }) => {
     title: "",
     geofenceId: [],
   });
-  const [previewURL, setPreviewURL] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [croppedFile, setCroppedFile] = useState(null);
+  const [showCrop, setShowCrop] = useState(false);
 
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -51,8 +55,7 @@ const AddBusinessCategory = ({ isOpen, onClose }) => {
         title: "",
         geofenceId: [],
       });
-      setPreviewURL(null);
-      setSelectedFile(null);
+      setCroppedFile(null);
       onClose();
       toaster.create({
         title: "Success",
@@ -60,11 +63,16 @@ const AddBusinessCategory = ({ isOpen, onClose }) => {
         type: "success",
       });
     },
-    onError: (data) => {
+    onError: (error) => {
+      const errorData = error || { message: "An unexpected error occurred" };
+
+      const formattedErrors = Object.entries(errorData)
+        .map(([_, msg]) => `• ${msg}`)
+        .join("\n");
+
       toaster.create({
         title: "Error",
-        description:
-          data?.message || "Error while creating new business category",
+        description: formattedErrors,
         type: "error",
       });
     },
@@ -83,7 +91,7 @@ const AddBusinessCategory = ({ isOpen, onClose }) => {
       }
     });
 
-    selectedFile && formDataObject.append("bannerImage", selectedFile);
+    croppedFile && formDataObject.append("bannerImage", croppedFile);
 
     handleAddCategory.mutate(formDataObject);
   };
@@ -94,13 +102,21 @@ const AddBusinessCategory = ({ isOpen, onClose }) => {
   }));
 
   const handleSelectFile = (e) => {
-    e.preventDefault();
     const file = e.target.files[0];
-
     if (file) {
       setSelectedFile(file);
-      setPreviewURL(URL.createObjectURL(file));
+      setShowCrop(true);
     }
+  };
+
+  const handleCropImage = (file) => {
+    setCroppedFile(file);
+    cancelCrop();
+  };
+
+  const cancelCrop = () => {
+    setSelectedFile(null);
+    setShowCrop(false);
   };
 
   return (
@@ -167,12 +183,12 @@ const AddBusinessCategory = ({ isOpen, onClose }) => {
                 </label>
 
                 <div className="flex items-center w-2/3 gap-[30px]">
-                  {!previewURL ? (
+                  {!croppedFile ? (
                     <div className="bg-gray-400 h-16 w-16 rounded-md" />
                   ) : (
                     <figure className="h-16 w-16 rounded-md">
                       <img
-                        src={previewURL}
+                        src={URL.createObjectURL(croppedFile)}
                         alt={formData?.title}
                         className="h-full w-full object-cover rounded-md"
                       />
@@ -195,25 +211,33 @@ const AddBusinessCategory = ({ isOpen, onClose }) => {
                   </label>
                 </div>
               </div>
-
-              <div className="flex justify-end mt-[20px] gap-4">
-                <button
-                  className="bg-gray-300 rounded-lg px-6 py-2 font-semibold justify-end"
-                  onClick={onClose}
-                >
-                  Cancel
-                </button>
-                <button
-                  disabled={handleAddCategory.isPending}
-                  className="bg-teal-800 rounded-lg px-6 py-2 text-white font-semibold justify-end"
-                  onClick={handleSave}
-                >
-                  {handleAddCategory.isPending ? `Saving...` : `Save`}
-                </button>
-              </div>
             </div>
           )}
+
+          {/* Crop Modal */}
+          <CropImage
+            isOpen={showCrop && selectedFile}
+            onClose={() => {
+              setSelectedFile(null);
+              setShowCrop(false);
+            }}
+            selectedImage={selectedFile}
+            onCropComplete={handleCropImage}
+          />
         </DialogBody>
+
+        <DialogFooter>
+          <Button
+            onClick={onClose}
+            className="bg-gray-200 p-2 text-black outline-none focus:outline-none"
+          >
+            Cancel
+          </Button>
+
+          <Button className="bg-teal-700 p-2 text-white" onClick={handleSave}>
+            {handleAddCategory.isPending ? `Saving...` : `Save`}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </DialogRoot>
   );

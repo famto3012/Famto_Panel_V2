@@ -25,6 +25,7 @@ import Error from "@/components/others/Error";
 
 import { fetchAllProductDiscount } from "@/hooks/discount/useDiscount";
 import { createNewProduct } from "@/hooks/product/useProduct";
+import CropImage from "@/components/others/CropImage";
 
 const AddProduct = ({ isOpen, onClose, merchantId }) => {
   const [formData, setFormData] = useState({
@@ -44,9 +45,11 @@ const AddProduct = ({ isOpen, onClose, merchantId }) => {
     availableQuantity: "",
     alert: "",
   });
+  const [croppedFile, setCroppedFile] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
-  const [previewURL, setPreviewURL] = useState(null);
   const [tagValue, setTagValue] = useState("");
+
+  const [showCrop, setShowCrop] = useState(false);
 
   const inputRef = useRef(null);
 
@@ -124,8 +127,18 @@ const AddProduct = ({ isOpen, onClose, merchantId }) => {
     const file = e.target.files[0];
     if (file) {
       setSelectedFile(file);
-      setPreviewURL(URL.createObjectURL(file));
+      setShowCrop(true);
     }
+  };
+
+  const handleCropImage = (file) => {
+    setCroppedFile(file);
+    cancelCrop();
+  };
+
+  const cancelCrop = () => {
+    setSelectedFile(null);
+    setShowCrop(false);
   };
 
   const handleAddProduct = useMutation({
@@ -172,7 +185,7 @@ const AddProduct = ({ isOpen, onClose, merchantId }) => {
       }
     }
 
-    selectedFile && formDataObject.append("productImage", selectedFile);
+    croppedFile && formDataObject.append("productImage", croppedFile);
 
     Object.entries(formData).forEach(([key, value]) => {
       appendFormData(value, key);
@@ -457,12 +470,12 @@ const AddProduct = ({ isOpen, onClose, merchantId }) => {
                 </label>
 
                 <div className=" flex items-center gap-[30px]">
-                  {!previewURL ? (
+                  {!croppedFile ? (
                     <div className="h-[66px] w-[66px] bg-gray-200 rounded-md "></div>
                   ) : (
                     <figure className="h-[66px] w-[66px] rounded-md">
                       <img
-                        src={previewURL}
+                        src={URL.createObjectURL(croppedFile)}
                         alt={formData.productName}
                         className="w-full h-full object-cover"
                       />
@@ -486,6 +499,17 @@ const AddProduct = ({ isOpen, onClose, merchantId }) => {
               </div>
             </div>
           )}
+
+          {/* Crop Modal */}
+          <CropImage
+            isOpen={showCrop && selectedFile}
+            onClose={() => {
+              setSelectedFile(null);
+              setShowCrop(false);
+            }}
+            selectedImage={selectedFile}
+            onCropComplete={handleCropImage}
+          />
         </DialogBody>
 
         <DialogFooter>
