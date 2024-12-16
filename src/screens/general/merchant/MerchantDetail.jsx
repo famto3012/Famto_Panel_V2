@@ -29,7 +29,6 @@ import EditMerchant from "@/models/general/merchant/EditMerchant";
 import BlockMerchant from "@/models/general/merchant/BlockMerchant";
 import DeleteMerchant from "@/models/general/merchant/DeleteMerchant";
 
-// TODO: Need to implement map modal
 const MerchantDetail = () => {
   const [formData, setFormData] = useState({});
   const [modal, setModal] = useState({
@@ -159,44 +158,49 @@ const MerchantDetail = () => {
 
         <div className="flex items-center gap-[15px] ">
           {role === "Admin" && !formData.isBlocked && (
-            <>
-              <Link
-                onClick={() => toggleModal("block")}
-                className="flex gap-2 items-center bg-yellow-100 py-2 px-5 rounded-md"
-              >
-                <span className="text-red-500">
-                  <RenderIcon iconName="BlockIcon" size={16} loading={6} />
-                </span>
-                <span>Block</span>
-              </Link>
-
-              <button
-                onClick={() => toggleModal("edit")}
-                className="bg-teal-600 text-white flex items-center gap-[10px] py-2 px-1.5 rounded"
-              >
-                <RenderIcon iconName="EditIcon" size={16} loading={6} />
-                Edit Merchant
-              </button>
-
-              <button
-                onClick={() => toggleModal("delete")}
-                className="bg-red-500 text-white rounded-md p-2"
-              >
-                Delete
-              </button>
-
-              <span>Status</span>
-              <Switch
-                disabled={
-                  formData.isApproved === "Pending" ||
-                  handleUpdateStatusMutation.isPending
-                }
-                colorPalette="teal"
-                value={formData?.status}
-                onCheckedChange={() => handleUpdateStatusMutation.mutate()}
-              />
-            </>
+            <Link
+              onClick={() => toggleModal("block")}
+              className="flex gap-2 items-center bg-yellow-100 py-2 px-5 rounded-md"
+            >
+              <span className="text-red-500">
+                <RenderIcon iconName="BlockIcon" size={16} loading={6} />
+              </span>
+              <span>Block</span>
+            </Link>
           )}
+
+          <>
+            <button
+              onClick={() => toggleModal("edit")}
+              className="bg-teal-600 text-white flex items-center gap-[10px] py-2 px-1.5 rounded"
+            >
+              <RenderIcon iconName="EditIcon" size={16} loading={6} />
+              {role === "Admin" ? `Edit Merchant` : `Change password`}
+            </button>
+
+            {role === "Admin" && (
+              <>
+                <button
+                  onClick={() => toggleModal("delete")}
+                  className="bg-red-500 text-white rounded-md p-2"
+                >
+                  Delete
+                </button>
+
+                <span>Status</span>
+                <Switch
+                  disabled={
+                    formData.isApproved === "Pending" ||
+                    formData.isBlocked ||
+                    handleUpdateStatusMutation.isPending
+                  }
+                  colorPalette="teal"
+                  value={formData?.status}
+                  onCheckedChange={() => handleUpdateStatusMutation.mutate()}
+                />
+              </>
+            )}
+          </>
         </div>
       </div>
 

@@ -76,12 +76,8 @@ const AllMerchantsTable = ({ filter }) => {
         <Table.Body>
           {isLoading ? (
             <Table.Row className="h-[70px]">
-              <Table.Cell
-                colSpan={9}
-                textAlign="center"
-                className="flex items-center gap-2 justify-center"
-              >
-                <ShowSpinner /> Loading...
+              <Table.Cell colSpan={9} textAlign="center">
+                <ShowSpinner /> <span>Loading...</span>
               </Table.Cell>
             </Table.Row>
           ) : isError ? (

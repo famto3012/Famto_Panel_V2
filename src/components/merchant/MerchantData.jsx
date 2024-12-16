@@ -10,6 +10,7 @@ import RenderIcon from "@/icons/RenderIcon";
 import { getAllGeofence } from "@/hooks/geofence/useGeofence";
 
 import MerchantRating from "@/models/general/merchant/MerchantRating";
+import Map from "@/models/common/Map";
 
 const MerchantData = ({ detail, onDataChange }) => {
   const [modal, setModal] = useState({
@@ -320,10 +321,21 @@ const MerchantData = ({ detail, onDataChange }) => {
           <label className="text-gray-700 w-1/3">Location</label>
           <button
             type="button"
-            onClick={() => {}}
-            className={`font-medium text-start rounded-md py-2 w-2/3 flex items-center justify-center gap-2 me-1`}
+            onClick={() => toggleModal("map")}
+            className={`font-medium text-start rounded-md py-2 w-2/3 flex items-center justify-center gap-2 me-1 border-2 border-teal-700 ${
+              detail?.merchantDetail?.location?.every((item) => !isNaN(item)) &&
+              detail?.merchantDetail?.location?.length === 2
+                ? "bg-teal-700 text-white"
+                : "text-teal-700"
+            }`}
           >
-            <span>Mark Location</span>
+            <span>
+              {detail?.merchantDetail?.location?.every(
+                (item) => !isNaN(item)
+              ) && detail?.merchantDetail?.location?.length === 2
+                ? "Location Marked"
+                : "Mark Location"}
+            </span>
             <RenderIcon iconName="LocationIcon" size={16} loading={6} />
           </button>
 
@@ -356,6 +368,21 @@ const MerchantData = ({ detail, onDataChange }) => {
         isOpen={modal.rating}
         onClose={closeModal}
         data={detail?.merchantDetail?.ratingByCustomers}
+      />
+
+      <Map
+        isOpen={modal.map}
+        onClose={closeModal}
+        onLocationSelect={(data) => {
+          onDataChange({
+            ...detail,
+            merchantDetail: {
+              ...detail.merchantDetail,
+              location: data,
+            },
+          });
+        }}
+        oldLocation={detail?.merchantDetail?.location}
       />
     </>
   );
