@@ -1,16 +1,25 @@
-import useApiClient from "../../api/apiClient";
+import useApiClient from "@/api/apiClient";
 
-export const fetchAllOrders = async (filter, navigate) => {
+export const fetchAllOrders = async (role, filter, page, limit, navigate) => {
   try {
     const api = useApiClient(navigate);
 
-    const route =
-      filter.selectedOption === "order"
-        ? `/orders/admin/get-orders`
-        : `/orders/admin/get-scheduled-orders`;
+    let route;
+
+    if (filter.selectedOption === "order" && role === "Admin") {
+      route = `/orders/admin/get-orders`;
+    } else if (filter.selectedOption === "order" && role === "Merchant") {
+      route = `/orders/get-orders`;
+    } else if (filter.selectedOption !== "order" && role === "Admin") {
+      route = `/orders/admin/get-scheduled-orders`;
+    } else if (filter.selectedOption !== "order" && role === "Merchant") {
+      route = `/orders/get-scheduled-orders`;
+    }
 
     const res = await api.get(route, {
       params: {
+        page,
+        limit,
         status: filter.status,
         paymentMode: filter.paymentMode,
         deliveryMode: filter.deliveryMode,
@@ -141,8 +150,6 @@ export const createInvoice = async (role, data, navigate) => {
         ? `/orders/admin/create-order-invoice`
         : `/orders/create-order-invoice`;
 
-    console.log(data);
-
     const api = useApiClient(navigate);
     const res = await api.post(route, data);
 
@@ -175,6 +182,39 @@ export const fetchMapplsAuthToken = async (navigate) => {
   } catch (err) {
     throw new Error(
       err.response?.data?.message || "Failed to fetch mappls token"
+    );
+  }
+};
+
+export const downloadOrderCSV = async (role, filter, navigate) => {
+  try {
+    const route =
+      role === "Admin"
+        ? `/orders/admin/download-csv`
+        : `/orders/download-order-csv`;
+
+    const api = useApiClient(navigate);
+    const res = await api.get(route, {
+      params: {
+        type: filter.selectedOption,
+        status: filter.status,
+        paymentMode: filter.paymentMode,
+        deliveryMode: filter.deliveryMode,
+        startDate: filter.date[0]
+          ? filter.date[0].toLocaleDateString("en-CA")
+          : null,
+        endDate: filter.date[1]
+          ? filter.date[1].toLocaleDateString("en-CA")
+          : null,
+        orderId: filter.orderId,
+      },
+      responseType: "blob",
+    });
+
+    return res.status === 200 ? res.data : null;
+  } catch (err) {
+    throw new Error(
+      err.response?.data?.message || "Failed to download order csv"
     );
   }
 };

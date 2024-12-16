@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
+
+import AuthContext from "@/context/AuthContext";
 
 import { HStack, Table } from "@chakra-ui/react";
 import {
@@ -22,6 +24,7 @@ const AllOrdersTable = ({ filter }) => {
   const limit = 50;
 
   const navigate = useNavigate();
+  const { role } = useContext(AuthContext);
 
   const {
     data: orderData,
@@ -29,7 +32,7 @@ const AllOrdersTable = ({ filter }) => {
     isError,
   } = useQuery({
     queryKey: ["all-orders", filter, page, limit],
-    queryFn: () => fetchAllOrders(filter, page, limit, navigate),
+    queryFn: () => fetchAllOrders(role, filter, page, limit, navigate),
     placeholderData: keepPreviousData,
   });
 

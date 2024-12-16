@@ -25,7 +25,8 @@ import "react-datepicker/dist/react-datepicker.css";
 
 import AllOrdersTable from "@/components/order/detail/AllOrdersTable";
 
-// TODO: Need to connect Order CSV download
+import { downloadOrderCSV } from "@/hooks/order/useOrder";
+
 const AllOrders = () => {
   const [filter, setFilter] = useState({
     selectedOption: "order",
@@ -52,6 +53,7 @@ const AllOrders = () => {
   const { data: allMerchants } = useQuery({
     queryKey: ["merchant-dropdown"],
     queryFn: () => fetchMerchantsForDropDown(navigate),
+    enabled: role && role === "Admin",
   });
 
   const merchantOptions = [
@@ -76,6 +78,48 @@ const AllOrders = () => {
       clearTimeout(handler);
     };
   }, [debounceId]);
+
+  const downloadCSV = useMutation({
+    mutationKey: ["download-order-csv"],
+    mutationFn: () => downloadOrderCSV(role, filter, navigate),
+  });
+
+  const handleDownloadOrderCSV = () => {
+    const promise = new Promise((resolve, reject) => {
+      downloadCSV.mutate(undefined, {
+        onSuccess: (data) => {
+          const url = window.URL.createObjectURL(new Blob([data]));
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute("download", "Order.csv");
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          resolve();
+        },
+        onError: (error) => {
+          reject(
+            new Error(error.message || "Failed to download the CSV file.")
+          );
+        },
+      });
+    });
+
+    toaster.promise(promise, {
+      loading: {
+        title: "Downloading...",
+        description: "Preparing your CSV file.",
+      },
+      success: {
+        title: "Download Successful",
+        description: "CSV file has been downloaded successfully.",
+      },
+      error: {
+        title: "Download Failed",
+        description: "Something went wrong while downloading the CSV file.",
+      },
+    });
+  };
 
   return (
     <div className="bg-gray-100 h-full">
@@ -110,13 +154,20 @@ const AllOrders = () => {
         </div>
 
         <div className="flex gap-x-4">
-          <Button variant="solid" className="bg-teal-200 text-black px-3">
-            <RenderIcon iconName="DownloadIcon" />
-            <span className="text-[16px]">CSV</span>
-          </Button>
+          {filter.selectedOption === "order" && (
+            <Button
+              onClick={handleDownloadOrderCSV}
+              variant="solid"
+              className="bg-teal-200 text-black px-3"
+            >
+              <RenderIcon iconName="DownloadIcon" />
+              <span className="text-[16px]">CSV</span>
+            </Button>
+          )}
+
           <Link
             to={`/order/create`}
-            className="bg-teal-700 text-white px-3 flex items-center gap-2 rounded-md"
+            className="bg-teal-700 text-white px-3 py-2 flex items-center gap-2 rounded-md"
           >
             <RenderIcon iconName="PlusIcon" />
             <span className="text-[16px]">Create Order</span>
@@ -220,21 +271,31 @@ const AllOrders = () => {
         </div>
 
         <div className="flex items-center gap-[20px]">
-          <DatePicker
-            selectsRange={true}
-            startDate={filter.date[0]}
-            endDate={filter.date[1]}
-            onChange={(date) => setFilter({ ...filter, date })}
-            dateFormat="yyyy/MM/dd"
-            withPortal
-            className="cursor-pointer "
-            customInput={
-              <span className="text-gray-400 text-xl">
-                <RenderIcon iconName="CalendarIcon" size={24} loading={2} />
+          <div className="flex items-center gap-2">
+            {Array.isArray(filter.date) && filter.date.some((data) => data) && (
+              <span
+                onClick={() => setFilter({ ...filter, date: [null, null] })}
+                className="text-red-500"
+              >
+                <RenderIcon iconName="CancelIcon" size={20} loading={6} />
               </span>
-            }
-            maxDate={new Date()}
-          />
+            )}
+            <DatePicker
+              selectsRange={true}
+              startDate={filter.date[0]}
+              endDate={filter.date[1]}
+              onChange={(date) => setFilter({ ...filter, date })}
+              dateFormat="yyyy/MM/dd"
+              withPortal
+              className="cursor-pointer "
+              customInput={
+                <span className="text-gray-400 text-xl">
+                  <RenderIcon iconName="CalendarIcon" size={24} loading={2} />
+                </span>
+              }
+              maxDate={new Date()}
+            />
+          </div>
 
           <div>
             <input
