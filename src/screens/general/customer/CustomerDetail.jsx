@@ -7,6 +7,7 @@ import { toaster } from "@/components/ui/toaster";
 
 import RenderIcon from "@/icons/RenderIcon";
 
+import Error from "@/components/others/Error";
 import Loader from "@/components/others/Loader";
 import GlobalSearch from "@/components/others/GlobalSearch";
 import WalletTransaction from "@/components/customer/WalletTransaction";
@@ -27,7 +28,9 @@ const CustomerDetail = () => {
   const [modal, setModal] = useState({
     block: false,
     rating: false,
+    enlarge: false,
   });
+  const [imageLink, setImageLink] = useState(null);
 
   const { customerId } = useParams();
   const navigate = useNavigate();
@@ -79,7 +82,8 @@ const CustomerDetail = () => {
     });
   };
 
-  const toggleModal = (type) => {
+  const toggleModal = (type, link = null) => {
+    setImageLink(link);
     setModal((prev) => ({ ...prev, [type]: true }));
   };
 
@@ -87,16 +91,13 @@ const CustomerDetail = () => {
     setModal({
       block: false,
       rating: false,
+      enlarge: false,
     });
+    setImageLink(null);
   };
 
   if (isLoading) return <Loader />;
-  if (isError)
-    return (
-      <div className="flex items-center justify-center h-screen">
-        Error in fetching customer detail
-      </div>
-    );
+  if (isError) return <Error />;
 
   return (
     <>
@@ -227,7 +228,15 @@ const CustomerDetail = () => {
               </form>
             </div>
 
-            <figure className="h-16 w-16 ms-[10rem] xl:ms-0 mt-[30px] xl:mt-0">
+            <figure
+              onClick={() =>
+                toggleModal(
+                  "enlarge",
+                  customer?.customerDetail?.customerImageURL
+                )
+              }
+              className="h-16 w-16 ms-[10rem] xl:ms-0 mt-[30px] xl:mt-0 cursor-pointer"
+            >
               {customer?.customerDetail?.customerImageURL ? (
                 <img
                   src={customer?.customerDetail?.customerImageURL}

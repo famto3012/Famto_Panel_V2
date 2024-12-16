@@ -13,11 +13,15 @@ import {
   DialogHeader,
   DialogTitle,
   DialogBody,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { Radio, RadioGroup } from "@/components/ui/radio";
 import { toaster } from "@/components/ui/toaster";
+import { Button } from "@/components/ui/button";
 
 import ModalLoader from "@/components/others/ModalLoader";
+import CropImage from "@/components/others/CropImage";
+import Error from "@/components/others/Error";
 
 import RenderIcon from "@/icons/RenderIcon";
 
@@ -47,7 +51,8 @@ const AddPromoCode = ({ isOpen, onClose }) => {
     deliveryMode: "Take Away",
   });
   const [selectedFile, setSelectedFile] = useState(null);
-  const [previewURL, setPreviewURL] = useState(null);
+  const [croppedFile, setCroppedFile] = useState(null);
+  const [showCrop, setShowCrop] = useState(false);
 
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -101,7 +106,7 @@ const AddPromoCode = ({ isOpen, onClose }) => {
     Object.entries(formData).forEach(([key, value]) => {
       formDataObject.append(key, value);
     });
-    selectedFile && formDataObject.append("promoImage", selectedFile);
+    croppedFile && formDataObject.append("promoImage", croppedFile);
 
     handleAddPromoCode.mutate(formDataObject);
   };
@@ -109,6 +114,12 @@ const AddPromoCode = ({ isOpen, onClose }) => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleInputNumberValidation = (e) => {
+    if (!/^[0-9]$/.test(e.key) && e.key !== "Backspace" && e.key !== "Tab") {
+      e.preventDefault();
+    }
   };
 
   const handleDeliveryModeChange = (value) => {
@@ -122,12 +133,22 @@ const AddPromoCode = ({ isOpen, onClose }) => {
     });
   };
 
-  const handleSelectImage = (e) => {
+  const handleSelectFile = (e) => {
     const file = e.target.files[0];
     if (file) {
       setSelectedFile(file);
-      setPreviewURL(URL.createObjectURL(file));
+      setShowCrop(true);
     }
+  };
+
+  const handleCropImage = (file) => {
+    setCroppedFile(file);
+    cancelCrop();
+  };
+
+  const cancelCrop = () => {
+    setSelectedFile(null);
+    setShowCrop(false);
   };
 
   const merchantOptions = allMerchants?.map((merchant) => ({
@@ -158,14 +179,11 @@ const AddPromoCode = ({ isOpen, onClose }) => {
             Add Promo code
           </DialogTitle>
         </DialogHeader>
-
         <DialogBody>
           {showLoading ? (
             <ModalLoader />
           ) : showError ? (
-            <>
-              <p>Error</p>
-            </>
+            <Error />
           ) : (
             <div className="flex flex-col h-[30rem] overflow-y-auto gap-5">
               <div className="flex items-center">
@@ -215,11 +233,12 @@ const AddPromoCode = ({ isOpen, onClose }) => {
                   Discount<span className="text-red-600 ml-2">*</span>
                 </label>
                 <input
-                  type="number"
+                  type="text"
                   name="discount"
                   className="border-2 border-gray-300 rounded focus:outline-none p-2 w-2/3"
                   value={formData.discount}
                   onChange={handleInputChange}
+                  onKeyDown={handleInputNumberValidation}
                 />
               </div>
 
@@ -311,11 +330,12 @@ const AddPromoCode = ({ isOpen, onClose }) => {
                   <span className="text-red-600 ml-2">*</span>
                 </label>
                 <input
-                  type="number"
+                  type="text"
                   name="maxDiscountValue"
                   value={formData.maxDiscountValue}
                   className="border-2 border-gray-300 rounded focus:outline-none p-2 w-2/3"
                   onChange={handleInputChange}
+                  onKeyDown={handleInputNumberValidation}
                 />
               </div>
 
@@ -330,6 +350,7 @@ const AddPromoCode = ({ isOpen, onClose }) => {
                   value={formData.minOrderAmount}
                   className="border-2 border-gray-300 rounded focus:outline-none p-2 w-2/3"
                   onChange={handleInputChange}
+                  onKeyDown={handleInputNumberValidation}
                 />
               </div>
 
@@ -339,11 +360,12 @@ const AddPromoCode = ({ isOpen, onClose }) => {
                   <span className="text-red-600 ml-2">*</span>
                 </label>
                 <input
-                  type="number"
+                  type="text"
                   name="maxAllowedUsers"
                   value={formData.maxAllowedUsers}
                   className="border-2 border-gray-300 rounded focus:outline-none p-2 w-2/3"
                   onChange={handleInputChange}
+                  onKeyDown={handleInputNumberValidation}
                 />
               </div>
 
@@ -470,14 +492,14 @@ const AddPromoCode = ({ isOpen, onClose }) => {
                   <span className="text-red-600">*</span>
                 </label>
                 <div className=" flex items-center w-2/3 gap-[30px]">
-                  {!previewURL ? (
-                    <div className="h-[66px] w-[66px] bg-gray-200 rounded-md"></div>
+                  {!croppedFile ? (
+                    <div className="bg-gray-400 h-16 w-16 rounded-md" />
                   ) : (
-                    <figure>
+                    <figure className="h-16 w-16 rounded-md">
                       <img
-                        src={previewURL}
-                        alt={formData.promoCode}
-                        className="h-[66px] w-[66px] object-cover rounded-md"
+                        src={URL.createObjectURL(croppedFile)}
+                        alt={formData?.promoCode}
+                        className="h-full w-full object-cover rounded-md"
                       />
                     </figure>
                   )}
@@ -488,7 +510,7 @@ const AddPromoCode = ({ isOpen, onClose }) => {
                     id="promoImage"
                     className="hidden"
                     accept="image/*"
-                    onChange={handleSelectImage}
+                    onChange={handleSelectFile}
                   />
 
                   <label
@@ -499,24 +521,33 @@ const AddPromoCode = ({ isOpen, onClose }) => {
                   </label>
                 </div>
               </div>
-
-              <div className="flex justify-end mt-10  gap-4">
-                <button
-                  className="bg-gray-300 rounded-lg px-6 py-2 font-semibold justify-end"
-                  onClick={onClose}
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleSave}
-                  className="bg-teal-800 rounded-lg px-6 py-2 text-white font-semibold justify-end"
-                >
-                  {handleAddPromoCode.isPending ? `Saving...` : `Save`}
-                </button>
-              </div>
             </div>
           )}
+
+          {/* Crop Modal */}
+          <CropImage
+            isOpen={showCrop && selectedFile}
+            onClose={() => {
+              setSelectedFile(null);
+              setShowCrop(false);
+            }}
+            selectedImage={selectedFile}
+            onCropComplete={handleCropImage}
+          />
         </DialogBody>
+
+        <DialogFooter>
+          <Button
+            onClick={onClose}
+            className="bg-gray-200 p-2 text-black outline-none focus:outline-none"
+          >
+            Cancel
+          </Button>
+
+          <Button className="bg-teal-700 p-2 text-white" onClick={handleSave}>
+            {handleAddPromoCode.isPending ? `Saving...` : `Save`}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </DialogRoot>
   );

@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import RenderIcon from "@/icons/RenderIcon";
+import EnlargeImage from "@/models/common/EnlargeImage";
 
 const MerchantDocument = ({ detail, onDataChange }) => {
   const [selectedFile, setSelectedFile] = useState({
@@ -15,6 +16,8 @@ const MerchantDocument = ({ detail, onDataChange }) => {
     fssaiImage: null,
     aadharImage: null,
   });
+  const [showModal, setShowModal] = useState(false);
+  const [imageLink, setImageLink] = useState(null);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -42,6 +45,16 @@ const MerchantDocument = ({ detail, onDataChange }) => {
     }
   };
 
+  const toggleModal = (link) => {
+    setImageLink(link);
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setImageLink(null);
+  };
+
   return (
     <>
       <div className="mb-[50px] w-full">
@@ -64,8 +77,13 @@ const MerchantDocument = ({ detail, onDataChange }) => {
               <div className="bg-gray-400 w-[65px] h-[65px] rounded-md" />
             ) : (
               <figure
-                onClick={() => handleImageClick(previewURL?.pancardImage)}
-                className="w-[65px] h-[65px] rounded relative"
+                onClick={() =>
+                  toggleModal(
+                    previewURL?.pancardImage ||
+                      detail?.merchantDetail?.pancardImage
+                  )
+                }
+                className="w-[65px] h-[65px] rounded relative cursor-pointer"
               >
                 <img
                   src={
@@ -109,7 +127,14 @@ const MerchantDocument = ({ detail, onDataChange }) => {
             {!previewURL?.gstinImage && !detail?.merchantDetail?.gstinImage ? (
               <div className="bg-gray-400 w-[65px] h-[65px] rounded-md" />
             ) : (
-              <figure className="w-[65px] h-[65px] rounded relative">
+              <figure
+                onClick={() =>
+                  toggleModal(
+                    previewURL?.gstinImage || detail?.merchantDetail?.gstinImage
+                  )
+                }
+                className="w-[65px] h-[65px] rounded relative"
+              >
                 <img
                   src={
                     previewURL?.gstinImage || detail?.merchantDetail?.gstinImage
@@ -152,7 +177,11 @@ const MerchantDocument = ({ detail, onDataChange }) => {
               <div className="bg-gray-400 w-[65px] h-[65px] rounded-md" />
             ) : (
               <figure
-                onClick={() => handleImageClick(previewURL?.fssaiImage)}
+                onClick={() =>
+                  toggleModal(
+                    previewURL?.fssaiImage || detail?.merchantDetail?.fssaiImage
+                  )
+                }
                 className="w-[65px] h-[65px] rounded relative"
               >
                 <img
@@ -209,8 +238,13 @@ const MerchantDocument = ({ detail, onDataChange }) => {
               <div className="bg-gray-400 w-[65px] h-[65px] rounded-md" />
             ) : (
               <figure
-                onClick={() => handleImageClick(previewURL?.aadharImage)}
-                className="w-[65px] h-[65px] rounded relative"
+                onClick={() =>
+                  toggleModal(
+                    previewURL?.aadharImage ||
+                      detail?.merchantDetail?.aadharImage
+                  )
+                }
+                className="w-[65px] h-[65px] rounded relative cursor-pointer"
               >
                 <img
                   src={
@@ -315,6 +349,13 @@ const MerchantDocument = ({ detail, onDataChange }) => {
           />
         </div>
       </div>
+
+      {/* Modal */}
+      <EnlargeImage
+        isOpen={showModal}
+        onClose={closeModal}
+        source={imageLink}
+      />
     </>
   );
 };

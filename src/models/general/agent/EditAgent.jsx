@@ -10,8 +10,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogBody,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { toaster } from "@/components/ui/toaster";
+import { Button } from "@/components/ui/button";
 
 import { agentTagOptions } from "@/utils/defaultData";
 
@@ -19,6 +21,7 @@ import RenderIcon from "@/icons/RenderIcon";
 
 import ModalLoader from "@/components/others/ModalLoader";
 import Error from "@/components/others/Error";
+import CropImage from "@/components/others/CropImage";
 
 import { fetchAllManagers } from "@/hooks/manager/useManager";
 import { getAllGeofence } from "@/hooks/geofence/useGeofence";
@@ -27,15 +30,13 @@ import { updateAgentDetail } from "@/hooks/agent/useAgent";
 
 const EditAgent = ({ isOpen, onClose, data }) => {
   const [formData, setFormData] = useState({});
-
-  const [previewURL, setPreviewURL] = useState({
+  const [croppedFile, setCroppedFile] = useState({
     agent: null,
     aadharFront: null,
     aadharBack: null,
     drivingLicenseFront: null,
     drivingLicenseBack: null,
   });
-
   const [selectedFile, setSelectedFile] = useState({
     agent: null,
     aadharFront: null,
@@ -43,6 +44,8 @@ const EditAgent = ({ isOpen, onClose, data }) => {
     drivingLicenseFront: null,
     drivingLicenseBack: null,
   });
+  const [showCrop, setShowCrop] = useState(false);
+  const [type, setType] = useState(false);
 
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -116,16 +119,6 @@ const EditAgent = ({ isOpen, onClose, data }) => {
     }));
   };
 
-  const handleSelectFile = (e, type) => {
-    e.preventDefault();
-    const file = e.target.files[0];
-
-    if (file) {
-      setSelectedFile({ ...selectedFile, [type]: file });
-      setPreviewURL({ ...previewURL, [type]: URL.createObjectURL(file) });
-    }
-  };
-
   const handleEditAgent = useMutation({
     mutationKey: ["edit-agent", data.agentId],
     mutationFn: ({ agentId, formDataObject }) =>
@@ -168,24 +161,71 @@ const EditAgent = ({ isOpen, onClose, data }) => {
       }
     });
 
-    selectedFile.agent &&
-      formDataObject.append("agentImage", selectedFile.agent);
-    selectedFile.aadharFront &&
-      formDataObject.append("aadharFrontImage", selectedFile.aadharFront);
-    selectedFile.aadharBack &&
-      formDataObject.append("aadharBackImage", selectedFile.aadharBack);
-    selectedFile.drivingLicenseFront &&
+    croppedFile.agent && formDataObject.append("agentImage", croppedFile.agent);
+    croppedFile.aadharFront &&
+      formDataObject.append("aadharFrontImage", croppedFile.aadharFront);
+    croppedFile.aadharBack &&
+      formDataObject.append("aadharBackImage", croppedFile.aadharBack);
+    croppedFile.drivingLicenseFront &&
       formDataObject.append(
         "drivingLicenseFrontImage",
-        selectedFile.drivingLicenseFront
+        croppedFile.drivingLicenseFront
       );
-    selectedFile.drivingLicenseBack &&
+    croppedFile.drivingLicenseBack &&
       formDataObject.append(
         "drivingLicenseBackImage",
-        selectedFile.drivingLicenseBack
+        croppedFile.drivingLicenseBack
       );
 
     handleEditAgent.mutate({ agentId: data.agentId, formDataObject });
+  };
+
+  const handleSelectFile = (e, type) => {
+    e.preventDefault();
+    const file = e.target.files[0];
+
+    if (file) {
+      setType(type);
+      setSelectedFile({ ...selectedFile, [type]: file });
+      setShowCrop(true);
+    }
+  };
+
+  const handleCropImage = (file) => {
+    setCroppedFile({
+      ...croppedFile,
+      [type]: file,
+    });
+    cancelCrop();
+  };
+
+  const cancelCrop = () => {
+    setType(null);
+    setSelectedFile({
+      agent: null,
+      aadharFront: null,
+      aadharBack: null,
+      drivingLicenseFront: null,
+      drivingLicenseBack: null,
+    });
+    setShowCrop(false);
+  };
+
+  const resetImages = () => {
+    setCroppedFile({
+      agent: null,
+      aadharFront: null,
+      aadharBack: null,
+      drivingLicenseFront: null,
+      drivingLicenseBack: null,
+    });
+    setSelectedFile({
+      agent: null,
+      aadharFront: null,
+      aadharBack: null,
+      drivingLicenseFront: null,
+      drivingLicenseBack: null,
+    });
   };
 
   const isLoading = managerLoading || geofenceLoading || pricingLoading;
@@ -349,9 +389,10 @@ const EditAgent = ({ isOpen, onClose, data }) => {
                       <figure className=" h-16 w-16 rounded relative">
                         <img
                           src={
-                            previewURL.aadharFront ||
-                            formData?.governmentCertificateDetail
-                              ?.aadharFrontImage
+                            croppedFile?.aadharFront
+                              ? URL.createObjectURL(croppedFile.aadharFront)
+                              : formData?.governmentCertificateDetail
+                                  ?.aadharFrontImage
                           }
                           alt="aadhar front"
                           className="w-full rounded absolute h-full object-cover"
@@ -372,9 +413,10 @@ const EditAgent = ({ isOpen, onClose, data }) => {
                       <figure className=" h-16 w-16 rounded relative">
                         <img
                           src={
-                            previewURL.aadharBack ||
-                            formData?.governmentCertificateDetail
-                              ?.aadharBackImage
+                            croppedFile?.aadharBack
+                              ? URL.createObjectURL(croppedFile.aadharBack)
+                              : formData?.governmentCertificateDetail
+                                  ?.aadharBackImage
                           }
                           alt="aadhar back"
                           className="w-full rounded absolute h-full object-cover"
@@ -425,9 +467,12 @@ const EditAgent = ({ isOpen, onClose, data }) => {
                       <figure className=" h-16 w-16 rounded relative">
                         <img
                           src={
-                            previewURL?.drivingLicenseFront ||
-                            formData?.governmentCertificateDetail
-                              ?.drivingLicenseFrontImage
+                            croppedFile?.drivingLicenseFront
+                              ? URL.createObjectURL(
+                                  croppedFile.drivingLicenseFront
+                                )
+                              : formData?.governmentCertificateDetail
+                                  ?.drivingLicenseFrontImage
                           }
                           alt="profile"
                           className="w-full rounded absolute h-full object-cover"
@@ -453,9 +498,12 @@ const EditAgent = ({ isOpen, onClose, data }) => {
                       <figure className=" h-16 w-16 rounded relative">
                         <img
                           src={
-                            previewURL.drivingLicenseBack ||
-                            formData?.governmentCertificateDetail
-                              ?.drivingLicenseBackImage
+                            croppedFile?.drivingLicenseBack
+                              ? URL.createObjectURL(
+                                  croppedFile.drivingLicenseBack
+                                )
+                              : formData?.governmentCertificateDetail
+                                  ?.drivingLicenseBackImage
                           }
                           alt="profile"
                           className="w-full rounded absolute h-full object-cover"
@@ -617,7 +665,11 @@ const EditAgent = ({ isOpen, onClose, data }) => {
               <div className="flex items-center gap-x-[30px]">
                 <figure className="h-16 w-16 rounded-md">
                   <img
-                    src={previewURL.agent || formData?.agentImage}
+                    src={
+                      croppedFile?.agent
+                        ? URL.createObjectURL(croppedFile.agent)
+                        : formData?.agentImage
+                    }
                     alt="profile"
                     className="w-full rounded h-full object-cover "
                   />
@@ -645,25 +697,37 @@ const EditAgent = ({ isOpen, onClose, data }) => {
                   Photo <span className="text-red-600">*</span>
                 </p>
               </div>
-
-              <div className="flex justify-end gap-4 mt-6">
-                <button
-                  className="bg-cyan-50 py-2 px-4 rounded-md"
-                  onClick={onClose}
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleSave}
-                  className="bg-teal-700 text-white py-2 px-4 rounded-md focus:outline-none"
-                  disabled={handleEditAgent.isPending}
-                >
-                  {handleEditAgent.isPending ? `Saving...` : `Save`}
-                </button>
-              </div>
             </div>
           )}
+
+          {/* Crop Modal */}
+          <CropImage
+            isOpen={showCrop && selectedFile[type]}
+            onClose={() => {
+              setSelectedFile(null);
+              setShowCrop(false);
+            }}
+            selectedImage={selectedFile[type]}
+            onCropComplete={handleCropImage}
+          />
         </DialogBody>
+
+        <DialogFooter>
+          <Button
+            onClick={onClose}
+            className="bg-gray-200 p-2 text-black outline-none focus:outline-none"
+          >
+            Cancel
+          </Button>
+
+          <Button
+            disabled={handleEditAgent.isPending}
+            className="bg-teal-700 p-2 text-white"
+            onClick={handleSave}
+          >
+            {handleEditAgent.isPending ? `Saving...` : `Save`}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </DialogRoot>
   );

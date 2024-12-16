@@ -10,10 +10,14 @@ import {
   DialogHeader,
   DialogTitle,
   DialogBody,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { toaster } from "@/components/ui/toaster";
+import { Button } from "@/components/ui/button";
 
+import CropImage from "@/components/others/CropImage";
 import ModalLoader from "@/components/others/ModalLoader";
+import Error from "@/components/others/Error";
 
 import { getAllGeofence } from "@/hooks/geofence/useGeofence";
 import { createNewAppBanner } from "@/hooks/adBanner/adBanner";
@@ -27,7 +31,8 @@ const AddAppBanner = ({ isOpen, onClose }) => {
     geofenceId: "",
   });
   const [selectedFile, setSelectedFile] = useState(null);
-  const [previewURL, setPreviewURL] = useState(null);
+  const [croppedFile, setCroppedFile] = useState(null);
+  const [showCrop, setShowCrop] = useState(false);
 
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -39,6 +44,7 @@ const AddAppBanner = ({ isOpen, onClose }) => {
   } = useQuery({
     queryKey: ["all-geofence"],
     queryFn: () => getAllGeofence(navigate),
+    enabled: isOpen,
   });
 
   const handleAddBanner = useMutation({
@@ -51,8 +57,7 @@ const AddAppBanner = ({ isOpen, onClose }) => {
         merchantId: "",
         geofenceId: "",
       });
-      setSelectedFile(null);
-      setPreviewURL(null);
+      setCroppedFile(null);
       onClose();
       toaster.create({
         title: "Success",
@@ -75,7 +80,8 @@ const AddAppBanner = ({ isOpen, onClose }) => {
     Object.entries(formData).forEach(([key, value]) => {
       formDataObject.append(key, value);
     });
-    selectedFile && formDataObject.append("bannerImage", selectedFile);
+
+    croppedFile && formDataObject.append("bannerImage", croppedFile);
 
     handleAddBanner.mutate(formDataObject);
   };
@@ -90,12 +96,22 @@ const AddAppBanner = ({ isOpen, onClose }) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSelectImage = (e) => {
+  const handleSelectFile = (e) => {
     const file = e.target.files[0];
     if (file) {
       setSelectedFile(file);
-      setPreviewURL(URL.createObjectURL(file));
+      setShowCrop(true);
     }
+  };
+
+  const handleCropImage = (file) => {
+    setCroppedFile(file);
+    cancelCrop();
+  };
+
+  const cancelCrop = () => {
+    setSelectedFile(null);
+    setShowCrop(false);
   };
 
   const showLoading = geofenceLoading;
@@ -112,7 +128,7 @@ const AddAppBanner = ({ isOpen, onClose }) => {
         <DialogCloseTrigger onClick={onClose} />
         <DialogHeader>
           <DialogTitle className="font-[600] text-[18px]">
-            Add App Banner
+            Add Banner
           </DialogTitle>
         </DialogHeader>
 
@@ -120,9 +136,7 @@ const AddAppBanner = ({ isOpen, onClose }) => {
           {showLoading ? (
             <ModalLoader />
           ) : showError ? (
-            <>
-              <p>Error</p>
-            </>
+            <Error />
           ) : (
             <>
               <div className="flex flex-col gap-4">
@@ -187,12 +201,12 @@ const AddAppBanner = ({ isOpen, onClose }) => {
                   </label>
 
                   <div className="flex items-center gap-[30px]">
-                    {!previewURL ? (
+                    {!croppedFile ? (
                       <div className="h-[80px] w-[175px] bg-gray-200 rounded-md"></div>
                     ) : (
                       <figure>
                         <img
-                          src={previewURL}
+                          src={URL.createObjectURL(croppedFile)}
                           alt={formData.name}
                           className="h-[80px] w-[175px] rounded-md object-cover"
                         />
@@ -205,7 +219,7 @@ const AddAppBanner = ({ isOpen, onClose }) => {
                       id="bannerImage"
                       className="hidden"
                       accept="image/*"
-                      onChange={handleSelectImage}
+                      onChange={handleSelectFile}
                     />
                     <label
                       htmlFor="bannerImage"
@@ -216,24 +230,34 @@ const AddAppBanner = ({ isOpen, onClose }) => {
                   </div>
                 </div>
               </div>
-
-              <div className="flex justify-end gap-4 mt-6">
-                <button
-                  className="bg-cyan-50 py-2 px-4 rounded-md"
-                  onClick={onClose}
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleSave}
-                  className="bg-teal-700 text-white py-2 px-4 rounded-md"
-                >
-                  {handleAddBanner.isPending ? "Saving..." : "Save"}
-                </button>
-              </div>
             </>
           )}
+
+          {/* Crop Modal */}
+          <CropImage
+            isOpen={showCrop && selectedFile}
+            onClose={() => {
+              setSelectedFile(null);
+              setShowCrop(false);
+            }}
+            aspectRatio={16 / 9}
+            selectedImage={selectedFile}
+            onCropComplete={handleCropImage}
+          />
         </DialogBody>
+
+        <DialogFooter>
+          <Button
+            onClick={onClose}
+            className="bg-gray-200 p-2 text-black outline-none focus:outline-none"
+          >
+            Cancel
+          </Button>
+
+          <Button className="bg-teal-700 p-2 text-white" onClick={handleSave}>
+            {handleAddBanner.isPending ? "Saving..." : "Save"}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </DialogRoot>
   );

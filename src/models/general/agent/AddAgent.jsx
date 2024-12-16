@@ -10,6 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogBody,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { toaster } from "@/components/ui/toaster";
 
@@ -24,6 +25,8 @@ import { fetchAllManagers } from "@/hooks/manager/useManager";
 import { getAllGeofence } from "@/hooks/geofence/useGeofence";
 import { fetchAllAgentPricing } from "@/hooks/pricing/useAgentPricing";
 import { createNewAgent } from "@/hooks/agent/useAgent";
+import CropImage from "@/components/others/CropImage";
+import { Button } from "@/components/ui/button";
 
 const AddAgent = ({ isOpen, onClose }) => {
   const [formData, setFormData] = useState({
@@ -44,8 +47,7 @@ const AddAgent = ({ isOpen, onClose }) => {
     licensePlate: "",
     drivingLicenseNumber: "",
   });
-
-  const [previewURL, setPreviewURL] = useState({
+  const [croppedFile, setCroppedFile] = useState({
     agent: null,
     rcFront: null,
     rcBack: null,
@@ -54,7 +56,6 @@ const AddAgent = ({ isOpen, onClose }) => {
     drivingLicenseFront: null,
     drivingLicenseBack: null,
   });
-
   const [selectedFile, setSelectedFile] = useState({
     agent: null,
     rcFront: null,
@@ -64,6 +65,8 @@ const AddAgent = ({ isOpen, onClose }) => {
     drivingLicenseFront: null,
     drivingLicenseBack: null,
   });
+  const [showCrop, setShowCrop] = useState(false);
+  const [type, setType] = useState(false);
 
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -133,25 +136,24 @@ const AddAgent = ({ isOpen, onClose }) => {
       }
     });
 
-    selectedFile.agent &&
-      formDataObject.append("agentImage", selectedFile.agent);
-    selectedFile.rcFront &&
-      formDataObject.append("rcFrontImage", selectedFile.rcFront);
-    selectedFile.rcBack &&
-      formDataObject.append("rcBackImage", selectedFile.rcBack);
-    selectedFile.aadharFront &&
-      formDataObject.append("aadharFrontImage", selectedFile.aadharFront);
-    selectedFile.aadharBack &&
-      formDataObject.append("aadharBackImage", selectedFile.aadharBack);
-    selectedFile.drivingLicenseFront &&
+    croppedFile.agent && formDataObject.append("agentImage", croppedFile.agent);
+    croppedFile.rcFront &&
+      formDataObject.append("rcFrontImage", croppedFile.rcFront);
+    croppedFile.rcBack &&
+      formDataObject.append("rcBackImage", croppedFile.rcBack);
+    croppedFile.aadharFront &&
+      formDataObject.append("aadharFrontImage", croppedFile.aadharFront);
+    croppedFile.aadharBack &&
+      formDataObject.append("aadharBackImage", croppedFile.aadharBack);
+    croppedFile.drivingLicenseFront &&
       formDataObject.append(
         "drivingLicenseFrontImage",
-        selectedFile.drivingLicenseFront
+        croppedFile.drivingLicenseFront
       );
-    selectedFile.drivingLicenseBack &&
+    croppedFile.drivingLicenseBack &&
       formDataObject.append(
         "drivingLicenseBackImage",
-        selectedFile.drivingLicenseBack
+        croppedFile.drivingLicenseBack
       );
 
     handleAddAgent.mutate(formDataObject);
@@ -176,7 +178,7 @@ const AddAgent = ({ isOpen, onClose }) => {
       licensePlate: "",
       drivingLicenseNumber: "",
     });
-    setPreviewURL({
+    setCroppedFile({
       agent: null,
       rcFront: null,
       rcBack: null,
@@ -221,9 +223,32 @@ const AddAgent = ({ isOpen, onClose }) => {
     const file = e.target.files[0];
 
     if (file) {
+      setType(type);
       setSelectedFile({ ...selectedFile, [type]: file });
-      setPreviewURL({ ...previewURL, [type]: URL.createObjectURL(file) });
+      setShowCrop(true);
     }
+  };
+
+  const handleCropImage = (file) => {
+    setCroppedFile({
+      ...croppedFile,
+      [type]: file,
+    });
+    cancelCrop();
+  };
+
+  const cancelCrop = () => {
+    setType(null);
+    setSelectedFile({
+      agent: null,
+      rcFront: null,
+      rcBack: null,
+      aadharFront: null,
+      aadharBack: null,
+      drivingLicenseFront: null,
+      drivingLicenseBack: null,
+    });
+    setShowCrop(false);
   };
 
   const isLoading = managerLoading || geofenceLoading || pricingLoading;
@@ -370,10 +395,10 @@ const AddAgent = ({ isOpen, onClose }) => {
                     />
 
                     <label htmlFor="rcFrontImage" className="cursor-pointer">
-                      {previewURL?.rcFront ? (
+                      {croppedFile?.rcFront ? (
                         <figure className=" h-16 w-16 rounded relative">
                           <img
-                            src={previewURL.rcFront}
+                            src={URL.createObjectURL(croppedFile.rcFront)}
                             alt="RC Front"
                             className="w-full rounded absolute h-full object-cover"
                           />
@@ -400,10 +425,10 @@ const AddAgent = ({ isOpen, onClose }) => {
                     />
 
                     <label htmlFor="rcBackImage" className="cursor-pointer">
-                      {previewURL?.rcBack ? (
+                      {croppedFile?.rcBack ? (
                         <figure className=" h-16 w-16 rounded relative">
                           <img
-                            src={previewURL.rcBack}
+                            src={URL.createObjectURL(croppedFile.rcBack)}
                             alt="RC Back"
                             className="w-full rounded absolute h-full object-cover"
                           />
@@ -513,10 +538,10 @@ const AddAgent = ({ isOpen, onClose }) => {
                       htmlFor="aadharFrontImage"
                       className="cursor-pointer"
                     >
-                      {previewURL?.aadharFront ? (
+                      {croppedFile?.aadharFront ? (
                         <figure className=" h-16 w-16 rounded relative">
                           <img
-                            src={previewURL.aadharFront}
+                            src={URL.createObjectURL(croppedFile.aadharFront)}
                             alt="aadhar front"
                             className="w-full rounded absolute h-full object-cover"
                           />
@@ -542,10 +567,10 @@ const AddAgent = ({ isOpen, onClose }) => {
                       onChange={(e) => handleSelectFile(e, "aadharBack")}
                     />
                     <label htmlFor="aadharBackImage" className="cursor-pointer">
-                      {previewURL?.aadharBack ? (
+                      {croppedFile?.aadharBack ? (
                         <figure className=" h-16 w-16 rounded relative">
                           <img
-                            src={previewURL.aadharBack}
+                            src={URL.createObjectURL(croppedFile.aadharBack)}
                             alt="aadhar back"
                             className="w-full rounded absolute h-full object-cover"
                           />
@@ -598,10 +623,12 @@ const AddAgent = ({ isOpen, onClose }) => {
                       htmlFor="drivingLicenseFrontImage"
                       className="cursor-pointer"
                     >
-                      {previewURL.drivingLicenseFront ? (
+                      {croppedFile.drivingLicenseFront ? (
                         <figure className=" h-16 w-16 rounded relative">
                           <img
-                            src={previewURL.drivingLicenseFront}
+                            src={URL.createObjectURL(
+                              croppedFile.drivingLicenseFront
+                            )}
                             alt="profile"
                             className="w-full rounded absolute h-full object-cover"
                           />
@@ -632,10 +659,12 @@ const AddAgent = ({ isOpen, onClose }) => {
                       htmlFor="drivingLicenseBackImage"
                       className="cursor-pointer"
                     >
-                      {previewURL?.drivingLicenseBack ? (
+                      {croppedFile?.drivingLicenseBack ? (
                         <figure className=" h-16 w-16 rounded relative">
                           <img
-                            src={previewURL.drivingLicenseBack}
+                            src={URL.createObjectURL(
+                              croppedFile.drivingLicenseBack
+                            )}
                             alt="profile"
                             className="w-full rounded absolute h-full object-cover"
                           />
@@ -785,14 +814,12 @@ const AddAgent = ({ isOpen, onClose }) => {
               <h1 className="font-semibold text-[18px] mb-5">Add Profile</h1>
 
               <div className="flex items-center gap-x-[30px]">
-                {!previewURL?.agent && (
+                {!croppedFile?.agent ? (
                   <div className="bg-cyan-100 h-16 w-16 rounded-md" />
-                )}
-
-                {previewURL.agent && (
+                ) : (
                   <figure className="h-16 w-16 rounded-md">
                     <img
-                      src={previewURL.agent}
+                      src={URL.createObjectURL(croppedFile.agent)}
                       alt="profile"
                       className="w-full rounded h-full object-cover "
                     />
@@ -821,24 +848,33 @@ const AddAgent = ({ isOpen, onClose }) => {
                   Photo <span className="text-red-600">*</span>
                 </p>
               </div>
-
-              <div className="flex justify-end gap-4 mt-6">
-                <button
-                  className="bg-cyan-50 py-2 px-4 rounded-md"
-                  onClick={onClose}
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleSave}
-                  className="bg-teal-700 text-white py-2 px-4 rounded-md focus:outline-none"
-                >
-                  {handleAddAgent.isPending ? `Saving...` : `Save`}
-                </button>
-              </div>
             </div>
           )}
+
+          {/* Crop Modal */}
+          <CropImage
+            isOpen={showCrop && selectedFile[type]}
+            onClose={() => {
+              setSelectedFile(null);
+              setShowCrop(false);
+            }}
+            selectedImage={selectedFile[type]}
+            onCropComplete={handleCropImage}
+          />
         </DialogBody>
+
+        <DialogFooter>
+          <Button
+            onClick={onClose}
+            className="bg-gray-200 p-2 text-black outline-none focus:outline-none"
+          >
+            Cancel
+          </Button>
+
+          <Button className="bg-teal-700 p-2 text-white" onClick={handleSave}>
+            {handleAddAgent.isPending ? `Saving...` : `Save`}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </DialogRoot>
   );

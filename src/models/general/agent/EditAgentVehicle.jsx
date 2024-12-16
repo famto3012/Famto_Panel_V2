@@ -10,29 +10,32 @@ import {
   DialogHeader,
   DialogTitle,
   DialogBody,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { toaster } from "@/components/ui/toaster";
+import { Button } from "@/components/ui/button";
 
 import { vehicleTypeOptions } from "@/utils/defaultData";
+
+import CropImage from "@/components/others/CropImage";
 
 import { updateAgentVehicle } from "@/hooks/agent/useAgent";
 
 const EditAgentVehicle = ({ isOpen, onClose, data, agentId }) => {
   const [formData, setFormData] = useState({});
-  const [previewURL, setPreviewURL] = useState({ rcFront: null, rcBack: null });
+  const [croppedFile, setCroppedFile] = useState({
+    rcFront: null,
+    rcBack: null,
+  });
   const [selectedFile, setSelectedFile] = useState({
     rcFront: null,
     rcBack: null,
   });
+  const [showCrop, setShowCrop] = useState(false);
+  const [type, setType] = useState(false);
 
   useEffect(() => {
-    if (data) {
-      setFormData(data);
-      setPreviewURL({
-        rcFront: data?.rcFrontImage || null,
-        rcBack: data?.rcBackImage || null,
-      });
-    }
+    data && setFormData(data);
   }, [data]);
 
   const handleInputChange = (e) => {
@@ -40,21 +43,46 @@ const EditAgentVehicle = ({ isOpen, onClose, data, agentId }) => {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
+  const resetForm = () => {
+    setCroppedFile({
+      rcFront: null,
+      rcBack: null,
+    });
+    setSelectedFile({
+      rcFront: null,
+      rcBack: null,
+    });
+  };
+
   const handleSelectFile = (e, type) => {
     const file = e.target.files[0];
     if (file) {
+      setType(type);
       setSelectedFile((prevFiles) => ({ ...prevFiles, [type]: file }));
-      setPreviewURL((prevPreviews) => ({
-        ...prevPreviews,
-        [type]: URL.createObjectURL(file),
-      }));
+      setShowCrop(true);
     }
   };
 
-  const resetForm = () => {
-    setFormData({});
-    setPreviewURL({ rcFront: null, rcBack: null });
-    setSelectedFile({ rcFront: null, rcBack: null });
+  const handleCropImage = (file) => {
+    setCroppedFile({
+      ...croppedFile,
+      [type]: file,
+    });
+    cancelCrop();
+  };
+
+  const cancelCrop = () => {
+    setType(null);
+    setSelectedFile({
+      agent: null,
+      rcFront: null,
+      rcBack: null,
+      aadharFront: null,
+      aadharBack: null,
+      drivingLicenseFront: null,
+      drivingLicenseBack: null,
+    });
+    setShowCrop(false);
   };
 
   const queryClient = useQueryClient();
@@ -91,13 +119,10 @@ const EditAgentVehicle = ({ isOpen, onClose, data, agentId }) => {
       }
     });
 
-    if (selectedFile.rcFront) {
-      formDataObject.append("rcFrontImage", selectedFile.rcFront);
-    }
-
-    if (selectedFile.rcBack) {
-      formDataObject.append("rcBackImage", selectedFile.rcBack);
-    }
+    croppedFile.rcFront &&
+      formDataObject.append("rcFrontImage", croppedFile.rcFront);
+    croppedFile.rcBack &&
+      formDataObject.append("rcBackImage", croppedFile.rcBack);
 
     updateVehicle({
       agentId,
@@ -185,7 +210,11 @@ const EditAgentVehicle = ({ isOpen, onClose, data, agentId }) => {
                   />
                   <label htmlFor="rcFrontImage" className="cursor-pointer">
                     <img
-                      src={previewURL.rcFront || ""}
+                      src={
+                        croppedFile.rcFront
+                          ? URL.createObjectURL(croppedFile.rcFront)
+                          : formData.rcFrontImage
+                      }
                       alt="RC Front"
                       className="h-16 w-16 border rounded object-cover"
                     />
@@ -204,7 +233,11 @@ const EditAgentVehicle = ({ isOpen, onClose, data, agentId }) => {
                   />
                   <label htmlFor="rcBackImage" className="cursor-pointer">
                     <img
-                      src={previewURL.rcBack || ""}
+                      src={
+                        croppedFile.rcBack
+                          ? URL.createObjectURL(croppedFile.rcBack)
+                          : formData.rcBackImage
+                      }
                       alt="RC Back"
                       className="h-16 w-16 border rounded object-cover"
                     />
@@ -213,23 +246,35 @@ const EditAgentVehicle = ({ isOpen, onClose, data, agentId }) => {
               </div>
             </div>
 
-            <div className="flex justify-end gap-4 mt-4">
-              <button
-                onClick={onClose}
-                className="bg-gray-200 py-2 px-4 rounded-md"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleSave}
-                className="bg-teal-700 text-white py-2 px-4 rounded-md"
-                disabled={isUpdating}
-              >
-                {isUpdating ? "Saving..." : "Save"}
-              </button>
-            </div>
+            {/* Crop Modal */}
+            <CropImage
+              isOpen={showCrop && selectedFile[type]}
+              onClose={() => {
+                setSelectedFile(null);
+                setShowCrop(false);
+              }}
+              selectedImage={selectedFile[type]}
+              onCropComplete={handleCropImage}
+            />
           </div>
         </DialogBody>
+
+        <DialogFooter>
+          <Button
+            onClick={onClose}
+            className="bg-gray-200 p-2 text-black outline-none focus:outline-none"
+          >
+            Cancel
+          </Button>
+
+          <Button
+            className="bg-teal-700 p-2 text-white"
+            onClick={handleSave}
+            disabled={isUpdating}
+          >
+            {isUpdating ? "Saving..." : "Save"}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </DialogRoot>
   );

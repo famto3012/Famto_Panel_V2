@@ -10,10 +10,14 @@ import {
   DialogHeader,
   DialogTitle,
   DialogBody,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { toaster } from "@/components/ui/toaster";
+import { Button } from "@/components/ui/button";
 
 import ModalLoader from "@/components/others/ModalLoader";
+import CropImage from "@/components/others/CropImage";
+import Error from "@/components/others/Error";
 
 import { getAllGeofence } from "@/hooks/geofence/useGeofence";
 import {
@@ -30,7 +34,8 @@ const EditIndividualBanner = ({ isOpen, onClose, bannerId }) => {
     geofenceId: "",
   });
   const [selectedFile, setSelectedFile] = useState(null);
-  const [previewURL, setPreviewURL] = useState(null);
+  const [croppedFile, setCroppedFile] = useState(null);
+  const [showCrop, setShowCrop] = useState(false);
 
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -51,12 +56,14 @@ const EditIndividualBanner = ({ isOpen, onClose, bannerId }) => {
     isError: bannerError,
   } = useQuery({
     queryKey: ["individual-banner-detail", bannerId],
-    queryFn: ({ queryKey }) => {
-      const [_, id] = queryKey;
-      return fetchSingleIndividualBanner(id, navigate);
-    },
-    enabled: isOpen,
+    queryFn: () => fetchSingleIndividualBanner(bannerId, navigate),
+    enabled: isOpen && bannerId ? true : false,
   });
+
+  useEffect(() => {
+    bannerData && setFormData(bannerData);
+    console.log(bannerData);
+  }, [bannerData]);
 
   const handleEditBanner = useMutation({
     mutationKey: ["edit-individual-banner"],
@@ -69,8 +76,7 @@ const EditIndividualBanner = ({ isOpen, onClose, bannerId }) => {
         merchantId: "",
         geofenceId: "",
       });
-      setSelectedFile(null);
-      setPreviewURL(null);
+      setCroppedFile(null);
       onClose();
       toaster.create({
         title: "Success",
@@ -93,14 +99,10 @@ const EditIndividualBanner = ({ isOpen, onClose, bannerId }) => {
     Object.entries(formData).forEach(([key, value]) => {
       formDataObject.append(key, value);
     });
-    selectedFile && formDataObject.append("bannerImage", selectedFile);
+    croppedFile && formDataObject.append("bannerImage", croppedFile);
 
     handleEditBanner.mutate({ bannerId, formDataObject });
   };
-
-  useEffect(() => {
-    bannerData && setFormData(bannerData);
-  }, [bannerData]);
 
   const geofenceOptions = allGeofence?.map((geofence) => ({
     label: geofence.name,
@@ -112,12 +114,22 @@ const EditIndividualBanner = ({ isOpen, onClose, bannerId }) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSelectImage = (e) => {
+  const handleSelectFile = (e) => {
     const file = e.target.files[0];
     if (file) {
       setSelectedFile(file);
-      setPreviewURL(URL.createObjectURL(file));
+      setShowCrop(true);
     }
+  };
+
+  const handleCropImage = (file) => {
+    setCroppedFile(file);
+    cancelCrop();
+  };
+
+  const cancelCrop = () => {
+    setSelectedFile(null);
+    setShowCrop(false);
   };
 
   const showLoading = geofenceLoading || bannerLoading;
@@ -134,7 +146,7 @@ const EditIndividualBanner = ({ isOpen, onClose, bannerId }) => {
         <DialogCloseTrigger onClick={onClose} />
         <DialogHeader>
           <DialogTitle className="font-[600] text-[18px]">
-            Add App Banner
+            Edit App Banner
           </DialogTitle>
         </DialogHeader>
 
@@ -142,9 +154,7 @@ const EditIndividualBanner = ({ isOpen, onClose, bannerId }) => {
           {showLoading ? (
             <ModalLoader />
           ) : showError ? (
-            <>
-              <p>Error</p>
-            </>
+            <Error />
           ) : (
             <>
               <div className="flex flex-col gap-4">
@@ -211,7 +221,11 @@ const EditIndividualBanner = ({ isOpen, onClose, bannerId }) => {
                   <div className="flex items-center gap-[30px]">
                     <figure>
                       <img
-                        src={previewURL || formData?.imageUrl}
+                        src={
+                          croppedFile
+                            ? URL.createObjectURL(croppedFile)
+                            : formData?.imageUrl
+                        }
                         alt={formData.name}
                         className="h-[80px] w-[175px] rounded-md object-cover"
                       />
@@ -223,7 +237,7 @@ const EditIndividualBanner = ({ isOpen, onClose, bannerId }) => {
                       id="bannerImage"
                       className="hidden"
                       accept="image/*"
-                      onChange={handleSelectImage}
+                      onChange={handleSelectFile}
                     />
                     <label
                       htmlFor="bannerImage"
@@ -234,24 +248,34 @@ const EditIndividualBanner = ({ isOpen, onClose, bannerId }) => {
                   </div>
                 </div>
               </div>
-
-              <div className="flex justify-end gap-4 mt-6">
-                <button
-                  className="bg-cyan-50 py-2 px-4 rounded-md"
-                  onClick={onClose}
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleSave}
-                  className="bg-teal-700 text-white py-2 px-4 rounded-md"
-                >
-                  {handleEditBanner.isPending ? "Saving..." : "Save"}
-                </button>
-              </div>
             </>
           )}
+
+          {/* Crop Modal */}
+          <CropImage
+            isOpen={showCrop && selectedFile}
+            onClose={() => {
+              setSelectedFile(null);
+              setShowCrop(false);
+            }}
+            aspectRatio={16 / 9}
+            selectedImage={selectedFile}
+            onCropComplete={handleCropImage}
+          />
         </DialogBody>
+
+        <DialogFooter>
+          <Button
+            onClick={onClose}
+            className="bg-gray-200 p-2 text-black outline-none focus:outline-none"
+          >
+            Cancel
+          </Button>
+
+          <Button className="bg-teal-700 p-2 text-white" onClick={handleSave}>
+            {handleEditBanner.isPending ? "Saving..." : "Save"}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </DialogRoot>
   );
