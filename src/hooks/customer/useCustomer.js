@@ -2,14 +2,15 @@ import useApiClient from "@/api/apiClient";
 
 export const fetchCustomer = async (role, filter, page, limit, navigate) => {
   try {
-    const route = role === "Admin" ? `/admin/customers` : ``;
+    const route =
+      role === "Admin"
+        ? `/admin/customers/fetch-customer`
+        : `/admin/customers/fetch-customer-of-merchant`;
 
     const api = useApiClient(navigate);
     const res = await api.get(route, {
-      params: { page, limit, filter },
+      params: { page, limit, geofence: filter.geofence, query: filter.name },
     });
-
-    console.log(res.data);
 
     return res.status === 200 ? res.data : null;
   } catch (err) {
@@ -17,22 +18,6 @@ export const fetchCustomer = async (role, filter, page, limit, navigate) => {
     throw new Error(
       err.response?.data?.message || "Failed to fetch all customer"
     );
-  }
-};
-
-export const searchCustomer = async (role, query, page, limit, navigate) => {
-  try {
-    const route = role === "Admin" ? `/admin/customers/search` : ``;
-
-    const api = useApiClient(navigate);
-    const res = await api.get(route, {
-      params: { page, limit, query },
-    });
-
-    return res.status === 200 ? res.data : [];
-  } catch (err) {
-    console.error(`Error in searching customer: ${err}`);
-    throw new Error(err.response?.data?.message || "Failed to search customer");
   }
 };
 

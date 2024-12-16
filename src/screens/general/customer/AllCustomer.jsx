@@ -16,7 +16,7 @@ import GlobalSearch from "@/components/others/GlobalSearch";
 import ShowSpinner from "@/components/others/ShowSpinner";
 
 import { getAllGeofence } from "@/hooks/geofence/useGeofence";
-import { fetchCustomer, searchCustomer } from "@/hooks/customer/useCustomer";
+import { fetchCustomer } from "@/hooks/customer/useCustomer";
 
 import AuthContext from "@/context/AuthContext";
 
@@ -24,13 +24,13 @@ import RenderIcon from "@/icons/RenderIcon";
 import CSVOperation from "@/models/general/customer/CSVOperation";
 
 const AllCustomer = () => {
-  const [filter, setFilter] = useState("");
-  const [search, setSearch] = useState("");
-  const [allCustomers, setAllCustomers] = useState([]);
-  const [pagination, setPagination] = useState({});
-  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [filter, setFilter] = useState({
+    geofence: null,
+    name: "",
+  });
+  const [debounce, setDebounce] = useState("");
   const [page, setPage] = useState(1);
-  const limit = 30;
+  const limit = 50;
   const [showModal, setShowModal] = useState(false);
 
   const navigate = useNavigate();
@@ -38,11 +38,11 @@ const AllCustomer = () => {
 
   useEffect(() => {
     const handler = setTimeout(() => {
-      setDebouncedSearch(search);
+      setFilter({ ...filter, name: debounce });
     }, 500);
 
     return () => clearTimeout(handler);
-  }, [search]);
+  }, [debounce]);
 
   const {
     data: allGeofence,
@@ -53,38 +53,11 @@ const AllCustomer = () => {
     queryFn: () => getAllGeofence(navigate),
   });
 
-  const {
-    data: filteredCustomers,
-    isLoading: filterLoading,
-    isError: filterError,
-  } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ["all-customer", filter, page, limit],
     queryFn: () => fetchCustomer(role, filter, page, limit, navigate),
     placeholderData: keepPreviousData,
   });
-
-  const {
-    data: searchedCustomers,
-    isLoading: searchLoading,
-    isError: searchError,
-  } = useQuery({
-    queryKey: ["search-customer", debouncedSearch, page, limit],
-    queryFn: () =>
-      debouncedSearch
-        ? searchCustomer(role, debouncedSearch, page, limit, navigate)
-        : [],
-    enabled: !!debouncedSearch,
-  });
-
-  useEffect(() => {
-    if (debouncedSearch) {
-      setAllCustomers(searchedCustomers?.data || []);
-      setPagination(searchedCustomers?.pagination || {});
-    } else {
-      setAllCustomers(filteredCustomers?.data || []);
-      setPagination(filteredCustomers?.pagination || {});
-    }
-  }, [debouncedSearch, filteredCustomers, searchedCustomers]);
 
   const geofenceOptions = [
     { label: "All", value: "all" },
@@ -94,8 +67,8 @@ const AllCustomer = () => {
     })),
   ];
 
-  const showTableLoading = geofenceLoading || filterLoading || searchLoading;
-  const showError = geofenceError || filterError || searchError;
+  const showTableLoading = geofenceLoading || isLoading;
+  const showError = geofenceError || isError;
 
   return (
     <div className="bg-gray-100 h-full">
@@ -103,24 +76,29 @@ const AllCustomer = () => {
       <>
         <div className="flex items-center justify-between mx-8 mt-5">
           <h1 className="text-lg font-bold">Customers</h1>
-          <button
-            className="bg-cyan-100 text-black rounded-md px-4 py-2 font-semibold flex items-center space-x-2"
-            onClick={() => setShowModal(true)}
-          >
-            <RenderIcon iconName="DownloadIcon" size={18} loading={6} />
-            <span>CSV</span>
-          </button>
+          {role === "Admin" && (
+            <button
+              className="bg-cyan-100 text-black rounded-md px-4 py-2 font-semibold flex items-center space-x-2"
+              onClick={() => setShowModal(true)}
+            >
+              <RenderIcon iconName="DownloadIcon" size={18} loading={6} />
+              <span>CSV</span>
+            </button>
+          )}
         </div>
 
         <div className="mx-8 rounded-lg mt-5 flex p-6 bg-white justify-between">
           <Select
             options={geofenceOptions}
-            value={geofenceOptions?.find((option) => option.value === filter)}
-            onChange={(option) => setFilter(option.value)}
+            value={geofenceOptions?.find(
+              (option) => option.value === filter.geofence
+            )}
+            onChange={(option) =>
+              setFilter({ ...filter, geofence: option.value })
+            }
             className=" bg-cyan-50 min-w-[10rem]"
             placeholder="Geofence"
-            isSearchable={true}
-            isMulti={false}
+            isSearchable
             styles={{
               control: (provided) => ({
                 ...provided,
@@ -137,8 +115,8 @@ const AllCustomer = () => {
             <div>
               <input
                 type="search"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                value={debounce}
+                onChange={(e) => setDebounce(e.target.value)}
                 className="bg-gray-100 p-3 rounded-3xl focus:outline-none outline-none text-[14px] ps-[20px]"
                 placeholder="Search customer"
               />
@@ -175,7 +153,7 @@ const AllCustomer = () => {
                   <ShowSpinner /> Loading...
                 </Table.Cell>
               </Table.Row>
-            ) : allCustomers?.length === 0 ? (
+            ) : data?.data?.length === 0 ? (
               <Table.Row className="h-[70px]">
                 <Table.Cell colSpan={7} textAlign="center">
                   No Customers Available
@@ -188,18 +166,18 @@ const AllCustomer = () => {
                 </Table.Cell>
               </Table.Row>
             ) : (
-              allCustomers?.map((customer) => (
-                <Table.Row key={customer._id} className={`h-[70px]`}>
+              data?.data?.map((customer) => (
+                <Table.Row key={customer.customerId} className={`h-[70px]`}>
                   <Table.Cell textAlign="center">
                     {role === "Admin" ? (
                       <Link
-                        to={`/customer/${customer._id}`}
+                        to={`/customer/${customer.customerId}`}
                         className=" underline underline-offset-2"
                       >
-                        {customer._id}
+                        {customer.customerId}
                       </Link>
                     ) : (
-                      customer._id
+                      customer.customerId
                     )}
                   </Table.Cell>
                   <Table.Cell textAlign="center">
@@ -230,9 +208,9 @@ const AllCustomer = () => {
           </Table.Body>
         </Table.Root>
 
-        {pagination?.totalDocuments && (
+        {data?.total && (
           <PaginationRoot
-            count={pagination.totalDocuments}
+            count={data.total}
             page={page}
             pageSize={30}
             defaultPage={1}
