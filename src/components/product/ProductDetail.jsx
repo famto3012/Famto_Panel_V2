@@ -19,13 +19,16 @@ import AdditionalProductDetail from "@/components/product/AdditionalProductDetai
 import EditProduct from "@/models/general/product/EditProduct";
 import ChangeCategory from "@/models/general/product/ChangeCategory";
 import DeleteProduct from "@/models/general/product/DeleteProduct";
+import EnlargeImage from "@/models/common/EnlargeImage";
 
 const ProductDetail = ({ merchantId }) => {
   const [modal, setModal] = useState({
     edit: false,
     delete: false,
     change: false,
+    enlarge: false,
   });
+  const [imageLink, setImageLink] = useState(null);
 
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -62,7 +65,8 @@ const ProductDetail = ({ merchantId }) => {
     },
   });
 
-  const toggleModal = (type) => {
+  const toggleModal = (type, link = null) => {
+    setImageLink(link);
     setModal({ ...modal, [type]: true });
   };
 
@@ -71,7 +75,9 @@ const ProductDetail = ({ merchantId }) => {
       edit: false,
       delete: false,
       change: false,
+      enlarge: false,
     });
+    setImageLink(null);
   };
 
   return (
@@ -96,7 +102,10 @@ const ProductDetail = ({ merchantId }) => {
           <>
             <div className="p-5 flex justify-between">
               <div className="flex w-2/3 gap-3">
-                <figure className="h-[90px] w-[90px]">
+                <figure
+                  onClick={() => toggleModal("enlarge", data?.productImageURL)}
+                  className="h-[90px] w-[90px] cursor-pointer"
+                >
                   <img
                     src={data?.productImageURL}
                     alt={data?.productName}
@@ -150,6 +159,8 @@ const ProductDetail = ({ merchantId }) => {
         )
       )}
 
+      {/* Modal */}
+
       <EditProduct
         isOpen={modal.edit}
         onClose={closeModal}
@@ -166,6 +177,12 @@ const ProductDetail = ({ merchantId }) => {
         isOpen={modal.change}
         onClose={closeModal}
         merchantId={merchantId}
+      />
+
+      <EnlargeImage
+        isOpen={modal.enlarge}
+        onClose={closeModal}
+        source={imageLink}
       />
     </div>
   );

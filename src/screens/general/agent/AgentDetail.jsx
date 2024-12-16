@@ -19,6 +19,7 @@ import AgentRatings from "@/models/general/agent/AgentRatings";
 import EditAgent from "@/models/general/agent/EditAgent";
 import BlockAgent from "@/models/general/agent/BlockAgent";
 import EditAgentVehicle from "@/models/general/agent/EditAgentVehicle";
+import EnlargeImage from "@/models/common/EnlargeImage";
 
 const AgentDetail = () => {
   const [modal, setModal] = useState({
@@ -26,8 +27,10 @@ const AgentDetail = () => {
     rating: false,
     block: false,
     vehicle: false,
+    enlarge: false,
   });
   const [vehicleData, setVehicleData] = useState({});
+  const [imageLink, setImageLink] = useState(null);
 
   const { agentId } = useParams();
   const navigate = useNavigate();
@@ -58,18 +61,21 @@ const AgentDetail = () => {
     },
   });
 
-  const toggleModal = (type, data = {}) => {
+  const toggleModal = (type, data = {}, link) => {
     setVehicleData(data);
+    setImageLink(link);
     setModal({ ...modal, [type]: true });
   };
 
   const closeModal = () => {
     setVehicleData({});
+    setImageLink(null);
     setModal({
       edit: false,
       rating: false,
       block: false,
       vehicle: false,
+      enlarge: false,
     });
   };
 
@@ -145,7 +151,10 @@ const AgentDetail = () => {
             </div>
           </div>
           <div>
-            <figure className="h-20 w-20" onClick={() => {}}>
+            <figure
+              className="h-20 w-20"
+              onClick={() => toggleModal("enlarge", undefined, data.agentImage)}
+            >
               <img
                 className="w-full h-full object-cover rounded-md"
                 src={data.agentImage}
@@ -205,27 +214,41 @@ const AgentDetail = () => {
               <Table.Cell textAlign="center">{item.model}</Table.Cell>
               <Table.Cell textAlign="center">{item.type}</Table.Cell>
               <Table.Cell textAlign="center">
-                <figure className="h-24 w-24">
-                  <img
-                    src={item.rcFrontImage}
-                    alt="RC Front image"
-                    className="w-full h-full object-contain"
-                  />
-                </figure>
+                <div className="w-full flex justify-center">
+                  <figure
+                    onClick={() =>
+                      toggleModal("enlarge", undefined, item.rcFrontImage)
+                    }
+                    className="h-24 w-24"
+                  >
+                    <img
+                      src={item.rcFrontImage}
+                      alt="RC Front image"
+                      className="w-full h-full object-contain"
+                    />
+                  </figure>
+                </div>
               </Table.Cell>
               <Table.Cell textAlign="center">
-                <figure className="h-24 w-24">
-                  <img
-                    src={item.rcBackImage}
-                    alt="RC Back image"
-                    className="w-full h-full object-contain"
-                  />
-                </figure>
+                <div className="w-full flex justify-center">
+                  <figure
+                    onClick={() =>
+                      toggleModal("enlarge", undefined, item.rcBackImage)
+                    }
+                    className="h-24 w-24"
+                  >
+                    <img
+                      src={item.rcBackImage}
+                      alt="RC Back image"
+                      className="w-full h-full object-contain"
+                    />
+                  </figure>
+                </div>
               </Table.Cell>
               <Table.Cell textAlign="center">
                 <span
                   onClick={() => toggleModal("vehicle", item)}
-                  className="flex items-center justify-center"
+                  className="flex items-center justify-center text-gray-500"
                 >
                   <RenderIcon iconName="EditIcon" size={24} loading={6} />
                 </span>
@@ -262,47 +285,93 @@ const AgentDetail = () => {
               {data?.governmentCertificateDetail?.aadharNumber}
             </Table.Cell>
             <Table.Cell textAlign="center">
-              <figure className="h-24 w-24">
-                <img
-                  src={data?.governmentCertificateDetail?.aadharFrontImage}
-                  alt="Aadhar Front"
-                  className="w-full h-full object-contain"
-                />
-              </figure>
+              <div className="w-full flex justify-center">
+                <figure
+                  onClick={() =>
+                    toggleModal(
+                      "enlarge",
+                      undefined,
+                      data?.governmentCertificateDetail?.aadharFrontImage
+                    )
+                  }
+                  className="h-24 w-24"
+                >
+                  <img
+                    src={data?.governmentCertificateDetail?.aadharFrontImage}
+                    alt="Aadhar Front"
+                    className="w-full h-full object-contain"
+                  />
+                </figure>
+              </div>
             </Table.Cell>
             <Table.Cell textAlign="center">
-              <figure className="h-24 w-24">
-                <img
-                  src={data?.governmentCertificateDetail?.aadharBackImage}
-                  alt="Aadhar Back"
-                  className="w-full h-full object-contain"
-                />
-              </figure>
+              <div className="w-full flex justify-center">
+                <figure
+                  onClick={() =>
+                    toggleModal(
+                      "enlarge",
+                      undefined,
+                      data?.governmentCertificateDetail?.aadharBackImage
+                    )
+                  }
+                  className="h-24 w-24"
+                >
+                  <img
+                    src={data?.governmentCertificateDetail?.aadharBackImage}
+                    alt="Aadhar Back"
+                    className="w-full h-full object-contain"
+                  />
+                </figure>
+              </div>
             </Table.Cell>
             <Table.Cell textAlign="center">
               {data?.governmentCertificateDetail?.drivingLicenseNumber}
             </Table.Cell>
             <Table.Cell textAlign="center">
-              <figure className="h-24 w-24">
-                <img
-                  src={
-                    data?.governmentCertificateDetail?.drivingLicenseFrontImage
+              <div className="w-full flex justify-center">
+                <figure
+                  onClick={() =>
+                    toggleModal(
+                      "enlarge",
+                      undefined,
+                      data?.governmentCertificateDetail
+                        ?.drivingLicenseFrontImage
+                    )
                   }
-                  alt="Driving License Front"
-                  className="w-full h-full object-contain"
-                />
-              </figure>
+                  className="h-24 w-24"
+                >
+                  <img
+                    src={
+                      data?.governmentCertificateDetail
+                        ?.drivingLicenseFrontImage
+                    }
+                    alt="Driving License Front"
+                    className="w-full h-full object-contain"
+                  />
+                </figure>
+              </div>
             </Table.Cell>
             <Table.Cell textAlign="center">
-              <figure className="h-24 w-24">
-                <img
-                  src={
-                    data?.governmentCertificateDetail?.drivingLicenseBackImage
+              <div className="w-full flex items-center">
+                <figure
+                  onClick={() =>
+                    toggleModal(
+                      "enlarge",
+                      undefined,
+                      data?.governmentCertificateDetail?.drivingLicenseBackImage
+                    )
                   }
-                  alt="Driving License Back"
-                  className="w-full h-full object-contain"
-                />
-              </figure>
+                  className="h-24 w-24"
+                >
+                  <img
+                    src={
+                      data?.governmentCertificateDetail?.drivingLicenseBackImage
+                    }
+                    alt="Driving License Back"
+                    className="w-full h-full object-contain"
+                  />
+                </figure>
+              </div>
             </Table.Cell>
           </Table.Row>
         </Table.Body>
@@ -394,6 +463,11 @@ const AgentDetail = () => {
         onClose={closeModal}
         data={vehicleData}
         agentId={data.agentId}
+      />
+      <EnlargeImage
+        isOpen={modal.enlarge}
+        onClose={closeModal}
+        source={imageLink}
       />
     </div>
   );

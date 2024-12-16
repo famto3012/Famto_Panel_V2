@@ -11,14 +11,17 @@ import { getAllGeofence } from "@/hooks/geofence/useGeofence";
 
 import MerchantRating from "@/models/general/merchant/MerchantRating";
 import Map from "@/models/common/Map";
+import EnlargeImage from "@/models/common/EnlargeImage";
 
 const MerchantData = ({ detail, onDataChange }) => {
   const [modal, setModal] = useState({
     rating: false,
     map: false,
+    enlarge: false,
   });
   const [previewURL, setPreviewURL] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [imageLink, setImageLink] = useState(null);
 
   const { role } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -70,7 +73,8 @@ const MerchantData = ({ detail, onDataChange }) => {
     value: geofence._id,
   }));
 
-  const toggleModal = (type) => {
+  const toggleModal = (type, link = null) => {
+    setImageLink(link);
     setModal({
       ...modal,
       [type]: true,
@@ -81,7 +85,9 @@ const MerchantData = ({ detail, onDataChange }) => {
     setModal({
       rating: false,
       map: false,
+      enlarge: false,
     });
+    setImageLink(null);
   };
 
   return (
@@ -99,7 +105,10 @@ const MerchantData = ({ detail, onDataChange }) => {
               </label>
             </div>
           ) : previewURL ? (
-            <figure className="w-[90%] h-[12rem] rounded-md relative">
+            <figure
+              onClick={() => toggleModal("enlarge", previewURL)}
+              className="w-[90%] h-[12rem] rounded-md relative"
+            >
               <img
                 src={previewURL}
                 alt="profile"
@@ -114,7 +123,12 @@ const MerchantData = ({ detail, onDataChange }) => {
             </figure>
           ) : (
             detail?.merchantDetail?.merchantImage && (
-              <figure className="w-[90%] h-[12rem] rounded-md relative  z-10">
+              <figure
+                onClick={() =>
+                  toggleModal("enlarge", detail?.merchantDetail?.merchantImage)
+                }
+                className="w-[90%] h-[12rem] rounded-md relative  z-10"
+              >
                 <img
                   src={detail?.merchantDetail?.merchantImage}
                   alt="profile"
@@ -341,6 +355,9 @@ const MerchantData = ({ detail, onDataChange }) => {
 
           {detail?.merchantDetail?.locationImage && (
             <img
+              onClick={() =>
+                toggleModal("enlarge", detail?.merchantDetail?.locationImage)
+              }
               src={detail?.merchantDetail?.locationImage}
               className="w-[70px] h-[66px] rounded-md cursor-pointer"
               alt="location map"
@@ -383,6 +400,12 @@ const MerchantData = ({ detail, onDataChange }) => {
           });
         }}
         oldLocation={detail?.merchantDetail?.location}
+      />
+
+      <EnlargeImage
+        isOpen={modal.enlarge}
+        onClose={closeModal}
+        source={imageLink}
       />
     </>
   );
