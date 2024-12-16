@@ -36,16 +36,23 @@ const Product = () => {
 
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { role } = useContext(AuthContext);
+  const { role, userId } = useContext(AuthContext);
   const { selectedCategory, setSelectedCategory } = useContext(DataContext);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["merchant-dropdown"],
     queryFn: () => fetchMerchantsForDropDown(navigate),
+    enabled: role && role === "Admin",
   });
 
   useEffect(() => {
-    data && data.length > 0 && setSelectedMerchant(data[0]._id);
+    if (role === "Admin" && data && data.length > 0) {
+      setSelectedMerchant(data[0]._id);
+    }
+
+    if (role === "Merchant") {
+      setSelectedMerchant(userId);
+    }
   }, [data]);
 
   const merchantOptions = data?.map((merchant) => ({
@@ -140,6 +147,7 @@ const Product = () => {
               <div className="flex gap-5 items-center">
                 Disabled
                 <Switch
+                  disabled={handleUpdateCategoryStatus.isPending}
                   colorPalette="teal"
                   checked={selectedCategory?.categoryStatus}
                   onCheckedChange={() => handleUpdateCategoryStatus.mutate()}
