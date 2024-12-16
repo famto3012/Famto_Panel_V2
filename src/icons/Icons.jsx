@@ -3,6 +3,7 @@ import {
   GoGift as GiftIcon,
   GoTriangleRight as AngleRightDropDownIcon,
   GoLock as LockIcon,
+  GoInfo as InfoIcon,
 } from "react-icons/go";
 import { GrBook as BookIcon } from "react-icons/gr";
 import { BsShopWindow as ShopIcon } from "react-icons/bs";
@@ -98,6 +99,7 @@ export {
   GeofenceIcon,
   GoogleIcon,
   HomeIcon,
+  InfoIcon,
   LeftArrowIcon,
   LocationIcon,
   LockIcon,

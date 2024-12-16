@@ -8,7 +8,7 @@ import { Provider } from "@/components/ui/provider";
 import { Toaster } from "@/components/ui/toaster";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "@/context/AuthContext.jsx";
-import { AddressProvider } from "@/context/AddressContext";
+import { DataProvider } from "@/context/DataContext";
 
 const queryClient = new QueryClient();
 
@@ -18,11 +18,11 @@ createRoot(document.getElementById("root")).render(
     <Toaster />
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <AddressProvider>
+        <DataProvider>
           <CustomRouter>
             <App />
           </CustomRouter>
-        </AddressProvider>
+        </DataProvider>
       </AuthProvider>
     </QueryClientProvider>
   </Provider>
