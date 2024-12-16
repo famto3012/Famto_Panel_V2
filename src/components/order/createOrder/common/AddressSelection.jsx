@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 
-import AddressContext from "@/context/AddressContext";
+import DataContext from "@/context/DataContext";
 
 import { HStack } from "@chakra-ui/react";
 import {
@@ -17,7 +17,7 @@ const AddressSelection = ({ address, onAddressSelect, label }) => {
   });
 
   const { addressType, setAddressType, otherAddressId, setOtherAddressId } =
-    useContext(AddressContext);
+    useContext(DataContext);
 
   useEffect(() => {
     onAddressSelect(selectedAddress);

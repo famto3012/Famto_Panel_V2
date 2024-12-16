@@ -8,7 +8,7 @@ import { Provider } from "@/components/ui/provider";
 import { Toaster } from "@/components/ui/toaster";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "@/context/AuthContext.jsx";
-import { AddressProvider } from "@/context/AddressContext";
+import { DataProvider } from "@/context/DataContext";
 import { SoundProvider } from "@/context/SoundContext";
 import { SocketProvider } from "@/context/SocketContext";
 import { register } from "@/serviceWorker";
@@ -21,7 +21,7 @@ createRoot(document.getElementById("root")).render(
     <Toaster />
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <AddressProvider>
+        <DataProvider>
           <SocketProvider>
             <SoundProvider>
               <CustomRouter>
@@ -29,7 +29,7 @@ createRoot(document.getElementById("root")).render(
               </CustomRouter>
             </SoundProvider>
           </SocketProvider>
-        </AddressProvider>
+         </DataProvider>
       </AuthProvider>
     </QueryClientProvider>
   </Provider>

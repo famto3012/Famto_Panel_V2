@@ -1,5 +1,19 @@
 import useApiClient from "@/api/apiClient";
 
+export const fetchBusinessCategoryOfMerchant = async (merchantId, navigate) => {
+  try {
+    const api = useApiClient(navigate);
+    const res = await api.get(`/categories/${merchantId}/business-categories`);
+
+    return res.status === 200 ? res.data.data : [];
+  } catch (err) {
+    throw new Error(
+      err.response?.data?.message ||
+        "Failed to fetch all business category of merchant"
+    );
+  }
+};
+
 export const getAllBusinessCategory = async (navigate) => {
   try {
     const api = useApiClient(navigate);
