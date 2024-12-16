@@ -9,6 +9,9 @@ import { Toaster } from "@/components/ui/toaster";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "@/context/AuthContext.jsx";
 import { DataProvider } from "@/context/DataContext";
+import { SoundProvider } from "@/context/SoundContext";
+import { SocketProvider } from "@/context/SocketContext";
+import { register } from "@/serviceWorker";
 
 const queryClient = new QueryClient();
 
@@ -19,12 +22,18 @@ createRoot(document.getElementById("root")).render(
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <DataProvider>
-          <CustomRouter>
-            <App />
-          </CustomRouter>
-        </DataProvider>
+          <SocketProvider>
+            <SoundProvider>
+              <CustomRouter>
+                <App />
+              </CustomRouter>
+            </SoundProvider>
+          </SocketProvider>
+         </DataProvider>
       </AuthProvider>
     </QueryClientProvider>
   </Provider>
   // </StrictMode>
 );
+
+register();

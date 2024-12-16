@@ -14,6 +14,10 @@ import AuthContext from "@/context/AuthContext";
 import { getNotificationLog } from "@/hooks/notification/useNotification";
 import Error from "@/components/others/Error";
 import ShowSpinner from "@/components/others/ShowSpinner";
+import { initializeApp } from "firebase/app";
+import { getMessaging, onMessage } from "firebase/messaging";
+import { useSoundContext } from "@/context/SoundContext";
+import { useSocket } from "@/context/SocketContext";
 
 const NotificationLog = () => {
   const [notificationLogData, setNotificationLogData] = useState([]);
@@ -23,8 +27,27 @@ const NotificationLog = () => {
 
   const navigate = useNavigate();
   const { role } = useContext(AuthContext);
+  const {
+    playNewOrderNotificationSound,
+    playNewNotificationSound,
+    setShowBadge,
+    newOrder,
+    orderRejected,
+    scheduledOrder,
+  } = useSoundContext();
+  const { socket } = useSocket();
 
   const getNotification = role || page || limit;
+
+  const firebaseConfig = {
+    apiKey: import.meta.env.VITE_APP_API_KEY,
+    authDomain: import.meta.env.VITE_APP_AUTH_DOMAIN,
+    projectId: import.meta.env.VITE_APP_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_APP_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_APP_MESSAGING_SENDER_ID,
+    appId: import.meta.env.VITE_APP_APP_ID,
+    measurementId: import.meta.env.VITE_APP_MEASUREMENT_ID,
+  };
 
   const {
     data: notificationLog,
@@ -36,12 +59,59 @@ const NotificationLog = () => {
     enabled: !!getNotification,
   });
 
+  const handleNotification = (payload) => {
+    if (
+      payload.notification.title === newOrder ||
+      payload.notification.title === orderRejected ||
+      payload.notification.title === scheduledOrder
+    ) {
+      console.log("New order sound");
+      playNewOrderNotificationSound();
+    } else {
+      console.log("New Notification sound");
+      playNewNotificationSound();
+    }
+    // addNotificationToTable(payload.notification);
+  };
+
+  useEffect(() => {
+    const app = initializeApp(firebaseConfig);
+    const messaging = getMessaging(app);
+    navigator.serviceWorker.addEventListener("message", (event) => {
+      if (event.data && event.data.type === "NOTIFICATION_RECEIVED") {
+        const payload = event.data.payload;
+        handleNotification(payload);
+      }
+    });
+
+    // Handle messages when the app is in the foreground
+    onMessage(messaging, (payload) => {
+      console.log("Received foreground message ", payload);
+      addNotificationToTable(payload);
+      handleNotification(payload);
+    });
+  }, [socket]);
+
   useEffect(() => {
     if (notificationLog) {
       setNotificationLogData(notificationLog.data);
       setPagination(notificationLog);
+      setShowBadge(false);
     }
   }, [notificationLog]);
+
+  const addNotificationToTable = (data) => {
+    console.log("Data", data);
+    const newNotification = {
+      title: data.notification.title, // Set the title
+      description: data.notification.body, // Set the body as description
+      imageUrl: data.notification.image, // Set the image URL
+      createdAt: new Date().toISOString(),
+      orderId: data?.data?.orderId,
+    };
+
+    setNotificationLogData((prevData) => [newNotification, ...prevData]);
+  };
 
   if (isError) return <Error />;
 
@@ -103,7 +173,13 @@ const NotificationLog = () => {
                           />
                         </div>
                       ) : (
-                        <span>-</span>
+                        <div className="flex justify-center items-center">
+                          <img
+                            className="w-[150px] h-[80px]"
+                            src="https://firebasestorage.googleapis.com/v0/b/famto-aa73e.appspot.com/o/admin_panel_assets%2FGroup%20427320384.svg?alt=media&token=0be47a53-43f3-4887-9822-3baad0edd31e"
+                            alt="Order Image"
+                          />
+                        </div>
                       )}
                     </Table.Cell>
                     <Table.Cell textAlign="center">
