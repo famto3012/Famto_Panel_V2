@@ -1,9 +1,9 @@
 import { useContext, useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
-import RenderIcon from "../../icons/RenderIcon";
+import RenderIcon from "@/icons/RenderIcon";
 
-import AuthContext from "../../context/AuthContext";
+import AuthContext from "@/context/AuthContext";
 
 const MainSideBar = () => {
   const [openDropdown, setOpenDropdown] = useState(null);
@@ -163,87 +163,101 @@ const MainSideBar = () => {
         )}
       </ul>
 
-      <div className="dropside" onClick={toggleSidebar("marketing")}>
-        <span className="font-[poppins]">Marketing</span>
-        <button>
-          <RenderIcon iconName="AngleRightDropDownIcon" size={24} loading={2} />
-        </button>
-      </div>
-      {openDropdown === "marketing" && (
-        <ul className="ul-side">
-          <Link
-            to="/marketing/discount"
-            className={`ps-4 side pt-1 pb-1 ${
-              selectedLink === "/marketing/discount" ? "selected-link" : ""
-            }`}
-          >
-            <span className="m-2">
-              <RenderIcon iconName="GiftIcon" size={28} loading={6} />
-            </span>
-            <span className="font-[poppins]">Discount</span>
-          </Link>
-
-          {role === "Admin" && (
-            <>
+      {role === "Admin" && (
+        <>
+          <div className="dropside" onClick={toggleSidebar("marketing")}>
+            <span className="font-[poppins]">Marketing</span>
+            <button>
+              <RenderIcon
+                iconName="AngleRightDropDownIcon"
+                size={24}
+                loading={2}
+              />
+            </button>
+          </div>
+          {openDropdown === "marketing" && (
+            <ul className="ul-side">
               <Link
-                to="/marketing/ad-banner"
-                className={`ps-4 side ${
-                  selectedLink === "/marketing/ad-banner" ? "selected-link" : ""
+                to="/marketing/discount"
+                className={`ps-4 side pt-1 pb-1 ${
+                  selectedLink === "/marketing/discount" ? "selected-link" : ""
                 }`}
               >
                 <span className="m-2">
-                  <RenderIcon iconName="AdBannerIcon" size={28} loading={6} />
+                  <RenderIcon iconName="GiftIcon" size={28} loading={6} />
                 </span>
-                <span className="font-[poppins]">Ad banner</span>
+                <span className="font-[poppins]">Discount</span>
               </Link>
 
-              <Link
-                to="/marketing/loyalty-point"
-                className={`ps-4 side ${
-                  selectedLink === "/marketing/loyalty-point"
-                    ? "selected-link"
-                    : ""
-                }`}
-              >
-                <span className="m-2">
-                  <RenderIcon
-                    iconName="LoyaltyPointIcon"
-                    size={28}
-                    loading={6}
-                  />
-                </span>
-                <span className="font-[poppins]">Loyality Point</span>
-              </Link>
+              <>
+                <Link
+                  to="/marketing/ad-banner"
+                  className={`ps-4 side ${
+                    selectedLink === "/marketing/ad-banner"
+                      ? "selected-link"
+                      : ""
+                  }`}
+                >
+                  <span className="m-2">
+                    <RenderIcon iconName="AdBannerIcon" size={28} loading={6} />
+                  </span>
+                  <span className="font-[poppins]">Ad banner</span>
+                </Link>
 
-              <Link
-                to="/marketing/promo-code"
-                className={`ps-4 side ${
-                  selectedLink === "/marketing/promo-code"
-                    ? "selected-link"
-                    : ""
-                }`}
-              >
-                <span className="m-2">
-                  <RenderIcon iconName="PromoCodeIcon" size={28} loading={6} />
-                </span>
-                <span className="font-[poppins]">Promo code</span>
-              </Link>
+                <Link
+                  to="/marketing/loyalty-point"
+                  className={`ps-4 side ${
+                    selectedLink === "/marketing/loyalty-point"
+                      ? "selected-link"
+                      : ""
+                  }`}
+                >
+                  <span className="m-2">
+                    <RenderIcon
+                      iconName="LoyaltyPointIcon"
+                      size={28}
+                      loading={6}
+                    />
+                  </span>
+                  <span className="font-[poppins]">Loyality Point</span>
+                </Link>
 
-              <Link
-                to="/marketing/referral"
-                className={`ps-4 side ${
-                  selectedLink === "/marketing/referral" ? "selected-link" : ""
-                }`}
-              >
-                <span className="m-2">
-                  <RenderIcon iconName="ReferralIcon" size={28} loading={6} />
-                </span>
+                <Link
+                  to="/marketing/promo-code"
+                  className={`ps-4 side ${
+                    selectedLink === "/marketing/promo-code"
+                      ? "selected-link"
+                      : ""
+                  }`}
+                >
+                  <span className="m-2">
+                    <RenderIcon
+                      iconName="PromoCodeIcon"
+                      size={28}
+                      loading={6}
+                    />
+                  </span>
+                  <span className="font-[poppins]">Promo code</span>
+                </Link>
 
-                <span className="font-[poppins]">Referral</span>
-              </Link>
-            </>
+                <Link
+                  to="/marketing/referral"
+                  className={`ps-4 side ${
+                    selectedLink === "/marketing/referral"
+                      ? "selected-link"
+                      : ""
+                  }`}
+                >
+                  <span className="m-2">
+                    <RenderIcon iconName="ReferralIcon" size={28} loading={6} />
+                  </span>
+
+                  <span className="font-[poppins]">Referral</span>
+                </Link>
+              </>
+            </ul>
           )}
-        </ul>
+        </>
       )}
 
       <div className="dropside" onClick={toggleSidebar("notification")}>
