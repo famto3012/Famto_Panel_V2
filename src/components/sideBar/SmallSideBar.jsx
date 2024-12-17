@@ -1,13 +1,15 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
-import { role } from "../../utils/testData";
+import RenderIcon from "@/icons/RenderIcon";
 
-import RenderIcon from "../../icons/RenderIcon";
+import AuthContext from "@/context/AuthContext";
 
 const SmallSideBar = () => {
   const [selectedLink, setSelectedLink] = useState("");
   const [isImageLoaded, setIsImageLoaded] = useState(false);
+
+  const { role } = useContext(AuthContext);
   const location = useLocation();
 
   useEffect(() => {
