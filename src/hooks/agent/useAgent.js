@@ -168,3 +168,81 @@ export const updateAgentVehicle = async (
     );
   }
 };
+
+export const fetchAgentPayout = async (filter, page, limit, navigate) => {
+  try {
+    const api = useApiClient(navigate);
+    const res = await api.get(`/admin/agents/filter-payment`, {
+      params: {
+        page,
+        limit,
+        status: filter?.status,
+        agent: filter?.agent,
+        geofence: filter?.geofence,
+        date: filter?.date ? filter.date.toLocaleDateString("en-CA") : null,
+        name: filter?.name,
+      },
+    });
+
+    return res.status === 200 ? res.data : {};
+  } catch (err) {
+    throw err.response?.data?.message || "Failed to fetch agent payout";
+  }
+};
+
+export const approveAgentPayout = async (agentId, detailId, navigate) => {
+  try {
+    const api = useApiClient(navigate);
+    const res = await api.patch(
+      `/admin/agents/approve-payout/${agentId}/${detailId}`,
+      {}
+    );
+
+    return res.status === 200 ? res.data.message : null;
+  } catch (err) {
+    throw (
+      err.response?.data?.message || {
+        message: "Failed to update agent's payout",
+      }
+    );
+  }
+};
+
+export const downloadPayoutCSV = async (filter, navigate) => {
+  try {
+    const api = useApiClient(navigate);
+    const res = await api.get(`/admin/agents/download-payment-csv`, {
+      params: {
+        status: filter?.status,
+        agent: filter?.agent,
+        geofence: filter?.geofence,
+        date: filter?.date ? filter.date.toLocaleDateString("en-CA") : null,
+        name: filter?.name,
+      },
+      responseType: "blob",
+    });
+
+    return res.status === 200 ? res.data : {};
+  } catch (err) {
+    throw err.response?.data?.message || "Failed to download agent payout CSV";
+  }
+};
+
+export const downloadAgentCSV = async (filter, navigate) => {
+  try {
+    const api = useApiClient(navigate);
+    const res = await api.get(`/admin/agents/download-agent-csv`, {
+      params: {
+        geofence: filter?.geofence,
+        status: filter?.status,
+        vehicleType: filter?.vehicleType,
+        name: filter?.name,
+      },
+      responseType: "blob",
+    });
+
+    return res.status === 200 ? res.data : {};
+  } catch (err) {
+    throw err.response?.data?.message || "Failed to download agent payout CSV";
+  }
+};

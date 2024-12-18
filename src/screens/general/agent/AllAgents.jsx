@@ -16,7 +16,11 @@ import { getAllGeofence } from "@/hooks/geofence/useGeofence";
 
 import { agentStatusOptions, agentVehicleOptions } from "@/utils/defaultData";
 
-import { fetchAllAgents, updateAgentStatus } from "@/hooks/agent/useAgent";
+import {
+  downloadAgentCSV,
+  fetchAllAgents,
+  updateAgentStatus,
+} from "@/hooks/agent/useAgent";
 
 import AddAgent from "@/models/general/agent/AddAgent";
 import ApproveAgent from "@/models/general/agent/ApproveAgent";
@@ -78,6 +82,48 @@ const AllAgents = () => {
     },
   });
 
+  const downloadCSV = useMutation({
+    mutationKey: ["agent-csv"],
+    mutationFn: (filter) => downloadAgentCSV(filter, navigate),
+  });
+
+  const handleDownloadCSV = () => {
+    const promise = new Promise((resolve, reject) => {
+      downloadCSV.mutate(filter, {
+        onSuccess: (data) => {
+          const url = window.URL.createObjectURL(new Blob([data]));
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute("download", "Agent.csv");
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          resolve();
+        },
+        onError: (error) => {
+          reject(
+            new Error(error.message || "Failed to download the CSV file.")
+          );
+        },
+      });
+    });
+
+    toaster.promise(promise, {
+      loading: {
+        title: "Downloading...",
+        description: "Preparing your CSV file.",
+      },
+      success: {
+        title: "Download Successful",
+        description: "CSV file has been downloaded successfully.",
+      },
+      error: {
+        title: "Download Failed",
+        description: "Something went wrong while downloading the CSV file.",
+      },
+    });
+  };
+
   const geofenceOptions = [
     { label: "All", value: "All" },
     ...(Array.isArray(allGeofence)
@@ -124,10 +170,10 @@ const AllAgents = () => {
 
       <div className="flex justify-between mt-[30px] items-center px-[30px]">
         <h1 className="text-[18px] font-semibold">Delivery Agent</h1>
-        <div className="flex space-x-2 justify-end ">
+        <div className="flex gap-x-2 justify-end ">
           <button
             className="bg-cyan-100 text-black rounded-md px-4 py-2 font-semibold flex items-center gap-2"
-            onClick={() => {}}
+            onClick={handleDownloadCSV}
           >
             <RenderIcon iconName="DownloadIcon" size={16} loading={6} />
             <span>CSV</span>
