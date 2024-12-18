@@ -139,7 +139,7 @@ const ListCategory = ({ merchantId }) => {
                   selectedCategory.categoryId === category?._id
                     ? "bg-gray-200"
                     : "bg-transparent"
-                } text-start ps-[20px] py-[20px] text-[16px] cursor-pointer hover:bg-gray-100 font-[400] capitalize`}
+                } text-start ps-[20px] py-[20px] text-[16px] cursor-pointer hover:bg-gray-100 font-[400] capitalize truncate`}
               >
                 {category.categoryName}
               </h6>

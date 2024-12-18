@@ -100,33 +100,37 @@ const ProductDetail = ({ merchantId }) => {
         data &&
         Object?.keys(data)?.length > 0 && (
           <>
-            <div className="p-5 flex justify-between">
-              <div className="flex w-2/3 gap-3">
-                <figure
-                  onClick={() =>
-                    toggleModal(
-                      "enlarge",
-                      data?.productImageURL ||
-                        import.meta.env.VITE_APP_DEFAULT_PRODUCT_IMAGE
-                    )
-                  }
-                  className="h-[90px] w-[90px] cursor-pointer"
-                >
-                  <img
-                    src={
-                      data?.productImageURL ||
-                      import.meta.env.VITE_APP_DEFAULT_PRODUCT_IMAGE
+            <div className="p-5 flex items-start w-full">
+              <div className="flex gap-3 items-start w-full">
+                <div className="flex flex-1 gap-3">
+                  <figure
+                    onClick={() =>
+                      toggleModal(
+                        "enlarge",
+                        data?.productImageURL ||
+                          import.meta.env.VITE_APP_DEFAULT_PRODUCT_IMAGE
+                      )
                     }
-                    alt={data?.productName}
-                    className="w-full h-full object-cover rounded-md"
-                  />
-                </figure>
-                <div>
-                  <p className="font-semibold">{data?.productName}</p>
-                  <p className="text-teal-800 font-bold">₹ {data?.price}</p>
+                    className="h-[90px] w-[90px] flex-shrink-0 cursor-pointer"
+                  >
+                    <img
+                      src={
+                        data?.productImageURL ||
+                        import.meta.env.VITE_APP_DEFAULT_PRODUCT_IMAGE
+                      }
+                      alt={data?.productName}
+                      className="w-full h-full object-cover rounded-md"
+                    />
+                  </figure>
+
+                  <div className="flex-1 w-5">
+                    <p className="font-semibold text-wrap text-gray-800">
+                      {data?.productName}
+                    </p>
+                    <p className="text-teal-800 font-bold">₹ {data?.price}</p>
+                  </div>
                 </div>
-              </div>
-              <div>
+
                 <button
                   className="bg-yellow-200/50 p-3 font-medium rounded-lg"
                   onClick={() => toggleModal("change")}
@@ -135,6 +139,7 @@ const ProductDetail = ({ merchantId }) => {
                 </button>
               </div>
             </div>
+
             <div className="flex justify-between p-5 items-center">
               <p className="font-semibold">Product Details</p>
               <div className="flex gap-5 items-center">
