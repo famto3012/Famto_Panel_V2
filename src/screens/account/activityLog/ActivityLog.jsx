@@ -1,9 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+
 import { Table } from "@chakra-ui/react";
 
 import GlobalSearch from "@/components/others/GlobalSearch";
 import ShowSpinner from "@/components/others/ShowSpinner";
+import Error from "@/components/others/Error";
 
 import { fetchAllActivityLogs } from "@/hooks/activityLog/activityLog";
 
@@ -16,7 +18,7 @@ const ActivityLog = () => {
   });
 
   return (
-    <div className="bg-gray-100 h-full">
+    <div className="bg-gray-100 h-full w-full">
       <GlobalSearch />
 
       <div className="py-4 flex items-center">
@@ -31,10 +33,15 @@ const ActivityLog = () => {
       <Table.Root striped interactive stickyHeader>
         <Table.Header>
           <Table.Row className="bg-teal-700 h-[70px]">
-            <Table.ColumnHeader color="white" textAlign="center" colSpan={2}>
+            <Table.ColumnHeader
+              colSpan={2}
+              color="white"
+              textAlign="center"
+              style={{ minWidth: "250px" }}
+            >
               Date and Time
             </Table.ColumnHeader>
-            <Table.ColumnHeader color="white" textAlign="center" colSpan={6}>
+            <Table.ColumnHeader colSpan={6} color="white" textAlign="center">
               Description
             </Table.ColumnHeader>
           </Table.Row>
@@ -42,7 +49,12 @@ const ActivityLog = () => {
         <Table.Body>
           {isLoading ? (
             <Table.Row className="h-[70px]">
-              <Table.Cell colSpan={8} textAlign="center">
+              <Table.Cell
+                colSpan={8}
+                textAlign="center"
+                display="flex"
+                gapX={2}
+              >
                 <ShowSpinner /> Loading...
               </Table.Cell>
             </Table.Row>
@@ -55,16 +67,16 @@ const ActivityLog = () => {
           ) : isError ? (
             <Table.Row className="h-[70px]">
               <Table.Cell colSpan={8} textAlign="center">
-                Error
+                <Error />
               </Table.Cell>
             </Table.Row>
           ) : (
             data?.map((item, index) => (
-              <Table.Row key={index} className={`h-[70px]`}>
-                <Table.Cell textAlign="center" colSpan={2}>
+              <Table.Row key={index} className="h-[70px]">
+                <Table.Cell colSpan={2} textAlign="center">
                   {item.date} at {item.time}
                 </Table.Cell>
-                <Table.Cell textAlign="start" colSpan={6}>
+                <Table.Cell colSpan={6} textAlign="start">
                   {item.description}
                 </Table.Cell>
               </Table.Row>
