@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 
 import AuthContext from "@/context/AuthContext";
+import DataContext from "@/context/DataContext";
 
 import { toaster } from "@/components/ui/toaster";
 
@@ -20,8 +21,8 @@ const HomeDelivery = ({ data, address }) => {
     selectedBusinessCategory: null,
     merchantId: null,
     items: [],
-    customerAddressType: "",
-    customerAddressOtherAddressId: "",
+    customerAddressType: null,
+    customerAddressOtherAddressId: null,
     instructionToMerchant: "",
     instructionToDeliveryAgent: "",
     addedTip: "",
@@ -31,9 +32,11 @@ const HomeDelivery = ({ data, address }) => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [cartData, setCartData] = useState({});
   const [showBill, setShowBill] = useState(false);
+  const [clearSignal, setClearSignal] = useState(false);
 
-  const { role } = useContext(AuthContext);
   const navigate = useNavigate();
+  const { role } = useContext(AuthContext);
+  const { setAddressType, setOtherAddressId } = useContext(DataContext);
 
   useEffect(() => {
     setHomeDeliveryData((prev) => ({
@@ -57,6 +60,17 @@ const HomeDelivery = ({ data, address }) => {
       customerAddressType: data.type,
       customerAddressOtherAddressId: data.otherAddressId,
     });
+  };
+
+  const handleToggleNewAddress = () => {
+    setHomeDeliveryData({
+      ...homeDeliveryData,
+      customerAddressType: null,
+      customerAddressOtherAddressId: null,
+    });
+    setAddressType(null);
+    setOtherAddressId(null);
+    setClearSignal(true);
   };
 
   const handleNewCustomerAddress = (data) => {
@@ -155,10 +169,15 @@ const HomeDelivery = ({ data, address }) => {
         <AddressSelection
           address={address}
           onAddressSelect={handleSelectAddress}
+          clearSignal={clearSignal}
+          setClearSignal={setClearSignal}
           label="Select Delivery Address"
         />
 
-        <AddAddress onNewAddress={handleNewCustomerAddress} />
+        <AddAddress
+          onNewAddress={handleNewCustomerAddress}
+          onToggleAddAddress={handleToggleNewAddress}
+        />
 
         <div className="flex items-start">
           <label

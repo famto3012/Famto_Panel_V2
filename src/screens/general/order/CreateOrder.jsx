@@ -30,7 +30,10 @@ const CreateOrder = () => {
   const { role } = useContext(AuthContext);
 
   const handleSelectCustomer = (customer) => {
-    setTopData({ ...topData, customerId: customer.customerId });
+    setTopData({
+      ...topData,
+      customerId: customer?.customerId || customer?._id,
+    });
     setAddress(customer.address);
   };
 

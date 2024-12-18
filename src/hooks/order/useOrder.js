@@ -102,7 +102,7 @@ export const searchCustomerForOrder = async (role, query, navigate) => {
 
     const res = await api.get(route);
 
-    return res.status === 200 ? res.data : [];
+    return res.status === 200 ? res.data.data : [];
   } catch (err) {
     throw new Error(
       err.response?.data?.message || "Failed to search customers for ordering."

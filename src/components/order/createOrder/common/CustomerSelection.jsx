@@ -76,7 +76,7 @@ const CustomerSelection = ({ onCustomerSelect }) => {
           <ul className="absolute bg-white border w-full mt-1 z-50">
             {allCustomers?.map((customer) => (
               <li
-                key={customer.customerId}
+                key={customer?.customerId || customer?._id}
                 className="p-2 hover:bg-gray-200 cursor-pointer"
                 onClick={() => selectCustomer(customer)}
               >

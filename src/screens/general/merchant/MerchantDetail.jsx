@@ -195,7 +195,7 @@ const MerchantDetail = () => {
                     handleUpdateStatusMutation.isPending
                   }
                   colorPalette="teal"
-                  value={formData?.status}
+                  checked={formData?.status}
                   onCheckedChange={() => handleUpdateStatusMutation.mutate()}
                 />
               </>
