@@ -158,7 +158,7 @@ const AllMerchant = () => {
               (option) => option.value === filter.geofence
             )}
             onChange={(option) =>
-              setFilter({ ...filter, status: option.value })
+              setFilter({ ...filter, geofence: option.value })
             }
             className=" bg-cyan-50 min-w-[10rem]"
             placeholder="Geofence"

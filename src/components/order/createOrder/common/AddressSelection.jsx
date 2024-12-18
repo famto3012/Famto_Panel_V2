@@ -10,7 +10,13 @@ import {
 } from "@/components/ui/radio-card";
 import { toaster } from "@/components/ui/toaster";
 
-const AddressSelection = ({ address, onAddressSelect, label }) => {
+const AddressSelection = ({
+  address,
+  onAddressSelect,
+  clearSignal,
+  setClearSignal,
+  label,
+}) => {
   const [selectedAddress, setSelectedAddress] = useState({
     type: null,
     otherAddressId: null,
@@ -22,6 +28,14 @@ const AddressSelection = ({ address, onAddressSelect, label }) => {
   useEffect(() => {
     onAddressSelect(selectedAddress);
   }, [selectedAddress]);
+
+  useEffect(() => {
+    if (clearSignal) {
+      setSelectedAddress({ type: null, otherAddressId: null });
+      onAddressSelect({ type: null, otherAddressId: null });
+      setClearSignal(false);
+    }
+  }, [clearSignal]);
 
   const handleSelectAddressType = (type) => {
     if (type === addressType && type !== "other") {
@@ -59,7 +73,7 @@ const AddressSelection = ({ address, onAddressSelect, label }) => {
             {label}
           </label>
 
-          <div>
+          <div className="w-2/3">
             {address?.map((address, index) => (
               <input
                 key={index}
@@ -77,14 +91,12 @@ const AddressSelection = ({ address, onAddressSelect, label }) => {
             {selectedAddress.type === "other" && (
               <RadioCardRoot className="mt-5">
                 <RadioCardLabel>Select Other Address</RadioCardLabel>
-                <HStack
-                  align="stretch"
-                  className="mt-[14px] flex-wrap gap-[20px]"
-                >
+                <HStack className="mt-[14px] flex-wrap gap-[20px]">
                   {address
                     ?.find((addr) => addr.type === "other")
                     ?.otherAddress?.map((otherAddr) => (
                       <RadioCardItem
+                        colorPalette="teal"
                         key={otherAddr.id}
                         value={otherAddr.id}
                         className="cursor-pointer"

@@ -237,6 +237,22 @@ export const updatePaymentStatusOfSubscription = async (logId, navigate) => {
   }
 };
 
+export const fetchCurrentSubscriptionPlan = async (navigate) => {
+  try {
+    const api = useApiClient(navigate);
+    const res = await api.get(`/admin/subscription/get-current-subscription`);
+
+    console.log(res.data);
+
+    return res.status === 200 ? res.data : null;
+  } catch (err) {
+    throw new Error(
+      err.response?.data?.message ||
+        "Failed to fetch current subscription plan of merchant"
+    );
+  }
+};
+
 // =====================================
 // ==============Customer===============
 // =====================================

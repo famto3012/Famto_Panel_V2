@@ -16,6 +16,7 @@ import Error from "@/components/others/Error";
 
 import {
   fetchAllSubscriptionPlansOfMerchant,
+  fetchCurrentSubscriptionPlan,
   initiateSubscriptionPaymentForMerchant,
   verifyRazorpayPaymentForSubscription,
 } from "@/hooks/commAndSubs/useSubscription";
@@ -53,7 +54,17 @@ const MerchantSubscriptionPlans = () => {
   } = useQuery({
     queryKey: ["merchant-dropdown"],
     queryFn: () => fetchMerchantsForDropDown(navigate),
-    enabled: role === "Admin" ? true : false,
+    enabled: role === "Admin",
+  });
+
+  const {
+    data: currentPlan,
+    isLoading: currentPlanLoading,
+    isError: currentPlanError,
+  } = useQuery({
+    queryKey: ["current-merchant-sub-plan"],
+    queryFn: () => fetchCurrentSubscriptionPlan(navigate),
+    enabled: role === "Merchant",
   });
 
   const handlePayment = useMutation({
@@ -161,6 +172,36 @@ const MerchantSubscriptionPlans = () => {
             Website preview
           </Link>
         </div>
+
+        {role === "Merchant" && (
+          <div className="mt-[20px] flex items-center">
+            <label className="w-1/3">Current Subscription Plan</label>
+
+            <div className="border w-fit p-3 pe-[20px] rounded-md flex items-center gap-x-5">
+              <RenderIcon iconName="InfoIcon" size={20} loading={6} />
+
+              {currentPlan?.planName && currentPlan?.daysLeft ? (
+                <div className="flex items-center">
+                  <div className="flex flex-col border-r-2 border-r-zinc-950 pe-[20px]">
+                    <span>Plan Name</span>
+                    <span className="text-black font-[500] text-[18px]">
+                      {currentPlan?.planName}
+                    </span>
+                  </div>
+
+                  <div className="flex flex-col ps-[20px]">
+                    <span>Days Left</span>
+                    <span className="text-black font-[500] text-[18px]">
+                      {currentPlan?.daysLeft}
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                <p>No active subscription plan</p>
+              )}
+            </div>
+          </div>
+        )}
 
         <div className="flex mt-10">
           <label className="w-1/3">Available Subscription Plans</label>

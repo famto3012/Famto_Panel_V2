@@ -103,11 +103,20 @@ const ProductDetail = ({ merchantId }) => {
             <div className="p-5 flex justify-between">
               <div className="flex w-2/3 gap-3">
                 <figure
-                  onClick={() => toggleModal("enlarge", data?.productImageURL)}
+                  onClick={() =>
+                    toggleModal(
+                      "enlarge",
+                      data?.productImageURL ||
+                        import.meta.env.VITE_APP_DEFAULT_PRODUCT_IMAGE
+                    )
+                  }
                   className="h-[90px] w-[90px] cursor-pointer"
                 >
                   <img
-                    src={data?.productImageURL}
+                    src={
+                      data?.productImageURL ||
+                      import.meta.env.VITE_APP_DEFAULT_PRODUCT_IMAGE
+                    }
                     alt={data?.productName}
                     className="w-full h-full object-cover rounded-md"
                   />

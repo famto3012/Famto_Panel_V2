@@ -4,8 +4,13 @@ import RenderIcon from "@/icons/RenderIcon";
 
 import AddAddressForm from "@/components/order/createOrder/common/AddAddressForm";
 
-const AddAddress = ({ onNewAddress }) => {
+const AddAddress = ({ onNewAddress, onToggleAddAddress }) => {
   const [showForm, setShowForm] = useState(false);
+
+  const handleToggleAddress = () => {
+    onToggleAddAddress();
+    setShowForm(!showForm);
+  };
 
   return (
     <div>
@@ -15,7 +20,7 @@ const AddAddress = ({ onNewAddress }) => {
         <div className="w-1/2 flex flex-col justify-center">
           <button
             className=" bg-gray-200 font-semibold py-2 rounded flex justify-between items-center px-4 border border-gray-300"
-            onClick={() => setShowForm(!showForm)}
+            onClick={handleToggleAddress}
           >
             <span>Add Address</span>
             {!showForm ? (

@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 
 import { HStack, Table } from "@chakra-ui/react";
 import {
@@ -10,13 +15,17 @@ import {
   PaginationRoot,
 } from "@/components/ui/pagination";
 import { Switch } from "@/components/ui/switch";
+import { toaster } from "@/components/ui/toaster";
 
 import RenderIcon from "@/icons/RenderIcon";
 
 import ShowSpinner from "@/components/others/ShowSpinner";
 import Error from "@/components/others/Error";
 
-import { fetchAllMerchants } from "@/hooks/merchant/useMerchant";
+import {
+  fetchAllMerchants,
+  updateStatusMutation,
+} from "@/hooks/merchant/useMerchant";
 
 import ApproveMerchant from "@/models/general/merchant/ApproveMerchant";
 import RejectMerchant from "@/models/general/merchant/RejectMerchant";
@@ -31,11 +40,32 @@ const AllMerchantsTable = ({ filter }) => {
   const [selectedId, setSelectedId] = useState(null);
 
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["all-merchants", filter, page],
     queryFn: () => fetchAllMerchants(filter, page, navigate),
     placeholderData: keepPreviousData,
+  });
+
+  const handleUpdateStatusMutation = useMutation({
+    mutationKey: ["update-merchant-status"],
+    mutationFn: (merchantId) => updateStatusMutation(merchantId, navigate),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["all-merchants"]);
+      toaster.create({
+        title: "Success",
+        description: `Merchant status updated successfully`,
+        type: "success",
+      });
+    },
+    onError: (data) => {
+      toaster.create({
+        title: "Error",
+        description: data.message || `Error in updating merchant status, `,
+        type: "error",
+      });
+    },
   });
 
   const toggleModal = (type, id = null) => {
@@ -117,7 +147,9 @@ const AllMerchantsTable = ({ filter }) => {
                   <Switch
                     colorPalette="teal"
                     checked={item.status}
-                    onCheckedChange={() => {}}
+                    onCheckedChange={() =>
+                      handleUpdateStatusMutation.mutate(item.merchantId)
+                    }
                   />
                 </Table.Cell>
                 <Table.Cell textAlign="center">
