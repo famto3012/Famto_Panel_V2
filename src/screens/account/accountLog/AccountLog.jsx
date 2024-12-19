@@ -7,7 +7,7 @@ import DatePicker from "react-datepicker";
 import { Table } from "@chakra-ui/react";
 
 import { toaster } from "@/components/ui/toaster";
-import { Switch } from "@/components/ui/switch";
+import { Button } from "@/components/ui/button";
 
 import GlobalSearch from "@/components/others/GlobalSearch";
 import ShowSpinner from "@/components/others/ShowSpinner";
@@ -190,7 +190,7 @@ const AccountLog = () => {
               "Account Type",
               "Description",
               "Date and Time",
-              "Status",
+              "Action",
             ].map((header, index) => (
               <Table.ColumnHeader key={index} color="white" textAlign="center">
                 {header}
@@ -230,11 +230,12 @@ const AccountLog = () => {
                   <span>{item.blockedTime}</span>
                 </Table.Cell>
                 <Table.Cell textAlign="center" flexDirection="column">
-                  <Switch
-                    colorPalette="teal"
-                    checked={item.status}
-                    onChange={() => toggleStatus.mutate(item.logId)}
-                  />
+                  <Button
+                    onClick={() => toggleStatus.mutate(item.logId)}
+                    className="bg-teal-700 text-white p-3"
+                  >
+                    Unblock
+                  </Button>
                 </Table.Cell>
               </Table.Row>
             ))
