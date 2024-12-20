@@ -11,3 +11,29 @@ export const signInHandler = async (credentials) => {
     throw new Error(JSON.stringify(err.response.data.errors));
   }
 };
+
+export const forgotPassword = async (email) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/auth/forgot-password`, {
+      email,
+    });
+
+    return response.status === 200 ? response.data : null;
+  } catch (err) {
+    throw err?.response?.data?.message || "Something went wrong";
+  }
+};
+
+export const resetPassword = async (password, resetToken, role) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/auth/reset-password`, {
+      password,
+      resetToken,
+      role,
+    });
+
+    return response.status === 200 ? response.data : null;
+  } catch (err) {
+    throw err?.response?.data?.message || "Something went wrong";
+  }
+};

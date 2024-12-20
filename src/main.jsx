@@ -12,6 +12,7 @@ import { DataProvider } from "@/context/DataContext";
 import { SoundProvider } from "@/context/SoundContext";
 import { SocketProvider } from "@/context/SocketContext";
 import { register } from "@/serviceWorker";
+import { OTPProvider } from "@/context/OTPContext";
 
 const queryClient = new QueryClient();
 
@@ -21,15 +22,17 @@ createRoot(document.getElementById("root")).render(
     <Toaster />
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <DataProvider>
-          <SocketProvider>
-            <SoundProvider>
-              <CustomRouter>
-                <App />
-              </CustomRouter>
-            </SoundProvider>
-          </SocketProvider>
-         </DataProvider>
+        <OTPProvider>
+          <DataProvider>
+            <SocketProvider>
+              <SoundProvider>
+                <CustomRouter>
+                  <App />
+                </CustomRouter>
+              </SoundProvider>
+            </SocketProvider>
+          </DataProvider>
+        </OTPProvider>
       </AuthProvider>
     </QueryClientProvider>
   </Provider>
