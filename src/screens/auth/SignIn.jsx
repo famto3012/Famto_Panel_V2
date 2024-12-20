@@ -75,7 +75,7 @@ const SignIn = () => {
               className="mx-auto hidden lg:flex h-20 w-20"
             />
             <h2 className="mt-3 text-2xl font-poppins text-teal-700 md:text-black">
-              Login
+              Sign In
             </h2>
           </div>
           <form onSubmit={handleSubmit}>

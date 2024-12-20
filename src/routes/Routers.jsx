@@ -34,11 +34,12 @@ const Routers = () => {
   const location = useLocation();
 
   useEffect(() => {
-    if (!token) {
+    if (!token && !location.pathname.startsWith("/auth")) {
       navigate("/auth/sign-in");
     } else if (
-      location.pathname === "/auth/sign-in" ||
-      location.pathname === "/auth/sign-up"
+      token &&
+      (location.pathname === "/auth/sign-in" ||
+        location.pathname === "/auth/sign-up")
     ) {
       navigate("/home");
     }

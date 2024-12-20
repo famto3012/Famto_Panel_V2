@@ -1,9 +1,10 @@
-import { useContext } from "react";
-import RenderIcon from "../../icons/RenderIcon";
-import AuthContext from "../../context/AuthContext";
+import { useState } from "react";
+
+import RenderIcon from "@/icons/RenderIcon";
+import Logout from "@/models/auth/Logout";
 
 const GlobalSearch = () => {
-  const { clearStorage } = useContext(AuthContext);
+  const [showModal, setShowModal] = useState(false);
 
   return (
     <div className="flex items-center justify-end pt-[20px] pe-[30px] bg-gray-100">
@@ -21,9 +22,11 @@ const GlobalSearch = () => {
         </button>
       </div>
 
-      <span onClick={() => clearStorage()} className="cursor-pointer">
+      <span onClick={() => setShowModal(!showModal)} className="cursor-pointer">
         <RenderIcon iconName="LogoutIcon" size={24} loading={6} />
       </span>
+
+      <Logout isOpen={showModal} onClose={() => setShowModal(!showModal)} />
     </div>
   );
 };

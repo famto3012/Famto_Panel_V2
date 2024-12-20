@@ -110,8 +110,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Function to refresh the access token
-
   // Load tokens once when the app starts
   useEffect(() => {
     loadTokens();
