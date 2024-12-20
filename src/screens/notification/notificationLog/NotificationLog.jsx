@@ -222,6 +222,7 @@ const NotificationLog = () => {
         </div>
       </div>
     </>
+
   );
 };
 

@@ -331,3 +331,33 @@ export const uploadMerchantCSV = async (data, navigate) => {
     );
   }
 };
+
+//For all
+
+export const updateMerchantStatusForMerchant = async (navigate) => {
+  try {
+    const api = useApiClient(navigate);
+    const res = await api.patch(`/merchants/change-status`, {});
+    return res.status === 200 ? res.data : null;
+  } catch (err) {
+    throw new Error(
+      err.response?.data?.message || "Failed to change merchant status"
+    );
+  }
+};
+
+export const updateMerchantStatusForMerchantToggle = async (
+  navigate,
+  status
+) => {
+  try {
+    const api = useApiClient(navigate);
+    console.log("status", status)
+    const res = await api.patch(`/merchants/change-status-toggle`, { status });
+    return res.status === 200 ? res.data : null;
+  } catch (err) {
+    throw new Error(
+      err.response?.data?.message || "Failed to change merchant status"
+    );
+  }
+};

@@ -58,6 +58,19 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const saveFcmTokenToStorage = (fcmToken) => {
+    try {
+      setIsLoading(true);
+
+      encryptStorage.setItem("fcmToken", fcmToken);
+      setFcmToken(fcmToken);
+    } catch (error) {
+      console.log("Error saving tokens:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Function to load tokens from secure storage
   const loadTokens = () => {
     try {
@@ -127,6 +140,7 @@ export const AuthProvider = ({ children }) => {
         saveToStorage,
         clearStorage,
         isLoading,
+        saveFcmTokenToStorage,
       }}
     >
       {children}
