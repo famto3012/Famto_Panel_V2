@@ -1,6 +1,34 @@
-import { role } from "../../utils/testData";
+import { useContext, useEffect, useState } from "react";
+import AuthContext from "@/context/AuthContext";
+import { SocketContext } from "@/context/SocketContext";
 
-const RealTimeDataCount = ({ data }) => {
+const RealTimeDataCount = () => {
+  const [realTimeDataCount, setRealTimeDataCount] = useState({});
+  const { token, role, userId } = useContext(AuthContext);
+  const { socket } = useContext(SocketContext);
+
+  useEffect(() => {
+    socket?.on("realTimeDataCount", (dataCount) => {
+      setTimeout(() => {
+        setRealTimeDataCount(dataCount);
+      }, 1000);
+    });
+
+    if (role === "Admin") {
+      socket?.emit("getRealTimeDataOnRefresh", "");
+    } else if (role === "Merchant") {
+      const data = {
+        id: userId,
+        role: role,
+      };
+      socket?.emit("getRealTimeDataOnRefreshMerchant", data);
+    }
+
+    return () => {
+      socket?.off("realTimeDataCount");
+    };
+  }, [token, socket, userId, role]);
+  
   return (
     <>
       <div className="w-full">
@@ -11,28 +39,28 @@ const RealTimeDataCount = ({ data }) => {
             <div className="border-l-4 px-5 border-teal-700 w-[22%]">
               <p className="text-[14px]">Pending</p>
               <p className="text-[24px] font-bold text-teal-600">
-                {data?.orderCount?.pending}
+                {realTimeDataCount?.orderCount?.pending}
               </p>
             </div>
 
             <div className="border-l-4  px-5 border-teal-700 w-[22%]">
               <p className="text-[14px]">Ongoing</p>
               <p className="text-[24px] font-bold text-teal-600">
-                {data?.orderCount?.ongoing}
+                {realTimeDataCount?.orderCount?.ongoing}
               </p>
             </div>
 
             <div className="border-l-4  px-5 border-teal-700 w-[22%]">
               <p className="text-[14px]">Completed</p>
               <p className="text-[24px] font-bold text-teal-600">
-                {data?.orderCount?.completed}
+                {realTimeDataCount?.orderCount?.completed}
               </p>
             </div>
 
             <div className="border-l-4  px-5 border-teal-700 w-[22%]">
               <p className="text-[14px]">Cancelled</p>
               <p className="text-[24px] font-bold text-teal-600">
-                {data?.orderCount?.cancelled}
+                {realTimeDataCount?.orderCount?.cancelled}
               </p>
             </div>
           </div>
@@ -48,25 +76,25 @@ const RealTimeDataCount = ({ data }) => {
                 <div className="border-l-4  px-5 border-teal-700 w-[22%]">
                   <p className="text-[14px]">Open</p>
                   <p className="text-[24px] font-bold text-teal-600">
-                    {data?.merchantCount?.open}
+                    {realTimeDataCount?.merchantCount?.open}
                   </p>
                 </div>
                 <div className="border-l-4  px-5 border-teal-700 w-[22%]">
                   <p className="text-[14px]">Closed</p>
                   <p className="text-[24px] font-bold text-teal-600">
-                    {data?.merchantCount?.closed}
+                    {realTimeDataCount?.merchantCount?.closed}
                   </p>
                 </div>
                 <div className="border-l-4  px-5 border-teal-700 w-[22%]">
                   <p className="text-[14px]">Active</p>
                   <p className="text-[24px] font-bold text-teal-600">
-                    {data?.merchantCount?.active}
+                    {realTimeDataCount?.merchantCount?.active}
                   </p>
                 </div>
                 <div className="border-l-4  px-5 border-teal-700 w-[22%]">
                   <p className="text-[14px]">Inactive</p>
                   <p className="text-[24px] font-bold text-teal-600">
-                    {data?.merchantCount?.notActive}
+                    {realTimeDataCount?.merchantCount?.notActive}
                   </p>
                 </div>
               </div>
@@ -81,19 +109,19 @@ const RealTimeDataCount = ({ data }) => {
                 <div className="border-l-4  px-5 border-teal-700 w-[22%]">
                   <p className="text-[14px]">Free</p>
                   <p className="text-[24px] font-bold text-teal-600">
-                    {data?.agentCount?.free}
+                    {realTimeDataCount?.agentCount?.free}
                   </p>
                 </div>
                 <div className="border-l-4  px-5 border-teal-700 w-[22%]">
                   <p className="text-[14px]">Inactive</p>
                   <p className="text-[24px] font-bold text-teal-600">
-                    {data?.agentCount?.inActive}
+                    {realTimeDataCount?.agentCount?.inActive}
                   </p>
                 </div>
                 <div className="border-l-4  px-5 border-teal-700 w-[22%]">
                   <p className="text-[14px]">Busy</p>
                   <p className="text-[24px] font-bold text-teal-600">
-                    {data?.agentCount?.busy}
+                    {realTimeDataCount?.agentCount?.busy}
                   </p>
                 </div>
               </div>

@@ -24,6 +24,7 @@ const PlaceSearchPlugin = ({ map }) => {
       location: [28.61, 77.23],
       region: "IND",
       height: 300,
+      hyperLocal: true,
     };
 
     const callback = (data) => {
