@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 import AuthContext from "@/context/AuthContext";
 import DataContext from "@/context/DataContext";
@@ -14,7 +14,10 @@ import SelectProduct from "@/components/order/createOrder/common/SelectProduct";
 import AddressSelection from "@/components/order/createOrder/common/AddressSelection";
 import AddAddress from "@/components/order/createOrder/common/AddAddress";
 
-import { createInvoice } from "@/hooks/order/useOrder";
+import {
+  createInvoice,
+  fetchAvailableBusinessCategoriesOfMerchant,
+} from "@/hooks/order/useOrder";
 
 const HomeDelivery = ({ data, address }) => {
   const [homeDeliveryData, setHomeDeliveryData] = useState({
@@ -35,8 +38,14 @@ const HomeDelivery = ({ data, address }) => {
   const [clearSignal, setClearSignal] = useState(false);
 
   const navigate = useNavigate();
-  const { role } = useContext(AuthContext);
+  const { role, userId } = useContext(AuthContext);
   const { setAddressType, setOtherAddressId } = useContext(DataContext);
+
+  const { data: availableBusinessCategory } = useQuery({
+    queryKey: ["available-business-category"],
+    queryFn: () => fetchAvailableBusinessCategoriesOfMerchant(navigate),
+    enabled: role === "Merchant",
+  });
 
   useEffect(() => {
     setHomeDeliveryData((prev) => ({
@@ -44,6 +53,20 @@ const HomeDelivery = ({ data, address }) => {
       ...data,
     }));
   }, [data]);
+
+  useEffect(() => {
+    if (role === "Merchant") {
+      setHomeDeliveryData((prev) => ({
+        ...prev,
+        merchantId: userId,
+      }));
+    }
+  }, []);
+
+  useEffect(() => {
+    availableBusinessCategory?.length &&
+      setBusinessCategories(availableBusinessCategory);
+  }, [availableBusinessCategory]);
 
   const handleMerchantSelect = (data) => {
     setHomeDeliveryData({ ...homeDeliveryData, merchantId: data._id });

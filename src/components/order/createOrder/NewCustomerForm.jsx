@@ -67,9 +67,12 @@ const NewCustomerForm = ({ toggleNewCustomerForm, onAddCustomer }) => {
                 onChange={handleInputChange}
                 onKeyDown={(e) => {
                   if (
-                    !/^[A-z]$/.test(e.key) &&
+                    !/^[a-zA-Z\s]$/.test(e.key) &&
                     e.key !== "Backspace" &&
-                    e.key !== "Tab"
+                    e.key !== "Tab" &&
+                    e.key !== "ArrowLeft" &&
+                    e.key !== "ArrowRight" &&
+                    e.key !== "Delete"
                   ) {
                     e.preventDefault();
                   }
@@ -102,7 +105,9 @@ const NewCustomerForm = ({ toggleNewCustomerForm, onAddCustomer }) => {
                   if (
                     !/^[0-9]$/.test(e.key) &&
                     e.key !== "Backspace" &&
-                    e.key !== "Tab"
+                    e.key !== "Tab" &&
+                    e.key !== "ArrowLeft" &&
+                    e.key !== "ArrowRight"
                   ) {
                     e.preventDefault();
                   }

@@ -1,8 +1,14 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 
 import AuthContext from "@/context/AuthContext";
+import { useSocket } from "@/context/SocketContext";
 
 import { HStack, Table } from "@chakra-ui/react";
 import {
@@ -11,20 +17,38 @@ import {
   PaginationPrevTrigger,
   PaginationRoot,
 } from "@/components/ui/pagination";
+import { toaster } from "@/components/ui/toaster";
+import { Button } from "@/components/ui/button";
 
 import RenderIcon from "@/icons/RenderIcon";
 
 import Error from "@/components/others/Error";
 import ShowSpinner from "@/components/others/ShowSpinner";
 
-import { fetchAllOrders } from "@/hooks/order/useOrder";
+import {
+  fetchAllOrders,
+  markOrderAsCompleted,
+  markOrderAsReady,
+} from "@/hooks/order/useOrder";
+
+import RejectOrder from "@/models/general/order/RejectOrder";
+import AcceptOrder from "@/models/general/order/AcceptOrder";
 
 const AllOrdersTable = ({ filter }) => {
+  const [allOrders, setAllOrders] = useState([]);
+  const [showModal, setShowModal] = useState({
+    accept: false,
+    reject: false,
+  });
+  const [selectedId, setSelectedId] = useState(null);
+
   const [page, setPage] = useState(1);
   const limit = 50;
 
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { role } = useContext(AuthContext);
+  const { socket } = useSocket();
 
   const {
     data: orderData,
@@ -36,27 +60,88 @@ const AllOrdersTable = ({ filter }) => {
     placeholderData: keepPreviousData,
   });
 
-  const handleAcceptOrder = useMutation({
-    mutationKey: ["acceptOrder"],
-    mutationFn: (orderId) => acceptOrder(orderId, role, navigate),
-    onMutate: (orderId) => {
-      setLoadingOrderId(orderId);
-    },
+  useEffect(() => {
+    orderData?.data && orderData?.data?.length && setAllOrders(orderData.data);
+  }, [orderData?.data]);
+
+  useEffect(() => {
+    const handleNewOrder = (orderData) => {
+      setAllOrders((prevOrders) => [orderData, ...prevOrders]);
+    };
+
+    const handleChangeAccepterOrderStatus = ({ orderId }) => {
+      setAllOrders((prevOrders) =>
+        prevOrders.map((order) =>
+          order.orderId === orderId
+            ? { ...order, orderStatus: "On-going" }
+            : order
+        )
+      );
+    };
+
+    const handleChangeRejectedOrderStatus = ({ orderId }) => {
+      setAllOrders((prevOrders) =>
+        prevOrders.map((order) =>
+          order.orderId === orderId
+            ? { ...order, orderStatus: "Cancelled" }
+            : order
+        )
+      );
+    };
+
+    socket?.on("newOrderCreated", handleNewOrder);
+    socket?.on("orderAccepted", handleChangeAccepterOrderStatus);
+    socket?.on("orderRejected", handleChangeRejectedOrderStatus);
+
+    return () => {
+      socket?.off("newOrderCreated", handleNewOrder);
+      socket?.off("orderAccepted", handleChangeAccepterOrderStatus);
+      socket?.off("orderRejected", handleChangeRejectedOrderStatus);
+    };
+  }, [socket]);
+
+  const handleMarkAsReady = useMutation({
+    mutationKey: ["mark-as-ready"],
+    mutationFn: (orderId) => markOrderAsReady(orderId, navigate),
     onSuccess: () => {
-      toaster.create({
-        title: "Success",
-        description: "Order accepted",
-        type: "success",
-      });
+      queryClient.invalidateQueries(["all-orders"]);
     },
-    onError: () => {
+    onError: (data) => {
       toaster.create({
         title: "Error",
-        description: "Failed to accept order",
+        description: data || "Something went wrong",
         type: "error",
       });
     },
   });
+
+  const handleMarkAsCompleted = useMutation({
+    mutationKey: ["mark-as-completed"],
+    mutationFn: (orderId) => markOrderAsCompleted(orderId, navigate),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["all-orders"]);
+    },
+    onError: () => {
+      toaster.create({
+        title: "Error",
+        description: "Something went wrong",
+        type: "error",
+      });
+    },
+  });
+
+  const toggleModal = (type, id) => {
+    setSelectedId(id);
+    setShowModal({ ...showModal, [type]: true });
+  };
+
+  const closeModal = () => {
+    setSelectedId(null);
+    setShowModal({
+      accept: false,
+      reject: false,
+    });
+  };
 
   return (
     <div>
@@ -94,14 +179,14 @@ const AllOrdersTable = ({ filter }) => {
                 <Error />
               </Table.Cell>
             </Table.Row>
-          ) : orderData?.data?.length === 0 ? (
+          ) : allOrders?.length === 0 ? (
             <Table.Row className="h-[70px]">
               <Table.Cell colSpan={10} textAlign="center">
                 No Orders Available
               </Table.Cell>
             </Table.Row>
           ) : (
-            orderData?.data?.map((order) => (
+            allOrders?.map((order) => (
               <Table.Row
                 key={order.orderId}
                 className={`h-[70px] ${
@@ -122,9 +207,14 @@ const AllOrdersTable = ({ filter }) => {
                 <Table.Cell textAlign="center">
                   {order.orderStatus === "Pending" &&
                   filter.selectedOption === "order" ? (
-                    <HStack gap={3} alignItems="center">
+                    <HStack
+                      gap={3}
+                      display="flex"
+                      justifyContent="center"
+                      alignItems="center"
+                    >
                       <span
-                        onClick={() => handleAcceptOrder.mutate(order.orderId)}
+                        onClick={() => toggleModal("accept", order.orderId)}
                         className="cursor-pointer"
                       >
                         <RenderIcon
@@ -133,8 +223,9 @@ const AllOrdersTable = ({ filter }) => {
                           loading={6}
                         />
                       </span>
+
                       <span
-                        onClick={() => openRejectDialog(order.orderId)}
+                        onClick={() => toggleModal("reject", order.orderId)}
                         className="cursor-pointer"
                       >
                         <RenderIcon
@@ -144,6 +235,46 @@ const AllOrdersTable = ({ filter }) => {
                         />
                       </span>
                     </HStack>
+                  ) : order.orderStatus === "On-going" &&
+                    order.deliveryMode === "Take Away" ? (
+                    <>
+                      {order.isReady === false ? (
+                        <Button
+                          className="text-white bg-teal-700 font-[500] text-[14px] p-2 rounded-md outline-none focus:outline-none"
+                          onClick={() =>
+                            handleMarkAsReady.mutate(order.orderId)
+                          }
+                        >
+                          Mark as Ready
+                        </Button>
+                      ) : (
+                        <Button
+                          className="text-white bg-teal-700 font-[500] text-[14px] p-2 rounded-md outline-none focus:outline-none"
+                          onClick={() =>
+                            handleMarkAsCompleted.mutate(order.orderId)
+                          }
+                        >
+                          Collected by customer
+                        </Button>
+                      )}
+                    </>
+                  ) : order?.deliveryMode === "Home Delivery" ? (
+                    <>
+                      {order?.orderStatus === "On-going" && order?.isReady ? (
+                        <p className="text-orange-500 font-[600] text-[14px]">
+                          On-going
+                        </p>
+                      ) : (
+                        <button
+                          className="text-white bg-teal-700 font-[500] text-[14px] p-2 rounded-md outline-none focus:outline-none"
+                          onClick={() =>
+                            handleMarkAsReady.mutate(order.orderId)
+                          }
+                        >
+                          Mark as Ready
+                        </button>
+                      )}
+                    </>
                   ) : (
                     <p
                       className={`text-[16px] font-[600] ${
@@ -201,6 +332,17 @@ const AllOrdersTable = ({ filter }) => {
           </HStack>
         </PaginationRoot>
       )}
+
+      <AcceptOrder
+        isOpen={showModal.accept}
+        onClose={closeModal}
+        orderId={selectedId}
+      />
+      <RejectOrder
+        isOpen={showModal.reject}
+        onClose={closeModal}
+        orderId={selectedId}
+      />
     </div>
   );
 };
