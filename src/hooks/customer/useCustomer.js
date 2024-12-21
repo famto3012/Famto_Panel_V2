@@ -125,3 +125,47 @@ export const updateCustomerDetails = async (
     );
   }
 };
+
+export const downloadSampleCustomerCSV = async (navigate) => {
+  try {
+    const api = useApiClient(navigate);
+    const res = await api.get(`/admin/customers/download-sample-customer-csv`, {
+      responseType: "blob",
+    });
+
+    return res.status === 200 ? res.data : null;
+  } catch (err) {
+    throw new Error(
+      err.response?.data?.message || "Failed to download sample customer csv"
+    );
+  }
+};
+
+export const downloadAllCustomerCSV = async (geofence, navigate) => {
+  try {
+    const api = useApiClient(navigate);
+    const res = await api.get(`/admin/customers/download-customer-csv`, {
+      params: { geofence },
+      responseType: "blob",
+    });
+
+    return res.status === 200 ? res.data.message : null;
+  } catch (err) {
+    throw new Error(
+      err.response?.data?.message || "Failed to download customer csv"
+    );
+  }
+};
+
+export const uploadCustomerCSV = async (data, navigate) => {
+  try {
+    const api = useApiClient(navigate);
+    const res = await api.post(`/admin/customers/upload-customer-csv`, data);
+
+    return res.status === 200 ? res.data.message : null;
+  } catch (err) {
+    throw new Error(
+      err.response?.data?.message || "Failed to upload customer csv"
+    );
+  }
+};
