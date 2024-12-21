@@ -11,7 +11,7 @@ import RenderIcon from "@/icons/RenderIcon";
 
 import { paymentOptions } from "@/utils/defaultData";
 
-import { createOrder } from "@/hooks/order/useOrder";
+import { createOrder, downloadInvoiceBill } from "@/hooks/order/useOrder";
 
 const ShowBill = ({ data }) => {
   const [formData, setFormData] = useState({
@@ -31,6 +31,47 @@ const ShowBill = ({ data }) => {
       deliveryMode: data.deliveryMode,
     });
   }, [data]);
+
+  const downloadBill = useMutation({
+    mutationKey: ["download-invoice-bill"],
+    mutationFn: () =>
+      downloadInvoiceBill(formData?.cartId, formData?.deliveryMode, navigate),
+  });
+
+  const handleDownloadBill = () => {
+    const promise = new Promise((resolve, reject) => {
+      downloadBill.mutate(undefined, {
+        onSuccess: (data) => {
+          const url = window.URL.createObjectURL(new Blob([data]));
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute("download", "Invoice.pdf");
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          resolve();
+        },
+        onError: (error) => {
+          reject(new Error(error.message || "Failed to download the invoice"));
+        },
+      });
+    });
+
+    toaster.promise(promise, {
+      loading: {
+        title: "Downloading...",
+        description: "Preparing your invoice",
+      },
+      success: {
+        title: "Download Successful",
+        description: "Invoice has been downloaded successfully.",
+      },
+      error: {
+        title: "Download Failed",
+        description: "Something went wrong while downloading the invoice",
+      },
+    });
+  };
 
   const handleCreateOrder = useMutation({
     mutationKey: ["create-order"],
@@ -145,7 +186,7 @@ const ShowBill = ({ data }) => {
       <div className="flex justify-end gap-4 mt-16 mx-10">
         <button
           className="bg-cyan-50 py-2 px-4 rounded-md flex items-center gap-2"
-          onClick={() => {}}
+          onClick={handleDownloadBill}
         >
           <RenderIcon iconName="DownloadIcon" size={16} loading={6} />
           <span>Bill</span>

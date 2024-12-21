@@ -52,8 +52,7 @@ export const acceptOrder = async (orderId, role, navigate) => {
 
     return res.status === 200 ? res.data : [];
   } catch (err) {
-    console.error(`Error in accepting order: ${err}`);
-    throw new Error(err.response?.data?.message || "Failed to accept order.");
+    throw err.response?.data?.message || "Failed to accept order.";
   }
 };
 
@@ -69,8 +68,29 @@ export const rejectOrder = async (orderId, role, navigate) => {
 
     return res.status === 200 ? res.data : [];
   } catch (err) {
-    console.error(`Error in rejecting order: ${err}`);
-    throw new Error(err.response?.data?.message || "Failed to reject order.");
+    throw err.response?.data?.message || "Failed to reject order.";
+  }
+};
+
+export const markOrderAsReady = async (orderId, navigate) => {
+  try {
+    const api = useApiClient(navigate);
+    const res = await api.put(`/orders/mark-as-ready/${orderId}`, {});
+
+    return res.status === 200 ? res.data.message : null;
+  } catch (err) {
+    throw err.response?.data?.message || "Failed to mark order as ready";
+  }
+};
+
+export const markOrderAsCompleted = async (orderId, navigate) => {
+  try {
+    const api = useApiClient(navigate);
+    const res = await api.put(`/orders/mark-as-completed/${orderId}`, {});
+
+    return res.status === 200 ? res.data.message : null;
+  } catch (err) {
+    throw err.response?.data?.message || "Failed to mark order as completed";
   }
 };
 
@@ -216,5 +236,35 @@ export const downloadOrderCSV = async (role, filter, navigate) => {
     throw new Error(
       err.response?.data?.message || "Failed to download order csv"
     );
+  }
+};
+
+export const fetchAvailableBusinessCategoriesOfMerchant = async (navigate) => {
+  try {
+    const api = useApiClient(navigate);
+    const res = await api.get(`/orders/available-business-categories`);
+
+    return res.status === 200 ? res.data.data : [];
+  } catch (err) {
+    throw new Error(
+      err.response?.data?.message || "Failed to fetch available categories"
+    );
+  }
+};
+
+export const downloadInvoiceBill = async (cartId, deliveryMode, navigate) => {
+  try {
+    const api = useApiClient(navigate);
+    const res = await api.post(
+      `/orders/download-invoice-bill`,
+      { cartId, deliveryMode },
+      {
+        responseType: "blob",
+      }
+    );
+
+    return res.status === 200 ? res.data : null;
+  } catch (err) {
+    throw err.response?.data?.message || "Failed to download invoice bill";
   }
 };

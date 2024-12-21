@@ -5,7 +5,7 @@ import { toaster } from "@/components/ui/toaster";
 
 import Map from "@/models/common/Map";
 
-const AddAddressForm = ({ onNewAddressChange }) => {
+const AddAddressForm = ({ onAddCustomerAddress }) => {
   const [formData, setFormData] = useState({
     type: "",
     fullName: "",
@@ -33,8 +33,6 @@ const AddAddressForm = ({ onNewAddressChange }) => {
   };
 
   const handleAddNewAddress = () => {
-    console.log(formData);
-
     const requiredFields = ["type", "fullName", "phoneNumber", "flat", "area"];
     const missingFields = requiredFields.filter((field) => !formData[field]);
 
@@ -60,7 +58,7 @@ const AddAddressForm = ({ onNewAddressChange }) => {
       return;
     }
 
-    onNewAddressChange(formData);
+    onAddCustomerAddress(formData);
     setShowButton(false);
   };
 
@@ -114,10 +112,10 @@ const AddAddressForm = ({ onNewAddressChange }) => {
             <button
               type="button"
               onClick={() => setShowModal(true)}
-              className={`${formData.latitude && formData.longitude ? "bg-transparent text-black" : "bg-teal-700 text-white"} font-medium border border-teal-700 w-2/3 rounded-md mx-auto py-2`}
+              className={`${formData.latitude && formData.longitude ? "bg-transparent text-teal-700" : "bg-teal-700 text-white"} font-medium border border-teal-700 w-2/3 rounded-md mx-auto py-2`}
             >
               {formData.latitude && formData.longitude
-                ? `Location Selected`
+                ? `Location Marked`
                 : `Mark location`}
             </button>
             <Map

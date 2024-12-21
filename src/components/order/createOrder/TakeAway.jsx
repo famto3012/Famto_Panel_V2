@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 
 import AuthContext from "@/context/AuthContext";
@@ -10,7 +10,10 @@ import SelectMerchant from "@/components/order/createOrder/common/SelectMerchant
 import SelectProduct from "@/components/order/createOrder/common/SelectProduct";
 import ShowTakeAwayBill from "@/components/order/createOrder/common/ShowTakeAwayBill";
 
-import { createInvoice } from "@/hooks/order/useOrder";
+import {
+  createInvoice,
+  fetchAvailableBusinessCategoriesOfMerchant,
+} from "@/hooks/order/useOrder";
 
 const TakeAway = ({ data }) => {
   const [takeAwayData, setTakeAwayData] = useState({
@@ -25,7 +28,22 @@ const TakeAway = ({ data }) => {
   const [cartData, setCartData] = useState({});
 
   const navigate = useNavigate();
-  const { role } = useContext(AuthContext);
+  const { role, userId } = useContext(AuthContext);
+
+  const { data: availableBusinessCategory } = useQuery({
+    queryKey: ["available-business-category"],
+    queryFn: () => fetchAvailableBusinessCategoriesOfMerchant(navigate),
+    enabled: role === "Merchant",
+  });
+
+  useEffect(() => {
+    if (role === "Merchant") {
+      setTakeAwayData((prev) => ({
+        ...prev,
+        merchantId: userId,
+      }));
+    }
+  }, []);
 
   useEffect(() => {
     setTakeAwayData((prev) => ({
@@ -33,6 +51,11 @@ const TakeAway = ({ data }) => {
       ...data,
     }));
   }, [data]);
+
+  useEffect(() => {
+    availableBusinessCategory?.length &&
+      setBusinessCategories(availableBusinessCategory);
+  }, [availableBusinessCategory]);
 
   const handleMerchantSelect = (data) => {
     setTakeAwayData({ ...takeAwayData, merchantId: data._id });

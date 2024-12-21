@@ -14,29 +14,29 @@ import { Button } from "@chakra-ui/react";
 
 import AuthContext from "@/context/AuthContext";
 
-import { rejectOrder } from "@/hooks/order/useOrder";
+import { acceptOrder } from "@/hooks/order/useOrder";
 
-const RejectOrder = ({ isOpen, onClose, orderId }) => {
+const AcceptOrder = ({ isOpen, onClose, orderId }) => {
   const { role } = useContext(AuthContext);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const rejectOrderMutation = useMutation({
-    mutationKey: ["rejectOrder"],
-    mutationFn: () => rejectOrder(orderId, role, navigate),
+  const handleAcceptOrder = useMutation({
+    mutationKey: ["accept-order"],
+    mutationFn: () => acceptOrder(orderId, role, navigate),
     onSuccess: () => {
       queryClient.invalidateQueries(["all-orders"]);
       onClose();
       toaster.create({
         title: "Success",
-        description: "Order rejected",
+        description: "Order accepted",
         type: "success",
       });
     },
-    onError: () => {
+    onError: (data) => {
       toaster.create({
         title: "Error",
-        description: "Failed to reject order",
+        description: "Failed to accept order" + data,
         type: "error",
       });
     },
@@ -50,8 +50,10 @@ const RejectOrder = ({ isOpen, onClose, orderId }) => {
       motionPreset="slide-in-bottom"
     >
       <DialogContent>
-        <DialogHeader className="text-[16px] font-[600]">Reject?</DialogHeader>
-        <DialogBody>Do you want to reject this order?</DialogBody>
+        <DialogHeader className="text-[16px] font-[600]">
+          Accept Order
+        </DialogHeader>
+        <DialogBody>Do you want to accept this order?</DialogBody>
         <DialogFooter>
           <Button
             onClick={onClose}
@@ -61,10 +63,10 @@ const RejectOrder = ({ isOpen, onClose, orderId }) => {
           </Button>
 
           <Button
-            className="bg-red-500 p-2 text-white"
-            onClick={() => rejectOrderMutation.mutate()}
+            className="bg-teal-700 p-2 text-white"
+            onClick={() => handleAcceptOrder.mutate(orderId)}
           >
-            {rejectOrderMutation.isPending ? `Rejecting...` : `Reject`}
+            {handleAcceptOrder.isPending ? `Accepting...` : `Accept`}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -72,4 +74,4 @@ const RejectOrder = ({ isOpen, onClose, orderId }) => {
   );
 };
 
-export default RejectOrder;
+export default AcceptOrder;
