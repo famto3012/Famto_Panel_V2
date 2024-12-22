@@ -5,7 +5,7 @@ import {
   MenuRoot,
   MenuTrigger,
 } from "@/components/ui/menu";
-import GlobalSearch from "../../../components/others/GlobalSearch";
+import GlobalSearch from "@/components/others/GlobalSearch";
 import RenderIcon from "@/icons/RenderIcon";
 import { getAuthTokenForDeliveryManagementMap } from "@/hooks/deliveryManagement/useDeliveryManagement";
 import { useQuery } from "@tanstack/react-query";

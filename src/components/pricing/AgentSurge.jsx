@@ -6,18 +6,18 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Switch } from "@/components/ui/switch";
 import { toaster } from "@/components/ui/toaster";
 
-import RenderIcon from "../../icons/RenderIcon";
+import RenderIcon from "@/icons/RenderIcon";
 
 import ShowSpinner from "../others/ShowSpinner";
 
 import {
   fetchAllAgentSurge,
   updateAgentSurgeStatus,
-} from "../../hooks/pricing/useAgentPricing";
+} from "@/hooks/pricing/useAgentPricing";
 
-import AddAgentSurge from "../../models/configure/pricing/AddAgentSurge";
-import EditAgentSurge from "../../models/configure/pricing/EditAgentSurge";
-import DeleteAgentSurge from "../../models/configure/pricing/DeleteAgentSurge";
+import AddAgentSurge from "@/models/configure/pricing/AddAgentSurge";
+import EditAgentSurge from "@/models/configure/pricing/EditAgentSurge";
+import DeleteAgentSurge from "@/models/configure/pricing/DeleteAgentSurge";
 
 const AgentSurge = () => {
   const navigate = useNavigate();

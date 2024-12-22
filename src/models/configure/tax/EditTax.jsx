@@ -17,11 +17,11 @@ import {
 import { Radio, RadioGroup } from "@/components/ui/radio";
 import { toaster } from "@/components/ui/toaster";
 
-import ModalLoader from "../../../components/others/ModalLoader";
+import ModalLoader from "@/components/others/ModalLoader";
 
-import { editTaxDetail, getTaxDetail } from "../../../hooks/tax/useTax";
-import { getAllGeofence } from "../../../hooks/geofence/useGeofence";
-import { getAllBusinessCategory } from "../../../hooks/customerAppCustomization/useBusinessCategory";
+import { editTaxDetail, getTaxDetail } from "@/hooks/tax/useTax";
+import { getAllGeofence } from "@/hooks/geofence/useGeofence";
+import { getAllBusinessCategory } from "@/hooks/customerAppCustomization/useBusinessCategory";
 
 const EditTax = ({ isOpen, taxId, onClose }) => {
   const navigate = useNavigate();

@@ -16,7 +16,7 @@ import {
   updatePromoCodeStatus,
 } from "@/hooks/promocode/usePromocode";
 
-import { formatDate } from "@/utils/formatters";
+import { formatDate } from "@/utils/formatter";
 import AddPromoCode from "@/models/marketing/promocode/AddPromoCode";
 import EditPromoCode from "@/models/marketing/promocode/EditPromoCode";
 import DeletePromoCode from "@/models/marketing/promocode/DeletePromoCode";

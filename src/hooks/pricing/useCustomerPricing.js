@@ -1,4 +1,4 @@
-import useApiClient from "../../api/apiClient";
+import useApiClient from "@/api/apiClient";
 
 // Customer pricing
 // ========================

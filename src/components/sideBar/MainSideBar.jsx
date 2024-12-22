@@ -58,7 +58,7 @@ const MainSideBar = () => {
           key="home"
         >
           <span className="m-2">
-            <RenderIcon iconName="HomeIcon" size={28} loading={6} />
+            <RenderIcon iconName="HomeIcon" size={22} loading={6} />
           </span>
           <span className="font-[poppins]">Home</span>
         </Link>
@@ -68,7 +68,7 @@ const MainSideBar = () => {
           key="order"
         >
           <span className="m-2">
-            <RenderIcon iconName="BookIcon" size={28} loading={6} />
+            <RenderIcon iconName="BookIcon" size={22} loading={6} />
           </span>
 
           <span className="font-[poppins]">Orders</span>
@@ -80,7 +80,7 @@ const MainSideBar = () => {
             key="merchant"
           >
             <span className="m-2">
-              <RenderIcon iconName="ShopIcon" size={28} loading={6} />
+              <RenderIcon iconName="ShopIcon" size={22} loading={6} />
             </span>
 
             <span className="font-[poppins]">Merchants</span>
@@ -92,7 +92,7 @@ const MainSideBar = () => {
           key="product"
         >
           <span className="m-2">
-            <RenderIcon iconName="ProductIcon" size={28} loading={6} />
+            <RenderIcon iconName="ProductIcon" size={22} loading={6} />
           </span>
 
           <span className="font-[poppins]">Products</span>
@@ -103,7 +103,7 @@ const MainSideBar = () => {
           key="customer"
         >
           <span className="m-2">
-            <RenderIcon iconName="UsersIcon" size={28} loading={6} />
+            <RenderIcon iconName="UsersIcon" size={22} loading={6} />
           </span>
 
           <span className="font-[poppins]">Customers</span>
@@ -117,7 +117,7 @@ const MainSideBar = () => {
               key="agent"
             >
               <span className="m-2">
-                <RenderIcon iconName="AgentIcon" size={28} loading={6} />
+                <RenderIcon iconName="AgentIcon" size={22} loading={6} />
               </span>
 
               <span className="font-[poppins]">Delivery Agents</span>
@@ -129,7 +129,7 @@ const MainSideBar = () => {
               key="delivery-management"
             >
               <span className="m-2">
-                <RenderIcon iconName="BikeIcon" size={28} loading={6} />
+                <RenderIcon iconName="BikeIcon" size={22} loading={6} />
               </span>
 
               <span className="font-[poppins]">Delivery Management</span>
@@ -143,7 +143,7 @@ const MainSideBar = () => {
           key="comm"
         >
           <span className="m-2">
-            <RenderIcon iconName="PercentageIcon" size={28} loading={6} />
+            <RenderIcon iconName="PercentageIcon" size={22} loading={6} />
           </span>
 
           <span className="font-[poppins]">Commission/Subscription</span>
@@ -155,7 +155,7 @@ const MainSideBar = () => {
             key="chat"
           >
             <span className="m-2">
-              <RenderIcon iconName="WhatsappIcon" size={28} loading={6} />
+              <RenderIcon iconName="WhatsappIcon" size={22} loading={6} />
             </span>
 
             <span className="font-[poppins]">Whatsapp</span>
@@ -184,7 +184,7 @@ const MainSideBar = () => {
                 }`}
               >
                 <span className="m-2">
-                  <RenderIcon iconName="GiftIcon" size={28} loading={6} />
+                  <RenderIcon iconName="GiftIcon" size={22} loading={6} />
                 </span>
                 <span className="font-[poppins]">Discount</span>
               </Link>
@@ -199,7 +199,7 @@ const MainSideBar = () => {
                   }`}
                 >
                   <span className="m-2">
-                    <RenderIcon iconName="AdBannerIcon" size={28} loading={6} />
+                    <RenderIcon iconName="AdBannerIcon" size={22} loading={6} />
                   </span>
                   <span className="font-[poppins]">Ad banner</span>
                 </Link>
@@ -215,11 +215,11 @@ const MainSideBar = () => {
                   <span className="m-2">
                     <RenderIcon
                       iconName="LoyaltyPointIcon"
-                      size={28}
+                      size={22}
                       loading={6}
                     />
                   </span>
-                  <span className="font-[poppins]">Loyality Point</span>
+                  <span className="font-[poppins]">Loyalty Point</span>
                 </Link>
 
                 <Link
@@ -233,7 +233,7 @@ const MainSideBar = () => {
                   <span className="m-2">
                     <RenderIcon
                       iconName="PromoCodeIcon"
-                      size={28}
+                      size={22}
                       loading={6}
                     />
                   </span>
@@ -249,7 +249,7 @@ const MainSideBar = () => {
                   }`}
                 >
                   <span className="m-2">
-                    <RenderIcon iconName="ReferralIcon" size={28} loading={6} />
+                    <RenderIcon iconName="ReferralIcon" size={22} loading={6} />
                   </span>
 
                   <span className="font-[poppins]">Referral</span>
@@ -275,7 +275,7 @@ const MainSideBar = () => {
             }`}
           >
             <span className="m-2">
-              <RenderIcon iconName="NotificationIcon" size={28} loading={6} />
+              <RenderIcon iconName="NotificationIcon" size={22} loading={6} />
             </span>
             <span className="font-[poppins]">Notification log</span>
           </Link>
@@ -293,7 +293,7 @@ const MainSideBar = () => {
                 <span className="m-2">
                   <RenderIcon
                     iconName="PushNotificationIcon"
-                    size={28}
+                    size={22}
                     loading={6}
                   />
                 </span>
@@ -311,7 +311,7 @@ const MainSideBar = () => {
                 <span className="m-2">
                   <RenderIcon
                     iconName="NotificationSettingsIcon"
-                    size={28}
+                    size={22}
                     loading={6}
                   />
                 </span>
@@ -329,7 +329,7 @@ const MainSideBar = () => {
                 <span className="m-2">
                   <RenderIcon
                     iconName="AlertNotificationIcon"
-                    size={28}
+                    size={22}
                     loading={6}
                   />
                 </span>
@@ -361,7 +361,7 @@ const MainSideBar = () => {
                 }`}
               >
                 <span className="m-2">
-                  <RenderIcon iconName="ManagerIcon" size={28} loading={6} />
+                  <RenderIcon iconName="ManagerIcon" size={22} loading={6} />
                 </span>
                 <span className="font-[poppins]">Managers</span>
               </Link>
@@ -373,7 +373,7 @@ const MainSideBar = () => {
                 }`}
               >
                 <span className="m-2">
-                  <RenderIcon iconName="PricingIcon" size={28} loading={6} />
+                  <RenderIcon iconName="PricingIcon" size={22} loading={6} />
                 </span>
                 <span className="font-[poppins]">Pricing</span>
               </Link>
@@ -385,7 +385,7 @@ const MainSideBar = () => {
                 }`}
               >
                 <span className="m-2">
-                  <RenderIcon iconName="PercentageIcon" size={28} loading={6} />
+                  <RenderIcon iconName="PercentageIcon" size={22} loading={6} />
                 </span>
                 <span className="font-[poppins]">Tax</span>
               </Link>
@@ -397,7 +397,7 @@ const MainSideBar = () => {
                 }`}
               >
                 <span className="m-2">
-                  <RenderIcon iconName="GeofenceIcon" size={28} loading={6} />
+                  <RenderIcon iconName="GeofenceIcon" size={22} loading={6} />
                 </span>
                 <span className="font-[poppins]">Geofence</span>
               </Link>
@@ -427,7 +427,7 @@ const MainSideBar = () => {
                 <span className="m-2">
                   <RenderIcon
                     iconName="CustomizationIcon"
-                    size={28}
+                    size={22}
                     loading={6}
                   />
                 </span>
@@ -443,7 +443,7 @@ const MainSideBar = () => {
                 <span className="m-2">
                   <RenderIcon
                     iconName="CustomizationIcon"
-                    size={28}
+                    size={22}
                     loading={6}
                   />
                 </span>
@@ -461,7 +461,7 @@ const MainSideBar = () => {
                 <span className="m-2">
                   <RenderIcon
                     iconName="CustomizationIcon"
-                    size={28}
+                    size={22}
                     loading={6}
                   />
                 </span>
@@ -491,7 +491,7 @@ const MainSideBar = () => {
                 }`}
               >
                 <span className="m-2">
-                  <RenderIcon iconName="ActivityIcon" size={28} loading={6} />
+                  <RenderIcon iconName="ActivityIcon" size={22} loading={6} />
                 </span>
                 <span className="font-[poppins]">Activity logs</span>
               </Link>
@@ -505,7 +505,7 @@ const MainSideBar = () => {
                 }`}
               >
                 <span className="m-2">
-                  <RenderIcon iconName="AccountIcon" size={28} loading={6} />
+                  <RenderIcon iconName="AccountIcon" size={22} loading={6} />
                 </span>
                 <span className="font-[poppins]">Account logs</span>
               </Link>
@@ -519,7 +519,7 @@ const MainSideBar = () => {
             }`}
           >
             <span className="m-2">
-              <RenderIcon iconName="SettingsIcon" size={28} loading={6} />
+              <RenderIcon iconName="SettingsIcon" size={22} loading={6} />
             </span>
             <span className="font-[poppins]">Settings</span>
           </Link>

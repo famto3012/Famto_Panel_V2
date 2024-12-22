@@ -15,11 +15,11 @@ import { toaster } from "@/components/ui/toaster";
 
 import ModalLoader from "@/components/others/ModalLoader";
 
-import { getAllGeofence } from "../../../hooks/geofence/useGeofence";
+import { getAllGeofence } from "@/hooks/geofence/useGeofence";
 import {
   editAgentSurge,
   getSingleAgentSurge,
-} from "../../../hooks/pricing/useAgentPricing";
+} from "@/hooks/pricing/useAgentPricing";
 
 const EditAgentSurge = ({ isOpen, onClose, surgeId }) => {
   const navigate = useNavigate();

@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { toaster } from "@/components/ui/toaster";
 
-import { deleteCustomerSurge } from "../../../hooks/pricing/useCustomerPricing";
+import { deleteCustomerSurge } from "@/hooks/pricing/useCustomerPricing";
 
 const DeleteCustomerSurge = ({ isOpen, onClose, surgeId }) => {
   const navigate = useNavigate();

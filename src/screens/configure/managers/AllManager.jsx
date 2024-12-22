@@ -1,4 +1,4 @@
-import GlobalSearch from "../../../components/others/GlobalSearch";
+import GlobalSearch from "@/components/others/GlobalSearch";
 
 const AllManager = () => {
   return (

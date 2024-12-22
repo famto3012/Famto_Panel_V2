@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { toaster } from "@/components/ui/toaster";
 
-import { deleteAgentPricing } from "../../../hooks/pricing/useAgentPricing";
+import { deleteAgentPricing } from "@/hooks/pricing/useAgentPricing";
 
 const DeleteAgentPricing = ({ isOpen, onClose, pricingId }) => {
   const navigate = useNavigate();

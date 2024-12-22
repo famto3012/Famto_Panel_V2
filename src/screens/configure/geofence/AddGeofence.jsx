@@ -1,5 +1,5 @@
 import RenderIcon from "@/icons/RenderIcon";
-import GlobalSearch from "../../../components/others/GlobalSearch";
+import GlobalSearch from "@/components/others/GlobalSearch";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { toaster } from "@/components/ui/toaster";

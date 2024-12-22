@@ -4,21 +4,20 @@ import { useQuery } from "@tanstack/react-query";
 
 import { Button } from "@chakra-ui/react";
 
-import AuthContext from "../../../context/AuthContext";
+import AuthContext from "@/context/AuthContext";
 
-import GlobalSearch from "../../../components/others/GlobalSearch";
-import Loader from "../../../components/others/Loader";
-import Details from "../../../components/order/detail/Details";
-import OrderItems from "../../../components/order/detail/OrderItem";
-import OrderBill from "../../../components/order/detail/OrderBill";
-import OrderMapAndStepper from "../../../components/order/detail/OrderMapAndStepper";
+import GlobalSearch from "@/components/others/GlobalSearch";
+import Loader from "@/components/others/Loader";
+import Details from "@/components/order/detail/Details";
+import OrderItems from "@/components/order/detail/OrderItem";
+import OrderBill from "@/components/order/detail/OrderBill";
+import OrderMapAndStepper from "@/components/order/detail/OrderMapAndStepper";
 
-import RenderIcon from "../../../icons/RenderIcon";
+import RenderIcon from "@/icons/RenderIcon";
 
-import { getOrderDetail } from "../../../hooks/order/useOrder";
+import { getOrderDetail } from "@/hooks/order/useOrder";
 
 // TODO: Need to connect bill download API
-// TODO: Need to connect order detail stepper UI
 const OrderDetail = () => {
   const { orderId } = useParams();
   const { role } = useContext(AuthContext);
@@ -177,7 +176,8 @@ const OrderDetail = () => {
       <OrderItems data={orderDetail} />
 
       <OrderBill data={orderDetail} />
-      <OrderMapAndStepper orderDetail={orderDetail}/>
+
+      <OrderMapAndStepper orderDetail={orderDetail} />
     </div>
   );
 };

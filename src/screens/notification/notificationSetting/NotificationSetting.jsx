@@ -1,5 +1,5 @@
 import AddNotificationSettings from "@/models/notification/notificationSetting/AddNotificationSettings";
-import GlobalSearch from "../../../components/others/GlobalSearch";
+import GlobalSearch from "@/components/others/GlobalSearch";
 import { useEffect, useState } from "react";
 import RenderIcon from "@/icons/RenderIcon";
 import { Switch } from "@/components/ui/switch";

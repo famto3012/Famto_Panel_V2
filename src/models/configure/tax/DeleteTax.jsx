@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { toaster } from "@/components/ui/toaster";
 
-import { deleteTax } from "../../../hooks/tax/useTax";
+import { deleteTax } from "@/hooks/tax/useTax";
 
 const DeleteTax = ({ isOpen, taxId, onClose }) => {
   const navigate = useNavigate();

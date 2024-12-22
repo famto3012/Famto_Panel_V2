@@ -8,8 +8,8 @@ import {
 } from "@/components/ui/steps";
 import { getAuthTokenForDeliveryManagementMap } from "@/hooks/deliveryManagement/useDeliveryManagement";
 import { fetchPolylineFromPickupToDelivery } from "@/hooks/order/useOrder";
-import RenderIcon from "@/icons/RenderIcon";
-import { formatDate, formatTime } from "@/utils/formatters";
+
+import { formatDate, formatTime } from "@/utils/formatter";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { mappls } from "mappls-web-maps";
 import { useEffect, useRef, useState } from "react";

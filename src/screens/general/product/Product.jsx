@@ -8,6 +8,7 @@ import DataContext from "@/context/DataContext";
 
 import { Switch } from "@/components/ui/switch";
 import { toaster } from "@/components/ui/toaster";
+import { Button } from "@/components/ui/button";
 
 import RenderIcon from "@/icons/RenderIcon";
 
@@ -126,12 +127,13 @@ const Product = () => {
           )}
 
           <div className="flex gap-3">
-            <button
+            <Button
+              disabled={!selectedCategory.categoryId}
               onClick={() => toggleModal("csv")}
               className="bg-cyan-100 text-black rounded-md py-2 px-4 font-semibold flex gap-[5px] items-center"
             >
               CSV
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -147,20 +149,25 @@ const Product = () => {
               <div className="flex gap-5 items-center">
                 Disabled
                 <Switch
-                  disabled={handleUpdateCategoryStatus.isPending}
+                  disabled={
+                    handleUpdateCategoryStatus.isPending ||
+                    !selectedCategory.categoryId
+                  }
                   colorPalette="teal"
                   checked={selectedCategory?.categoryStatus}
                   onCheckedChange={() => handleUpdateCategoryStatus.mutate()}
                 />
                 Enable
-                <button
+                <Button
+                  disabled={!selectedCategory.categoryId}
                   className="bg-blue-50 p-2 flex items-center gap-x-2 px-5 rounded-md"
                   onClick={() => toggleModal("edit")}
                 >
                   <RenderIcon iconName="EditIcon" size={16} loading={6} />
                   <span>Edit</span>
-                </button>
-                <button
+                </Button>
+                <Button
+                  disabled={!selectedCategory.categoryId}
                   className="bg-red-100 p-2 flex items-center gap-x-2 rounded-md px-3"
                   onClick={() => toggleModal("delete")}
                 >
@@ -168,7 +175,7 @@ const Product = () => {
                     <RenderIcon iconName="DeleteIcon" size={18} loading={6} />
                   </span>
                   Delete
-                </button>
+                </Button>
               </div>
             </div>
 
