@@ -20,10 +20,10 @@ import { createInvoice } from "@/hooks/order/useOrder";
 const PickAndDrop = ({ data, address }) => {
   const [pickAndDropData, setPickAndDropData] = useState({
     items: [],
-    pickUpAddressType: "",
-    pickUpAddressOtherAddressId: "",
-    deliveryAddressType: "",
-    deliveryAddressOtherAddressId: "",
+    pickUpAddressType: null,
+    pickUpAddressOtherAddressId: null,
+    deliveryAddressType: null,
+    deliveryAddressOtherAddressId: null,
     newPickupAddress: null,
     newDeliveryAddress: null,
     instructionInPickup: "",
@@ -33,6 +33,7 @@ const PickAndDrop = ({ data, address }) => {
   });
   const [cartData, setCartData] = useState({});
   const [showBill, setShowBill] = useState(false);
+  const [clearSignal, setClearSignal] = useState(false);
 
   const { role } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -66,6 +67,15 @@ const PickAndDrop = ({ data, address }) => {
     });
   };
 
+  const handleToggleNewPickAddress = () => {
+    setPickAndDropData({
+      ...pickAndDropData,
+      pickUpAddressType: null,
+      pickUpAddressOtherAddressId: null,
+    });
+    setClearSignal(true);
+  };
+
   const handleNewDeliveryAddress = (data) => {
     setPickAndDropData({
       ...pickAndDropData,
@@ -73,6 +83,15 @@ const PickAndDrop = ({ data, address }) => {
       deliveryAddressType: null,
       deliveryAddressOtherAddressId: null,
     });
+  };
+
+  const handleToggleNewDropAddress = () => {
+    setPickAndDropData({
+      ...pickAndDropData,
+      deliveryAddressType: null,
+      deliveryAddressOtherAddressId: null,
+    });
+    setClearSignal(true);
   };
 
   const handleAddItem = () => {
@@ -154,11 +173,16 @@ const PickAndDrop = ({ data, address }) => {
             <AddressSelection
               address={address}
               onAddressSelect={handleSelectPickAddress}
+              clearSignal={clearSignal}
+              setClearSignal={setClearSignal}
               label="Select Pickup Address"
             />
           </div>
 
-          <AddAddress onNewAddress={handleNewPickAddress} />
+          <AddAddress
+            onNewAddress={handleNewPickAddress}
+            onToggleAddAddress={handleToggleNewPickAddress}
+          />
 
           {data?.ifScheduled?.time && (
             <div className="flex items-center">
@@ -338,11 +362,16 @@ const PickAndDrop = ({ data, address }) => {
             <AddressSelection
               address={address}
               onAddressSelect={handleSelectDropAddress}
+              clearSignal={clearSignal}
+              setClearSignal={setClearSignal}
               label="Select Delivery Address"
             />
           </div>
 
-          <AddAddress onNewAddress={handleNewDeliveryAddress} />
+          <AddAddress
+            onNewAddress={handleNewDeliveryAddress}
+            onToggleAddAddress={handleToggleNewDropAddress}
+          />
 
           {data?.deliveryTime && (
             <div className="flex items-center">

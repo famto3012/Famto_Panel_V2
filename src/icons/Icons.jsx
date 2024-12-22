@@ -17,7 +17,6 @@ import {
   FaApple as AppleIcon,
 } from "react-icons/fa";
 import {
-  LuUserRound as AgentIcon,
   LuBellRing as PushNotificationIcon,
   LuFolderCog as CustomizationIcon,
   LuClock as ActivityIcon,
@@ -70,7 +69,10 @@ import { IoSettingsOutline as SettingsIcon } from "react-icons/io5";
 import { SlCloudUpload as UploadIcon } from "react-icons/sl";
 import { AiOutlineEllipsis as ThreeDots } from "react-icons/ai";
 import { BsPalette as PaintPaletteIcon } from "react-icons/bs";
-import { BiGridVertical as ReOrderIcon } from "react-icons/bi";
+import {
+  BiGridVertical as ReOrderIcon,
+  BiSolidUserRectangle as AgentIcon,
+} from "react-icons/bi";
 
 export {
   AccountIcon,
