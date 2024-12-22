@@ -149,7 +149,7 @@ export const downloadAllCustomerCSV = async (geofence, navigate) => {
       responseType: "blob",
     });
 
-    return res.status === 200 ? res.data.message : null;
+    return res.status === 200 ? res.data : null;
   } catch (err) {
     throw new Error(
       err.response?.data?.message || "Failed to download customer csv"
