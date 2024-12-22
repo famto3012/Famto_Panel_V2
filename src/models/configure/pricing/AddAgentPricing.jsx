@@ -15,8 +15,8 @@ import { toaster } from "@/components/ui/toaster";
 
 import ModalLoader from "@/components/others/ModalLoader";
 
-import { getAllGeofence } from "../../../hooks/geofence/useGeofence";
-import { createNewAgentPricing } from "../../../hooks/pricing/useAgentPricing";
+import { getAllGeofence } from "@/hooks/geofence/useGeofence";
+import { createNewAgentPricing } from "@/hooks/pricing/useAgentPricing";
 
 const AddAgentPricing = ({ isOpen, onClose }) => {
   const navigate = useNavigate();

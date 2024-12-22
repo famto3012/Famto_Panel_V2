@@ -6,17 +6,17 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Switch } from "@/components/ui/switch";
 import { toaster } from "@/components/ui/toaster";
 
-import RenderIcon from "../../icons/RenderIcon";
+import RenderIcon from "@/icons/RenderIcon";
 
 import ShowSpinner from "../others/ShowSpinner";
 
 import {
   fetchAllCustomerSurge,
   updateCustomerSurgeStatus,
-} from "../../hooks/pricing/useCustomerPricing";
-import AddCustomerSurge from "../../models/configure/pricing/AddCustomerSurge";
-import EditCustomerSurge from "../../models/configure/pricing/EditCustomerSurge";
-import DeleteCustomerSurge from "../../models/configure/pricing/DeleteCustomerSurge";
+} from "@/hooks/pricing/useCustomerPricing";
+import AddCustomerSurge from "@/models/configure/pricing/AddCustomerSurge";
+import EditCustomerSurge from "@/models/configure/pricing/EditCustomerSurge";
+import DeleteCustomerSurge from "@/models/configure/pricing/DeleteCustomerSurge";
 
 const CustomerSurge = () => {
   const navigate = useNavigate();

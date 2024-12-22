@@ -17,11 +17,11 @@ import { Radio, RadioGroup } from "@/components/ui/radio";
 
 import ModalLoader from "@/components/others/ModalLoader";
 
-import { getAllGeofence } from "../../../hooks/geofence/useGeofence";
-import { getAllBusinessCategory } from "../../../hooks/customerAppCustomization/useBusinessCategory";
-import { createCustomerPricing } from "../../../hooks/pricing/useCustomerPricing";
+import { getAllGeofence } from "@/hooks/geofence/useGeofence";
+import { getAllBusinessCategory } from "@/hooks/customerAppCustomization/useBusinessCategory";
+import { createCustomerPricing } from "@/hooks/pricing/useCustomerPricing";
 
-import { vehicleTypeOptions } from "../../../utils/defaultData";
+import { vehicleTypeOptions } from "@/utils/defaultData";
 
 const AddCustomerPricing = ({ isOpen, onClose, pricingId }) => {
   const navigate = useNavigate();

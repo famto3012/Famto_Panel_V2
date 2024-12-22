@@ -1,5 +1,5 @@
 import Toggles from "@/components/agentAppCustomization/Toggles";
-import GlobalSearch from "../../../components/others/GlobalSearch";
+import GlobalSearch from "@/components/others/GlobalSearch";
 
 const AgentApp = () => {
   return (

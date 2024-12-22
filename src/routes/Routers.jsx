@@ -9,8 +9,9 @@ import { Suspense, lazy, useContext, useEffect } from "react";
 
 import ProtectedRoute from "./ProtectedRoutes";
 
-import Loader from "../components/others/Loader";
-import AuthContext from "../context/AuthContext";
+import Loader from "@/components/others/Loader";
+import AuthContext from "@/context/AuthContext";
+import Maintenance from "@/screens/other/Maintenance";
 
 // Lazy load each route component
 const AuthRoutes = lazy(() => import("./AuthRoute"));
@@ -36,13 +37,11 @@ const Routers = () => {
   useEffect(() => {
     if (!token && !location.pathname.startsWith("/auth")) {
       navigate("/auth/sign-in");
-    } else if (
-      token &&
-      (location.pathname === "/auth/sign-in" ||
-        location.pathname === "/auth/sign-up")
-    ) {
+    } else if (token && location.pathname.startsWith("/auth")) {
       navigate("/home");
     }
+
+    // navigate("/maintenance");
   }, [token, location.pathname, navigate]);
 
   return (
@@ -98,6 +97,8 @@ const Routers = () => {
           }
         />
         <Route path="/account/*" element={<AccountRoutes />} />
+        <Route path="/maintenance" element={<Maintenance />} />
+        <Route path="*" element={<Navigate to="/home" replace />} />
       </Routes>
     </Suspense>
   );

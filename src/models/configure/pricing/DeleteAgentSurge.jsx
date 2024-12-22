@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { toaster } from "@/components/ui/toaster";
 
-import { deleteAgentSurge } from "../../../hooks/pricing/useAgentPricing";
+import { deleteAgentSurge } from "@/hooks/pricing/useAgentPricing";
 
 const DeleteAgentSurge = ({ isOpen, onClose, surgeId }) => {
   const navigate = useNavigate();

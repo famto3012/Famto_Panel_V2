@@ -1,5 +1,5 @@
 import Select from "react-select";
-import GlobalSearch from "../../../components/others/GlobalSearch";
+import GlobalSearch from "@/components/others/GlobalSearch";
 import { Switch } from "@/components/ui/switch";
 import CropImage from "@/components/others/CropImage";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";

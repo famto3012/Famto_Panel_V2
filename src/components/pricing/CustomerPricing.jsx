@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { HStack, Table } from "@chakra-ui/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import RenderIcon from "../../icons/RenderIcon";
+import RenderIcon from "@/icons/RenderIcon";
 
 import { Switch } from "@/components/ui/switch";
 import { toaster } from "@/components/ui/toaster";
@@ -13,11 +13,11 @@ import ShowSpinner from "../others/ShowSpinner";
 import {
   fetchAllCustomerPricing,
   updateCustomerPricingStatus,
-} from "../../hooks/pricing/useCustomerPricing";
+} from "@/hooks/pricing/useCustomerPricing";
 
-import AddCustomerPricing from "../../models/configure/pricing/AddCustomerPricing";
-import EditCustomerPricing from "../../models/configure/pricing/EditCustomerPricing";
-import DeleteCustomerPricing from "../../models/configure/pricing/DeleteCustomerPricing";
+import AddCustomerPricing from "@/models/configure/pricing/AddCustomerPricing";
+import EditCustomerPricing from "@/models/configure/pricing/EditCustomerPricing";
+import DeleteCustomerPricing from "@/models/configure/pricing/DeleteCustomerPricing";
 
 const CustomerPricing = () => {
   const navigate = useNavigate();

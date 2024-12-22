@@ -11,8 +11,8 @@ import {
   Legend,
   LineController,
 } from "chart.js";
-import GlobalSearch from "../../../components/others/GlobalSearch";
-import RealTimeDataCount from "../../../components/home/RealTimeDataCount";
+import GlobalSearch from "@/components/others/GlobalSearch";
+import RealTimeDataCount from "@/components/home/RealTimeDataCount";
 import { Switch } from "@/components/ui/switch";
 import { Radio, RadioGroup } from "@/components/ui/radio";
 
@@ -96,7 +96,7 @@ const Home = () => {
   const { data: merchantProfileData } = useQuery({
     queryKey: ["merchant-detail", merchantId],
     queryFn: () => fetchSingleMerchantDetail(role, merchantId, navigate),
-    enabled: !!merchantId
+    enabled: !!merchantId,
   });
 
   const handleUpdateMerchantStatusMutation = useMutation({

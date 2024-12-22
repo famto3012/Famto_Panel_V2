@@ -1,5 +1,5 @@
 import { Radio, RadioGroup } from "@/components/ui/radio";
-import GlobalSearch from "../../../components/others/GlobalSearch";
+import GlobalSearch from "@/components/others/GlobalSearch";
 import CropImage from "@/components/others/CropImage";
 import RenderIcon from "@/icons/RenderIcon";
 import Select from "react-select";

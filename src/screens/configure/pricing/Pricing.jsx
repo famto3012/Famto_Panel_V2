@@ -1,8 +1,8 @@
-import GlobalSearch from "../../../components/others/GlobalSearch";
-import AgentPricing from "../../../components/pricing/AgentPricing";
-import AgentSurge from "../../../components/pricing/AgentSurge";
-import CustomerPricing from "../../../components/pricing/CustomerPricing";
-import CustomerSurge from "../../../components/pricing/CustomerSurge";
+import GlobalSearch from "@/components/others/GlobalSearch";
+import AgentPricing from "@/components/pricing/AgentPricing";
+import AgentSurge from "@/components/pricing/AgentSurge";
+import CustomerPricing from "@/components/pricing/CustomerPricing";
+import CustomerSurge from "@/components/pricing/CustomerSurge";
 
 const Pricing = () => {
   return (

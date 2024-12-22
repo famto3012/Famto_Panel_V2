@@ -1,6 +1,6 @@
-import GlobalSearch from "../../../components/others/GlobalSearch";
+import GlobalSearch from "@/components/others/GlobalSearch";
 import { useNavigate } from "react-router-dom";
-import { formatDate, formatTime } from "@/utils/formatters";
+import { formatDate, formatTime } from "@/utils/formatter";
 import {
   PaginationItems,
   PaginationNextTrigger,
@@ -222,7 +222,6 @@ const NotificationLog = () => {
         </div>
       </div>
     </>
-
   );
 };
 

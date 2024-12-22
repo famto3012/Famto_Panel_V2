@@ -13,8 +13,8 @@ import {
 } from "@/components/ui/dialog";
 import { toaster } from "@/components/ui/toaster";
 
-import { getAllGeofence } from "../../../hooks/geofence/useGeofence";
-import { createNewAgentSurge } from "../../../hooks/pricing/useAgentPricing";
+import { getAllGeofence } from "@/hooks/geofence/useGeofence";
+import { createNewAgentSurge } from "@/hooks/pricing/useAgentPricing";
 
 import ModalLoader from "@/components/others/ModalLoader";
 

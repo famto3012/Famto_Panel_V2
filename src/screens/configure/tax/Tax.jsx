@@ -5,16 +5,16 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Switch } from "@/components/ui/switch";
 import { toaster } from "@/components/ui/toaster";
 
-import GlobalSearch from "../../../components/others/GlobalSearch";
-import ShowSpinner from "../../../components/others/ShowSpinner";
+import GlobalSearch from "@/components/others/GlobalSearch";
+import ShowSpinner from "@/components/others/ShowSpinner";
 
-import RenderIcon from "../../../icons/RenderIcon";
+import RenderIcon from "@/icons/RenderIcon";
 
-import { fetchAllTax, toggleTaxStatus } from "../../../hooks/tax/useTax";
+import { fetchAllTax, toggleTaxStatus } from "@/hooks/tax/useTax";
 
-import EditTax from "../../../models/configure/tax/EditTax";
-import AddTax from "../../../models/configure/tax/AddTax";
-import DeleteTax from "../../../models/configure/tax/DeleteTax";
+import EditTax from "@/models/configure/tax/EditTax";
+import AddTax from "@/models/configure/tax/AddTax";
+import DeleteTax from "@/models/configure/tax/DeleteTax";
 
 const Tax = () => {
   const navigate = useNavigate();
