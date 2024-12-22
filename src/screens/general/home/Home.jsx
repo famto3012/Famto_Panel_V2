@@ -96,6 +96,7 @@ const Home = () => {
   const { data: merchantProfileData } = useQuery({
     queryKey: ["merchant-detail", merchantId],
     queryFn: () => fetchSingleMerchantDetail(role, merchantId, navigate),
+    enabled: !!merchantId
   });
 
   const handleUpdateMerchantStatusMutation = useMutation({
@@ -442,7 +443,7 @@ const Home = () => {
         merchantProfileData?.merchantDetail?.availability
       );
     }
-    if (userId) {
+    if (role === "Merchant" && userId) {
       setMerchantId(userId);
     }
   }, [merchantProfileData, userId]);

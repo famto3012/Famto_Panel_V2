@@ -268,3 +268,27 @@ export const downloadInvoiceBill = async (cartId, deliveryMode, navigate) => {
     throw err.response?.data?.message || "Failed to download invoice bill";
   }
 };
+
+export const fetchPolylineFromPickupToDelivery = async ({
+  navigate,
+  pickupLat,
+  pickupLng,
+  deliveryLat,
+  deliveryLng,
+}) => {
+  try {
+    const api = useApiClient(navigate);
+    const res = await api.post(`/admin/map/get-polyline`, {
+      pickupLat,
+      pickupLng,
+      deliveryLat,
+      deliveryLng,
+    });
+
+    return res.status === 200 ? res.data.routes[0].geometry.coordinates : [];
+  } catch (err) {
+    throw new Error(
+      err.response?.data?.message || "Failed to fetch polyline for map"
+    );
+  }
+};
