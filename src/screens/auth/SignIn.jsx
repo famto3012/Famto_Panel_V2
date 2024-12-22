@@ -2,9 +2,11 @@ import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 
-import RenderIcon from "../../icons/RenderIcon";
-import { signInHandler } from "../../hooks/auth/useAuth";
-import AuthContext from "../../context/AuthContext";
+import AuthContext from "@/context/AuthContext";
+
+import RenderIcon from "@/icons/RenderIcon";
+
+import { signInHandler } from "@/hooks/auth/useAuth";
 
 const SignIn = () => {
   const [formData, setFormData] = useState({
@@ -31,11 +33,10 @@ const SignIn = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Destructure the necessary values from useMutation
   const { mutate, isPending } = useMutation({
     mutationFn: () => signInHandler(formData),
-    onSuccess: ({ token, role, _id, fullName }) => {
-      saveToStorage(token, role, _id, fullName);
+    onSuccess: ({ token, role, _id, fullName, refreshToken }) => {
+      saveToStorage(token, role, _id, fullName, undefined, refreshToken);
       navigate("/home");
     },
     onError: (err) => {

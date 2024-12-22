@@ -26,7 +26,6 @@ export const AuthProvider = ({ children }) => {
   );
   const [isLoading, setIsLoading] = useState(false);
 
-  // Function to save tokens securely
   const saveToStorage = (
     accessToken,
     role,
@@ -52,7 +51,7 @@ export const AuthProvider = ({ children }) => {
       setFcmToken(fcmToken);
       setRefreshToken(newRefreshToken);
     } catch (error) {
-      console.log("Error saving tokens:", error);
+      console.error("Error saving tokens:", error);
     } finally {
       setIsLoading(false);
     }
@@ -65,7 +64,7 @@ export const AuthProvider = ({ children }) => {
       encryptStorage.setItem("fcmToken", fcmToken);
       setFcmToken(fcmToken);
     } catch (error) {
-      console.log("Error saving tokens:", error);
+      console.error("Error saving FCM token:", error);
     } finally {
       setIsLoading(false);
     }
@@ -92,7 +91,7 @@ export const AuthProvider = ({ children }) => {
         setRefreshToken(storedRefreshToken);
       }
     } catch (error) {
-      console.log("Error loading tokens:", error);
+      console.error("Error loading tokens:", error);
     } finally {
       setIsLoading(false);
     }
@@ -117,13 +116,12 @@ export const AuthProvider = ({ children }) => {
       setFcmToken(null);
       setRefreshToken(null);
     } catch (error) {
-      console.log("Error clearing tokens:", error);
+      console.error("Error clearing tokens:", error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Load tokens once when the app starts
   useEffect(() => {
     loadTokens();
   }, []);
