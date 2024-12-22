@@ -13,38 +13,32 @@ const refreshAccessToken = async () => {
     const refreshToken = encryptStorage.getItem("refreshToken");
 
     if (!refreshToken) {
-      console.log("No refresh token available, logging out");
-      clearStorage();
+      await clearStorage();
       return null;
     }
-
-    console.log("Refreshing access token...");
 
     const response = await axios.post(`${BASE_URL}/auth/refresh-token`, {
       refreshToken,
     });
 
-    const { accessToken } = response.data;
+    const { newToken } = response.data;
 
-    encryptStorage.setItem("token", accessToken);
+    encryptStorage.setItem("token", newToken);
 
-    console.log("Access token refreshed successfully:", accessToken);
-
-    return accessToken;
+    return newToken;
   } catch (error) {
-    console.log("Error refreshing access token:", error.message);
-    clearStorage();
+    await clearStorage();
     return null;
   }
 };
 
-const clearStorage = () => {
-  encryptStorage.removeItem("token");
-  encryptStorage.removeItem("role");
-  encryptStorage.removeItem("userId");
-  encryptStorage.removeItem("fcmToken");
-  encryptStorage.removeItem("username");
-  encryptStorage.removeItem("refreshToken");
+const clearStorage = async () => {
+  await encryptStorage.removeItem("token");
+  await encryptStorage.removeItem("role");
+  await encryptStorage.removeItem("userId");
+  await encryptStorage.removeItem("fcmToken");
+  await encryptStorage.removeItem("username");
+  await encryptStorage.removeItem("refreshToken");
 };
 
 const useApiClient = (navigate) => {
@@ -53,9 +47,6 @@ const useApiClient = (navigate) => {
   const axiosInstance = axios.create({
     baseURL: BASE_URL,
     withCredentials: true,
-    // headers: {
-    //   "Content-Type": "application/json",
-    // },
   });
 
   axiosInstance.interceptors.request.use(
@@ -71,14 +62,21 @@ const useApiClient = (navigate) => {
   axiosInstance.interceptors.response.use(
     (response) => response,
     async (error) => {
-      if (error.response?.status === 401) {
+      if (error.response?.status === 401 && !error.config._retry) {
         try {
+          error.config._retry = true;
           const newAccessToken = await refreshAccessToken();
 
-          error.config.headers["Authorization"] = `Bearer ${newAccessToken}`;
-          return axiosInstance(error.config);
+          if (newAccessToken) {
+            error.config.headers["Authorization"] = `Bearer ${newAccessToken}`;
+            return axiosInstance(error.config);
+          } else {
+            await clearStorage();
+            navigate("/auth/sign-in");
+            return Promise.reject("Session expired. Please log in again.");
+          }
         } catch (refreshError) {
-          clearStorage();
+          await clearStorage();
           navigate("/auth/sign-in");
           return Promise.reject(refreshError);
         }
