@@ -29,14 +29,15 @@ const CustomOrder = ({ data, address }) => {
     longitude: null,
     items: [],
     instructionInDelivery: "",
-    deliveryAddressType: "",
-    deliveryAddressOtherAddressId: "",
+    deliveryAddressType: null,
+    deliveryAddressOtherAddressId: null,
     addedTip: "",
     newDeliveryAddress: null,
   });
   const [showMap, setShowMap] = useState(false);
   const [cartData, setCartData] = useState({});
   const [showBill, setShowBill] = useState(false);
+  const [clearSignal, setClearSignal] = useState(false);
 
   const navigate = useNavigate();
   const { role } = useContext(AuthContext);
@@ -140,6 +141,15 @@ const CustomOrder = ({ data, address }) => {
       deliveryAddressType: null,
       deliveryAddressOtherAddressId: null,
     });
+  };
+
+  const handleToggleNewDeliveryAddress = () => {
+    setCustomOrderData({
+      ...customOrderData,
+      deliveryAddressType: null,
+      deliveryAddressOtherAddressId: null,
+    });
+    setClearSignal(true);
   };
 
   const handleCreateInvoice = useMutation({
@@ -364,10 +374,15 @@ const CustomOrder = ({ data, address }) => {
           <AddressSelection
             address={address}
             onAddressSelect={handleSelectAddress}
+            clearSignal={clearSignal}
+            setClearSignal={setClearSignal}
             label="Select Delivery Address"
           />
 
-          <AddAddress onNewAddress={handleNewDeliveryAddress} />
+          <AddAddress
+            onNewAddress={handleNewDeliveryAddress}
+            onToggleAddAddress={handleToggleNewDeliveryAddress}
+          />
 
           <div className="flex items-center">
             <label className="w-1/3 px-6 text-gray-700" htmlFor="tips">
