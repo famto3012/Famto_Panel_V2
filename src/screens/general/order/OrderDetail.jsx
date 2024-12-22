@@ -11,6 +11,7 @@ import Loader from "../../../components/others/Loader";
 import Details from "../../../components/order/detail/Details";
 import OrderItems from "../../../components/order/detail/OrderItem";
 import OrderBill from "../../../components/order/detail/OrderBill";
+import OrderMapAndStepper from "../../../components/order/detail/OrderMapAndStepper";
 
 import RenderIcon from "../../../icons/RenderIcon";
 
@@ -176,6 +177,7 @@ const OrderDetail = () => {
       <OrderItems data={orderDetail} />
 
       <OrderBill data={orderDetail} />
+      <OrderMapAndStepper orderDetail={orderDetail}/>
     </div>
   );
 };

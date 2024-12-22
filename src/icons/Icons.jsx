@@ -17,7 +17,7 @@ import {
   FaApple as AppleIcon,
 } from "react-icons/fa";
 import {
-  LuUserSquare as AgentIcon,
+  LuUserRound as AgentIcon,
   LuBellRing as PushNotificationIcon,
   LuFolderCog as CustomizationIcon,
   LuClock as ActivityIcon,
