@@ -16,7 +16,7 @@ import GlobalSearch from "@/components/others/GlobalSearch";
 import Loader from "@/components/others/Loader";
 import Error from "@/components/others/Error";
 import ShowSpinner from "@/components/others/ShowSpinner";
-import ReferralTable from "@/components/referral/referralTable";
+import ReferralTable from "@/components/referral/ReferralTable";
 
 import {
   fetchReferralData,
