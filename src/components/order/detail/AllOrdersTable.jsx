@@ -61,7 +61,9 @@ const AllOrdersTable = ({ filter }) => {
   });
 
   useEffect(() => {
-    orderData?.data && orderData?.data?.length && setAllOrders(orderData.data);
+    orderData?.data && orderData?.data?.length
+      ? setAllOrders(orderData.data)
+      : setAllOrders([]);
   }, [orderData?.data]);
 
   useEffect(() => {
