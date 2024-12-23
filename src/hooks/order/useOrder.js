@@ -292,3 +292,20 @@ export const fetchPolylineFromPickupToDelivery = async ({
     );
   }
 };
+
+export const downloadOrderBill = async (orderId, navigate) => {
+  try {
+    const api = useApiClient(navigate);
+    const res = await api.post(
+      `/orders/download-order-bill`,
+      { orderId },
+      {
+        responseType: "blob",
+      }
+    );
+
+    return res.status === 200 ? res.data : null;
+  } catch (err) {
+    throw err.response?.data?.message || "Failed to download order bill";
+  }
+};

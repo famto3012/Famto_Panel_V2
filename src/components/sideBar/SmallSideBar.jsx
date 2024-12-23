@@ -36,7 +36,7 @@ const SmallSideBar = () => {
       <ul className="ul-side">
         <Link to="/home" className="side">
           <span className="m-2">
-            <RenderIcon iconName="HomeIcon" size={28} loading={6} />
+            <RenderIcon iconName="HomeIcon" size={22} loading={6} />
           </span>
         </Link>
         <Link
@@ -44,7 +44,7 @@ const SmallSideBar = () => {
           className={`side ${selectedLink === "/order" || /^\/order\/[A-Za-z0-9]+$/.test(selectedLink) ? "selected-link" : ""}`}
         >
           <span className="m-2">
-            <RenderIcon iconName="BookIcon" size={28} loading={6} />
+            <RenderIcon iconName="BookIcon" size={22} loading={6} />
           </span>
         </Link>
         <Link
@@ -54,17 +54,17 @@ const SmallSideBar = () => {
           }`}
         >
           <span className="m-2">
-            <RenderIcon iconName="ShopIcon" size={28} loading={6} />
+            <RenderIcon iconName="ShopIcon" size={22} loading={6} />
           </span>
         </Link>
         <Link to="/product" className="side">
           <span className="m-2">
-            <RenderIcon iconName="ProductIcon" size={28} loading={6} />
+            <RenderIcon iconName="ProductIcon" size={22} loading={6} />
           </span>
         </Link>
         <Link to="/customer" className="side">
           <span className="m-2">
-            <RenderIcon iconName="UsersIcon" size={28} loading={6} />
+            <RenderIcon iconName="UsersIcon" size={22} loading={6} />
           </span>
         </Link>
         <Link
@@ -74,7 +74,7 @@ const SmallSideBar = () => {
           }`}
         >
           <span className="m-2">
-            <RenderIcon iconName="AgentIcon" size={28} loading={6} />
+            <RenderIcon iconName="AgentIcon" size={22} loading={6} />
           </span>
         </Link>
         <Link
@@ -84,12 +84,12 @@ const SmallSideBar = () => {
           }`}
         >
           <span className="m-2">
-            <RenderIcon iconName="BikeIcon" size={28} loading={6} />
+            <RenderIcon iconName="BikeIcon" size={22} loading={6} />
           </span>
         </Link>
         <Link to="/comm-and-subs" className="side">
           <span className="m-2">
-            <RenderIcon iconName="PercentageIcon" size={28} loading={6} />
+            <RenderIcon iconName="PercentageIcon" size={22} loading={6} />
           </span>
         </Link>
         {role === "Admin" && (
@@ -100,7 +100,7 @@ const SmallSideBar = () => {
             }`}
           >
             <span className="m-2">
-              <RenderIcon iconName="WhatsappIcon" size={28} loading={6} />
+              <RenderIcon iconName="WhatsappIcon" size={22} loading={6} />
             </span>
           </Link>
         )}
