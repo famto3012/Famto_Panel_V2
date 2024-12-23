@@ -11,17 +11,19 @@ import Error from "@/components/others/Error";
 import Loader from "@/components/others/Loader";
 import GlobalSearch from "@/components/others/GlobalSearch";
 import WalletTransaction from "@/components/customer/WalletTransaction";
+import OrderDetails from "@/components/customer/OrderDetails";
 
 import {
   fetchCustomerDetails,
   updateCustomerDetails,
 } from "@/hooks/customer/useCustomer";
 import { useDraggable } from "@/hooks/useDraggable";
-import OrderDetails from "@/components/customer/OrderDetails";
+
 import BlockOperation from "@/models/general/customer/BlockOperation";
 import ShowRating from "@/models/general/customer/ShowRating";
+import EditAddress from "@/models/general/customer/EditAddress";
+import EnlargeImage from "@/models/common/EnlargeImage";
 
-// TODO: Need to implement edit address modal
 const CustomerDetail = () => {
   const [customer, setCustomer] = useState({});
   const [editMode, setEditMode] = useState(false);
@@ -29,8 +31,14 @@ const CustomerDetail = () => {
     block: false,
     rating: false,
     enlarge: false,
+    address: false,
   });
   const [imageLink, setImageLink] = useState(null);
+  const [selectedAddress, setSelectedAddress] = useState({
+    type: null,
+    addressId: null,
+    data: null,
+  });
 
   const { customerId } = useParams();
   const navigate = useNavigate();
@@ -92,8 +100,63 @@ const CustomerDetail = () => {
       block: false,
       rating: false,
       enlarge: false,
+      address: false,
     });
     setImageLink(null);
+    setSelectedAddress({
+      type: null,
+      addressId: null,
+      data: null,
+    });
+  };
+
+  const handleSelectAddress = (type, addressId = null) => {
+    let data;
+    if (type === "home") {
+      data = customer.homeAddress;
+    } else if (type === "work") {
+      data = customer.workAddress;
+    } else if (type === "other") {
+      const addressFound = customer.otherAddress.find(
+        (address) => address.id === addressId
+      );
+      data = addressFound;
+    }
+
+    setSelectedAddress({
+      type,
+      addressId,
+      data,
+    });
+
+    setModal((prev) => ({ ...prev, address: true }));
+  };
+
+  const handleUpdateAddress = (data) => {
+    if (data.type === "home") {
+      setCustomer((prevData) => ({
+        ...prevData,
+        homeAddress: {
+          ...data.formData,
+        },
+      }));
+    } else if (data.type === "work") {
+      setCustomer((prevData) => ({
+        ...prevData,
+        workAddress: {
+          ...data.formData,
+        },
+      }));
+    } else if (data.type === "other") {
+      setCustomer((prevData) => ({
+        ...prevData,
+        otherAddress: prevData.otherAddress.map((address) =>
+          address.id === selectedAddress.addressId
+            ? { ...address, ...data.formData }
+            : address
+        ),
+      }));
+    }
   };
 
   if (isLoading) return <Loader />;
@@ -228,17 +291,15 @@ const CustomerDetail = () => {
               </form>
             </div>
 
-            <figure
-              onClick={() =>
-                toggleModal(
-                  "enlarge",
-                  customer?.customerDetail?.customerImageURL
-                )
-              }
-              className="h-16 w-16 ms-[10rem] xl:ms-0 mt-[30px] xl:mt-0 cursor-pointer"
-            >
+            <figure className="h-16 w-16 ms-[10rem] xl:ms-0 mt-[30px] xl:mt-0 cursor-pointer">
               {customer?.customerDetail?.customerImageURL ? (
                 <img
+                  onClick={() =>
+                    toggleModal(
+                      "enlarge",
+                      customer?.customerDetail?.customerImageURL
+                    )
+                  }
                   src={customer?.customerDetail?.customerImageURL}
                   alt={customer?.name}
                   className="w-full h-full object-cover"
@@ -303,8 +364,8 @@ const CustomerDetail = () => {
                       Home
                     </Tag>
                     <span
-                      onClick={() => {}}
-                      className=" absolute top-0 right-0 hidden group-hover:block cursor-pointer bg-gray-200 p-2 rounded-full"
+                      onClick={() => handleSelectAddress("home")}
+                      className={`${editMode ? "block" : "hidden"} absolute top-0 right-0 cursor-pointer bg-gray-200 p-2 rounded-full`}
                     >
                       <RenderIcon iconName="EditIcon" size={16} loading={6} />
                     </span>
@@ -335,8 +396,8 @@ const CustomerDetail = () => {
                       Work
                     </Tag>
                     <span
-                      onClick={() => {}}
-                      className=" absolute top-0 right-0 hidden group-hover:block cursor-pointer bg-gray-200 p-2 rounded-full"
+                      onClick={() => handleSelectAddress("work")}
+                      className={`${editMode ? "block" : "hidden"} absolute top-0 right-0 cursor-pointer bg-gray-200 p-2 rounded-full`}
                     >
                       <RenderIcon iconName="EditIcon" size={16} loading={6} />
                     </span>
@@ -372,8 +433,10 @@ const CustomerDetail = () => {
                       </Tag>
 
                       <span
-                        onClick={() => {}}
-                        className=" absolute top-0 right-0 hidden group-hover:block cursor-pointer bg-gray-200 p-2 rounded-full"
+                        onClick={() =>
+                          handleSelectAddress("other", address._id)
+                        }
+                        className={`${editMode ? "block" : "hidden"} absolute top-0 right-0 cursor-pointer bg-gray-200 p-2 rounded-full`}
                       >
                         <RenderIcon iconName="EditIcon" size={16} loading={6} />
                       </span>
@@ -401,6 +464,7 @@ const CustomerDetail = () => {
           data={customer?.walletDetails}
           customerId={customer?._id}
         />
+
         <OrderDetails data={customer?.orderDetails} />
       </div>
 
@@ -414,6 +478,20 @@ const CustomerDetail = () => {
         isOpen={modal.rating}
         onClose={closeModal}
         customerId={customerId}
+      />
+
+      <EnlargeImage
+        isOpen={modal.enlarge}
+        onClose={closeModal}
+        source={imageLink}
+      />
+
+      <EditAddress
+        isOpen={modal.address}
+        onClose={closeModal}
+        type={selectedAddress.type}
+        address={selectedAddress.data}
+        onNewAddress={handleUpdateAddress}
       />
     </>
   );
