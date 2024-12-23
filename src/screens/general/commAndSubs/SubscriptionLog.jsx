@@ -32,7 +32,7 @@ const SubscriptionLog = () => {
   const [merchantDebounce, setMerchantDebounce] = useState("");
 
   const navigate = useNavigate();
-  const { role } = useContext(AuthContext);
+  const { role, userId } = useContext(AuthContext);
 
   const { data: allMerchants } = useQuery({
     queryKey: ["merchant-dropdown"],
@@ -49,6 +49,12 @@ const SubscriptionLog = () => {
         }))
       : []),
   ];
+
+  useEffect(() => {
+    if (role === "Merchant") {
+      setMerchantFilter({ ...merchantFilter, merchantId: userId });
+    }
+  }, [role]);
 
   useEffect(() => {
     const handler = setTimeout(() => {
