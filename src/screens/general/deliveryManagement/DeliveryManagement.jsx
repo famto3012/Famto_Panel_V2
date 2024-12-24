@@ -12,7 +12,7 @@ import {
   getAuthTokenForDeliveryManagementMap,
   getAutoAllocation,
   updateAutoALlocationStatus,
-} from "@/hooks/deliveryManagement/useDeliveryManagement";
+} from "../../../hooks/deliveryManagement/useDeliveryManagement";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { mappls } from "mappls-web-maps";
 import { toaster } from "@/components/ui/toaster";

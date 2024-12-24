@@ -182,7 +182,7 @@ const EditMerchant = ({ isOpen, onClose, data }) => {
     if (data) {
       setFormData(data);
     }
-  }, []);
+  }, [data]);
 
   const { mutate, isPending } = useMutation({
     mutationKey: ["edit-merchant"],

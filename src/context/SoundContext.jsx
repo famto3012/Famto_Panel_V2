@@ -1,6 +1,7 @@
 import axios from "axios";
 import { EncryptStorage } from "encrypt-storage";
 import { createContext, useContext, useEffect, useState } from "react";
+import { Howl } from "howler";
 
 const SoundContext = createContext();
 
@@ -14,18 +15,38 @@ const encryptStorage = new EncryptStorage(secretKey, {
 });
 
 export const SoundProvider = ({ children }) => {
+  // Initialize Howler sounds
+  const newOrderSound = new Howl({
+    src: [
+      "https://res.cloudinary.com/dajlabmrb/video/upload/v1724931153/orderCreateAndRejectAudio_dg1rle.mp3",
+    ],
+    preload: true,
+    volume: 1.0,
+    loop: false, // Adjust volume as needed
+    onplayerror: function () {
+      console.log("Error playing sound.");
+    },
+  });
+
+  const notificationSound = new Howl({
+    src: [
+      "https://res.cloudinary.com/dajlabmrb/video/upload/v1724931165/46ffbafd-37e2-403e-92ed-b56edd5df42e-Notification_sound_gyz5ux.mp3",
+    ],
+    preload: true,
+    volume: 1.0,
+    loop: false, // Adjust volume as needed
+    onplayerror: function () {
+      console.log("Error playing sound.");
+    },
+  });
+
+  // Functions to play specific sounds
   const playNewOrderNotificationSound = () => {
-    const newOrderSoundUrl = new Audio(
-      "https://res.cloudinary.com/dajlabmrb/video/upload/v1724931153/orderCreateAndRejectAudio_dg1rle.mp3"
-    );
-    newOrderSoundUrl.play();
+    newOrderSound.play();
   };
 
   const playNewNotificationSound = () => {
-    const playNewNotification = new Audio(
-      "https://res.cloudinary.com/dajlabmrb/video/upload/v1724931165/46ffbafd-37e2-403e-92ed-b56edd5df42e-Notification_sound_gyz5ux.mp3"
-    );
-    playNewNotification.play();
+    notificationSound.play();
   };
 
   const [showBadge, setShowBadge] = useState(false);
@@ -63,6 +84,7 @@ export const SoundProvider = ({ children }) => {
           const scheduledOrderNotification = data.filter(
             (item) => item.event === "scheduledOrderCreated"
           );
+
           // Set the titles in respective useState hooks
           setNewOrder(newOrderNotification[0]?.title || "");
           setOrderRejected(orderRejectedNotification[0]?.title || "");
