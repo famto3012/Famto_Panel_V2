@@ -96,8 +96,16 @@ export const markOrderAsCompleted = async (orderId, navigate) => {
 
 export const getOrderDetail = async (orderId, role, navigate) => {
   try {
-    const route =
-      role === "Admin" ? `/orders/admin/${orderId}` : `/orders/${orderId}`;
+    const isStandardOrder = orderId.startsWith("O");
+
+    // Dynamically set the route based on the order type and role
+    const route = isStandardOrder
+      ? role === "Admin"
+        ? `/orders/admin/${orderId}`
+        : `/orders/${orderId}`
+      : role === "Admin"
+        ? `/orders/admin/scheduled-order/${orderId}`
+        : `/orders/scheduled-order/${orderId}`;
 
     const api = useApiClient(navigate);
     const res = await api.get(route);
@@ -307,5 +315,21 @@ export const downloadOrderBill = async (orderId, navigate) => {
     return res.status === 200 ? res.data : null;
   } catch (err) {
     throw err.response?.data?.message || "Failed to download order bill";
+  }
+};
+
+export const markScheduledOrderAsViewed = async (orderId, userId, navigate) => {
+  try {
+    const api = useApiClient(navigate);
+    const res = await api.put(
+      `/orders/scheduled-order-view/${orderId}/${userId}`,
+      {}
+    );
+
+    return res.status === 200 ? res.data : null;
+  } catch (err) {
+    throw (
+      err.response?.data?.message || "Failed to mark scheduled order as viewed."
+    );
   }
 };

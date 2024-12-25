@@ -192,10 +192,15 @@ const AllOrdersTable = ({ filter }) => {
               <Table.Row
                 key={order.orderId}
                 className={`h-[70px] ${
-                  order.orderStatus.trim().toLowerCase() === "pending" &&
                   filter.selectedOption === "order"
-                    ? "bg-red-500 text-white"
-                    : "even:bg-gray-100"
+                    ? order.orderStatus.trim().toLowerCase() === "pending"
+                      ? "bg-red-500 text-white"
+                      : "text-black"
+                    : (order.isViewed &&
+                          order.deliveryMode === "Home Delivery") ||
+                        (order.isViewed && order.deliveryMode === "Take Away")
+                      ? "text-black"
+                      : "bg-red-500 text-white"
                 }`}
               >
                 <Table.Cell textAlign="center">
@@ -286,7 +291,7 @@ const AllOrdersTable = ({ filter }) => {
                             ? "text-red-600"
                             : order.orderStatus === "On-going"
                               ? "text-orange-600"
-                              : ""
+                              : "text-yellow-500"
                       }`}
                     >
                       {order.orderStatus}
