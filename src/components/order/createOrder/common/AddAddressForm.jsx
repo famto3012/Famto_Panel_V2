@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import { Checkbox } from "@/components/ui/checkbox";
 import { toaster } from "@/components/ui/toaster";
 
 import Map from "@/models/common/Map";
+import DataContext from "@/context/DataContext";
 
 const AddAddressForm = ({ onAddCustomerAddress }) => {
   const [formData, setFormData] = useState({
@@ -19,6 +20,11 @@ const AddAddressForm = ({ onAddCustomerAddress }) => {
   });
   const [showButton, setShowButton] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [selectedAddress, setSelectedAddress] = useState({
+    type: null,
+    otherAddressId: null,
+  });
+  const { addressType, setAddressType } = useContext(DataContext);
 
   useEffect(() => {
     setShowButton(true);
@@ -57,9 +63,26 @@ const AddAddressForm = ({ onAddCustomerAddress }) => {
       });
       return;
     }
-
+    console.log("FormData", formData);
     onAddCustomerAddress(formData);
     setShowButton(false);
+  };
+
+  const handleAddressButtonClick = (type) => {
+    // Prevent selecting the same type unless it's "other"
+    if (type === addressType && type !== "other") {
+      toaster.create({
+        title: "Error",
+        description: "Pick-up Address and Delivery Address cannot be the same",
+        type: "error",
+      });
+      return; // Prevent the state update
+    }
+
+    // Update the form state for the selected address type
+    setFormData({ ...formData, type: type });
+    setAddressType(type);
+    setSelectedAddress({ type, otherAddressId: null });
   };
 
   return (
@@ -68,11 +91,11 @@ const AddAddressForm = ({ onAddCustomerAddress }) => {
       <div className="mt-6 p-6 bg-gray-200 rounded-lg shadow-lg w-1/2">
         <div className="flex flex-col gap-3">
           <div className="flex flex-row space-x-2 justify-around">
-            {["home", "work", "others"].map((button) => (
+            {["home", "work", "other"].map((button) => (
               <button
                 key={button}
                 type="button"
-                onClick={() => setFormData({ ...formData, type: button })}
+                onClick={() => handleAddressButtonClick(button)}
                 className={`px-5 p-2 rounded capitalize flex-1 ${
                   formData.type === button
                     ? "bg-teal-700 text-white"

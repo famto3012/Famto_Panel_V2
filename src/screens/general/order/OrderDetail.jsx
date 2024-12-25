@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
@@ -14,15 +14,19 @@ import Loader from "@/components/others/Loader";
 import Details from "@/components/order/detail/Details";
 import OrderItems from "@/components/order/detail/OrderItem";
 import OrderBill from "@/components/order/detail/OrderBill";
-import OrderMapAndStepper from "@/components/order/detail/OrderMapAndStepper";
+import OrderActivity from "@/components/order/detail/OrderActivity";
 
 import RenderIcon from "@/icons/RenderIcon";
 
-import { downloadOrderBill, getOrderDetail } from "@/hooks/order/useOrder";
+import {
+  downloadOrderBill,
+  getOrderDetail,
+  markScheduledOrderAsViewed,
+} from "@/hooks/order/useOrder";
 
 const OrderDetail = () => {
   const { orderId } = useParams();
-  const { role } = useContext(AuthContext);
+  const { role, userId } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const {
@@ -38,6 +42,11 @@ const OrderDetail = () => {
   const downloadBill = useMutation({
     mutationKey: ["download-order-bill"],
     mutationFn: () => downloadOrderBill(orderId, navigate),
+  });
+
+  const markScheduledOrderAsViewedForMerchant = useMutation({
+    mutationKey: ["mark-scheduled-order-viewed-for-merchant"],
+    mutationFn: () => markScheduledOrderAsViewed(orderId, userId, navigate),
   });
 
   const handleDownloadBill = () => {
@@ -74,6 +83,12 @@ const OrderDetail = () => {
       },
     });
   };
+
+  useEffect(() => {
+    if (role === "Merchant") {
+      markScheduledOrderAsViewedForMerchant.mutate();
+    }
+  }, [role, orderId, userId, navigate]);
 
   if (isLoading) return <Loader />;
   if (isError) return <Error />;
@@ -219,7 +234,7 @@ const OrderDetail = () => {
 
       <OrderBill data={orderDetail} />
 
-      <OrderMapAndStepper orderDetail={orderDetail} />
+      {orderId.startsWith("O") && <OrderActivity orderDetail={orderDetail} />}
     </div>
   );
 };
