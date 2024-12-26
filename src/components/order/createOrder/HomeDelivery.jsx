@@ -39,7 +39,8 @@ const HomeDelivery = ({ data, address }) => {
 
   const navigate = useNavigate();
   const { role, userId } = useContext(AuthContext);
-  const { setAddressType, setOtherAddressId } = useContext(DataContext);
+  const { setDeliveryAddressType, setDeliveryAddressId } =
+    useContext(DataContext);
 
   const { data: availableBusinessCategory } = useQuery({
     queryKey: ["available-business-category"],
@@ -91,8 +92,8 @@ const HomeDelivery = ({ data, address }) => {
       customerAddressType: null,
       customerAddressOtherAddressId: null,
     });
-    setAddressType(null);
-    setOtherAddressId(null);
+    setDeliveryAddressType(null);
+    setDeliveryAddressId(null);
     setClearSignal(true);
   };
 
@@ -195,6 +196,7 @@ const HomeDelivery = ({ data, address }) => {
           clearSignal={clearSignal}
           setClearSignal={setClearSignal}
           label="Select Delivery Address"
+          choose="Delivery"
         />
 
         <AddAddress

@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 
 import AuthContext from "@/context/AuthContext";
+import DataContext from "@/context/DataContext";
 
 import { Radio, RadioGroup } from "@/components/ui/radio";
 
@@ -19,6 +20,12 @@ const DeliveryModeAndOption = ({ onDataChange }) => {
   const [time, setTime] = useState(new Date());
 
   const { role } = useContext(AuthContext);
+  const {
+    setPickAddressType,
+    setPickAddressId,
+    setDeliveryAddressType,
+    setDeliveryAddressId,
+  } = useContext(DataContext);
 
   const deliveryModes = [
     "Take Away",
@@ -159,6 +166,10 @@ const DeliveryModeAndOption = ({ onDataChange }) => {
             onChange={(e) => {
               const selectedMode = e.target.value;
 
+              setPickAddressType(null);
+              setPickAddressId(null);
+              setDeliveryAddressType(null);
+              setDeliveryAddressId(null);
               setFormData({
                 ...formData,
                 deliveryMode: selectedMode,

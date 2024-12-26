@@ -4,6 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 
 import AuthContext from "@/context/AuthContext";
+import DataContext from "@/context/DataContext";
 
 import { toaster } from "@/components/ui/toaster";
 
@@ -36,6 +37,12 @@ const PickAndDrop = ({ data, address }) => {
   const [clearSignal, setClearSignal] = useState(false);
 
   const { role } = useContext(AuthContext);
+  const {
+    setPickAddressType,
+    setPickAddressId,
+    setDeliveryAddressType,
+    setDeliveryAddressId,
+  } = useContext(DataContext);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -73,6 +80,8 @@ const PickAndDrop = ({ data, address }) => {
       pickUpAddressType: null,
       pickUpAddressOtherAddressId: null,
     });
+    setPickAddressType(null);
+    setPickAddressId(null);
     setClearSignal(true);
   };
 
@@ -91,6 +100,8 @@ const PickAndDrop = ({ data, address }) => {
       deliveryAddressType: null,
       deliveryAddressOtherAddressId: null,
     });
+    setDeliveryAddressType(null);
+    setDeliveryAddressId(null);
     setClearSignal(true);
   };
 
@@ -176,6 +187,7 @@ const PickAndDrop = ({ data, address }) => {
               clearSignal={clearSignal}
               setClearSignal={setClearSignal}
               label="Select Pickup Address"
+              choose="Pick"
             />
           </div>
 
@@ -365,6 +377,7 @@ const PickAndDrop = ({ data, address }) => {
               clearSignal={clearSignal}
               setClearSignal={setClearSignal}
               label="Select Delivery Address"
+              choose="Delivery"
             />
           </div>
 
