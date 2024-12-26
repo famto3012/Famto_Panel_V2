@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+
+import DataContext from "@/context/DataContext";
 
 import {
   DialogBody,
@@ -18,9 +20,12 @@ import {
   downloadSampleProductCSV,
   uploadProductCSV,
 } from "@/hooks/product/useProduct";
+import { Button } from "@/components/ui/button";
 
 const CSVOperation = ({ isOpen, onClose, merchantId }) => {
   const [selectedCSVFile, setSelectedCSVFile] = useState(null);
+
+  const { selectedCategory } = useContext(DataContext);
 
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -209,15 +214,14 @@ const CSVOperation = ({ isOpen, onClose, merchantId }) => {
               )}
             </div>
             <div>
-              <button
+              <Button
+                disabled={!selectedCategory.categoryId}
                 onClick={handleDownloadProductCSV}
-                className="flex gap-2 p-3 bg-teal-800 rounded-xl px-5 border text-white cursor-pointer"
+                className="flex item-center gap-2 bg-teal-700 rounded-xl py-[25px] px-3 border text-white"
               >
-                <div className="flex items-center gap-[10px]">
-                  <RenderIcon iconName="DownloadIcon" size={20} loading={6} />
-                  <span>Download CSV</span>
-                </div>
-              </button>
+                <RenderIcon iconName="DownloadIcon" size={20} loading={6} />
+                <span>Download CSV</span>
+              </Button>
             </div>
           </div>
         </DialogBody>
