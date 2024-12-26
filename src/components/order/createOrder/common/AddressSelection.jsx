@@ -2,12 +2,6 @@ import { useContext, useEffect, useState } from "react";
 
 import DataContext from "@/context/DataContext";
 
-import { HStack } from "@chakra-ui/react";
-import {
-  RadioCardItem,
-  RadioCardLabel,
-  RadioCardRoot,
-} from "@/components/ui/radio-card";
 import { toaster } from "@/components/ui/toaster";
 
 const AddressSelection = ({
@@ -16,14 +10,23 @@ const AddressSelection = ({
   clearSignal,
   setClearSignal,
   label,
+  choose,
 }) => {
   const [selectedAddress, setSelectedAddress] = useState({
     type: null,
     otherAddressId: null,
   });
 
-  const { addressType, setAddressType, otherAddressId, setOtherAddressId } =
-    useContext(DataContext);
+  const {
+    pickAddressType,
+    setPickAddressType,
+    pickAddressId,
+    setPickAddressId,
+    deliveryAddressType,
+    setDeliveryAddressType,
+    deliveryAddressId,
+    setDeliveryAddressId,
+  } = useContext(DataContext);
 
   useEffect(() => {
     onAddressSelect(selectedAddress);
@@ -38,7 +41,18 @@ const AddressSelection = ({
   }, [clearSignal]);
 
   const handleSelectAddressType = (type) => {
-    if (type === addressType && type !== "other") {
+    if (choose === "Pick" && type !== "other" && deliveryAddressType === type) {
+      toaster.create({
+        title: "Error",
+        description: "Pick-up Address and Delivery Address cannot be the same",
+        type: "error",
+      });
+      return;
+    } else if (
+      choose === "Delivery" &&
+      type !== "other" &&
+      pickAddressType === type
+    ) {
       toaster.create({
         title: "Error",
         description: "Pick-up Address and Delivery Address cannot be the same",
@@ -47,12 +61,27 @@ const AddressSelection = ({
       return;
     }
 
-    setAddressType(type);
+    choose === "Pick" ? setPickAddressType(type) : setDeliveryAddressType(type);
     setSelectedAddress({ type, otherAddressId: null });
   };
 
   const handleSelectOtherAddress = (id) => {
-    if (id === otherAddressId) {
+    if (
+      selectedAddress.type === "other" &&
+      deliveryAddressId === id &&
+      choose === "Pick"
+    ) {
+      toaster.create({
+        title: "Error",
+        description: "Pick-up Address and Delivery Address cannot be the same",
+        type: "error",
+      });
+      return;
+    } else if (
+      selectedAddress.type === "other" &&
+      pickAddressId === id &&
+      choose === "Delivery"
+    ) {
       toaster.create({
         title: "Error",
         description: "Pick-up Address and Delivery Address cannot be the same",
@@ -61,7 +90,7 @@ const AddressSelection = ({
       return;
     }
 
-    setOtherAddressId(id);
+    choose === "Pick" ? setPickAddressId(id) : setDeliveryAddressId(id);
     setSelectedAddress((prev) => ({ ...prev, otherAddressId: id }));
   };
 
@@ -89,34 +118,30 @@ const AddressSelection = ({
             ))}
 
             {selectedAddress.type === "other" && (
-              <RadioCardRoot className="mt-5">
-                <RadioCardLabel>Select Other Address</RadioCardLabel>
-                <HStack className="mt-[14px] flex-wrap gap-[20px]">
+              <div className="mt-5">
+                <span>Select other address</span>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-3 ">
                   {address
                     ?.find((addr) => addr.type === "other")
                     ?.otherAddress?.map((otherAddr) => (
-                      <RadioCardItem
-                        colorPalette="teal"
+                      <div
                         key={otherAddr.id}
-                        value={otherAddr.id}
-                        className="cursor-pointer"
-                        description={
-                          <div className="flex flex-col w-[150px] gap-y-1">
-                            <span className="text-black">{otherAddr.flat}</span>
-                            <span className="text-black">{otherAddr.area}</span>
-                            <span className="text-black">
-                              {otherAddr.landmark}
-                            </span>
-                          </div>
-                        }
-                        checked={
-                          otherAddr.id === selectedAddress.otherAddressId
-                        }
-                        onChange={() => handleSelectOtherAddress(otherAddr.id)}
-                      />
+                        className={`cursor-pointer p-4 border rounded-md ${
+                          selectedAddress.otherAddressId === otherAddr.id
+                            ? "bg-teal-500 text-white"
+                            : "bg-gray-100 text-black"
+                        }`}
+                        onClick={() => handleSelectOtherAddress(otherAddr.id)}
+                      >
+                        <div className="flex flex-col gap-y-1">
+                          <span>{otherAddr.flat}</span>
+                          <span>{otherAddr.area}</span>
+                          <span>{otherAddr.landmark}</span>
+                        </div>
+                      </div>
                     ))}
-                </HStack>
-              </RadioCardRoot>
+                </div>
+              </div>
             )}
           </div>
         </div>
