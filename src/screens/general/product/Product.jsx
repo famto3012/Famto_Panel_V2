@@ -128,7 +128,6 @@ const Product = () => {
 
           <div className="flex gap-3">
             <Button
-              disabled={!selectedCategory.categoryId}
               onClick={() => toggleModal("csv")}
               className="bg-cyan-100 text-black rounded-md py-2 px-4 font-semibold flex gap-[5px] items-center"
             >
