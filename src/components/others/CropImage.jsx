@@ -101,6 +101,7 @@ const CropImage = ({
     setImgSrc(null);
     setCrop(null);
     setCompletedCrop(null);
+    onClose();
   };
 
   return (
