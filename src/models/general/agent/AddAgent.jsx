@@ -66,7 +66,7 @@ const AddAgent = ({ isOpen, onClose }) => {
     drivingLicenseBack: null,
   });
   const [showCrop, setShowCrop] = useState(false);
-  const [type, setType] = useState(false);
+  const [type, setType] = useState(null);
 
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -239,15 +239,7 @@ const AddAgent = ({ isOpen, onClose }) => {
 
   const cancelCrop = () => {
     setType(null);
-    setSelectedFile({
-      agent: null,
-      rcFront: null,
-      rcBack: null,
-      aadharFront: null,
-      aadharBack: null,
-      drivingLicenseFront: null,
-      drivingLicenseBack: null,
-    });
+    setSelectedFile((prev) => ({ ...prev, [type]: null }));
     setShowCrop(false);
   };
 
@@ -854,10 +846,7 @@ const AddAgent = ({ isOpen, onClose }) => {
           {/* Crop Modal */}
           <CropImage
             isOpen={showCrop && selectedFile[type]}
-            onClose={() => {
-              setSelectedFile(null);
-              setShowCrop(false);
-            }}
+            onClose={cancelCrop}
             selectedImage={selectedFile[type]}
             onCropComplete={handleCropImage}
           />
