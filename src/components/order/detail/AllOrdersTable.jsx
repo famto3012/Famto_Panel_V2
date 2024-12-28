@@ -271,7 +271,8 @@ const AllOrdersTable = ({ filter }) => {
                         <p className="text-orange-500 font-[600] text-[14px]">
                           On-going
                         </p>
-                      ) : (
+                      ) : order?.orderStatus === "On-going" &&
+                        !order?.isReady ? (
                         <button
                           className="text-white bg-teal-700 font-[500] text-[14px] p-2 rounded-md outline-none focus:outline-none"
                           onClick={() =>
@@ -280,6 +281,10 @@ const AllOrdersTable = ({ filter }) => {
                         >
                           Mark as Ready
                         </button>
+                      ) : (
+                        <p className="text-red-500 font-[600] text-[16px]">
+                          {order?.orderStatus}
+                        </p>
                       )}
                     </>
                   ) : (
