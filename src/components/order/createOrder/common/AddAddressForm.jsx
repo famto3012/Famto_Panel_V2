@@ -112,23 +112,53 @@ const AddAddressForm = ({ onAddCustomerAddress }) => {
             { label: "Phone Number", name: "phoneNumber" },
             { label: "Flat/House no/Floor", name: "flat" },
             { label: "Area/Locality", name: "area" },
+            { label: "Latitude", name: "latitude" },
+            { label: "Longitude", name: "longitude" },
             { label: "Nearby Landmark", name: "landmark", required: false },
-          ].map(({ label, name, required = true }) => (
-            <div className="flex items-center" key={name}>
-              <label className="w-1/3 text-md font-medium">
-                {label}
-                {required && <span className="text-red-500">*</span>}
-              </label>
-              <input
-                type="text"
-                name={name}
-                placeholder={label}
-                className="w-2/3 px-3 py-2 bg-white rounded focus:outline-none"
-                value={formData[name]}
-                onChange={handleChangeAddress}
-              />
-            </div>
-          ))}
+          ].map(({ label, name, required = true }) => {
+            const handleKeyDown = (e) => {
+              const allowedKeys = [
+                "Backspace",
+                "Tab",
+                "ArrowLeft",
+                "ArrowRight",
+              ];
+              const isNumberKey = e.key >= "0" && e.key <= "9";
+
+              if (
+                name === "phoneNumber" ||
+                name === "latitude" ||
+                name === "longitude"
+              ) {
+                const isDotAllowed = name !== "phoneNumber" && e.key === ".";
+                if (
+                  !isNumberKey &&
+                  !allowedKeys.includes(e.key) &&
+                  !isDotAllowed
+                ) {
+                  e.preventDefault();
+                }
+              }
+            };
+
+            return (
+              <div className="flex items-center" key={name}>
+                <label className="w-1/3 text-md font-medium">
+                  {label}
+                  {required && <span className="text-red-500">*</span>}
+                </label>
+                <input
+                  type="text"
+                  name={name}
+                  placeholder={label}
+                  className="w-2/3 px-3 py-2 bg-white rounded focus:outline-none"
+                  value={formData[name]}
+                  onChange={handleChangeAddress}
+                  onKeyDown={handleKeyDown}
+                />
+              </div>
+            );
+          })}
 
           <div className="flex items-center">
             <label className="w-1/3 text-md font-medium">Location</label>
