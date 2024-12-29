@@ -30,9 +30,12 @@ const PlaceSearchPlugin = ({ map }) => {
     }
 
     const optional_config = {
-      location: [8.5892862, 76.8773566],
+      location: [8.5892862, 76.8773566], // Center of Trivandrum
       region: "IND",
       height: 300,
+      // filter: "bounds:8.2833,76.6833;8.9,77.2833",
+      inputQuery: "Thiruvananthapuram",
+      hyperLocal: true,
     };
 
     const callback = (data) => {
