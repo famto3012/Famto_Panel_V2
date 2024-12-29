@@ -137,9 +137,9 @@ const AssignAgent = ({ isOpen, onClose, taskId }) => {
               label={"Agent"}
               value={
                 <div style={{ position: "relative" }}>
-                  <MenuRoot closeOnSelect={true}>
+                  <MenuRoot closeOnSelect={false}>
                     <MenuTrigger>
-                      <div className="flex justify-center items-center text-[15px] font-semibold text-gray-700 bg-white w-[217px] h-[35px] rounded-lg border-[2px] border-gray-200">
+                      <div className="flex justify-center items-center text-[15px] font-semibold text-gray-700 bg-white w-[217px] h-[35px] rounded-lg border-[2px] border-gray-200 cursor-pointer">
                         <p>
                           {selectedAgent?.agentName !== ""
                             ? selectedAgent?.agentName
@@ -147,42 +147,49 @@ const AssignAgent = ({ isOpen, onClose, taskId }) => {
                         </p>
                       </div>
                     </MenuTrigger>
-                    <MenuContent style={{ zIndex: 1500 }}>
-                      {agents?.map((agent) => (
+                    <MenuContent
+                      className="bg-white rounded-md border border-gray-200"
+                      style={{
+                        zIndex: 1500,
+                        maxHeight: "200px",
+                        overflowY: "auto",
+                      }}
+                    >
+                      {agents.map((agent) => (
                         <MenuItem
-                          key={agent?._id}
+                          key={agent._id}
                           onClick={() =>
-                            handleAgentSelect(agent?._id, agent?.name)
+                            handleAgentSelect(agent._id, agent.name)
                           }
+                          className="cursor-pointer hover:bg-gray-100"
+                          closeOnSelect={true}
                         >
                           <div className="flex flex-col">
                             <p className="flex text-[15px] font-semibold">
-                              {agent?._id}{" "}
+                              {agent._id}{" "}
                               {agent?.workStructure === "Fish & Meat" && (
                                 <div className="w-[10px] h-[10px] rounded-full bg-red-600 ml-3 mt-1"></div>
                               )}
                             </p>
                             <p className="text-[15px] font-semibold">
-                              {agent?.name}
+                              {agent.name}
                             </p>
                           </div>
                           <MenuItemCommand>
                             <div className="flex flex-col text-left">
                               <span
                                 className={
-                                  agent?.status === "Free"
+                                  agent.status === "Free"
                                     ? "text-green-400 font-semibold text-[14px]"
-                                    : agent?.status === "Inactive"
+                                    : agent.status === "Inactive"
                                       ? "text-gray-500 font-semibold text-[14px]"
-                                      : agent?.status === "Busy"
-                                        ? "text-red-500 font-semibold text-[14px]"
-                                        : "text-red-500 font-semibold text-[14px]"
+                                      : "text-red-500 font-semibold text-[14px]"
                                 }
                               >
-                                {agent?.status}
+                                {agent.status}
                               </span>
                               <span className="text-[14px] font-semibold">
-                                {agent?.distance} Kms
+                                {agent.distance} Kms
                               </span>
                             </div>
                           </MenuItemCommand>
