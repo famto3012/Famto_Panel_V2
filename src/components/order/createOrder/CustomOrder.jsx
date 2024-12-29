@@ -177,30 +177,101 @@ const CustomOrder = ({ data, address }) => {
     <>
       <div className="bg-white mt-5 rounded">
         <div className="flex flex-col gap-6">
-          <div className="flex items-center">
+          <div className="flex items-start">
             <label className="w-1/3 px-6 text-gray-700" htmlFor="location">
               Search for a location
             </label>
 
             <div className="w-1/3">
-              <button
-                type="button"
-                onClick={() => setShowMap(true)}
-                className={` ${
-                  customOrderData?.latitude && customOrderData?.longitude
-                    ? `bg-teal-700 text-white`
-                    : `bg-transparent text-teal-700`
-                } flex items-center justify-center font-medium border border-teal-700 w-4/5 rounded-md me-auto py-2 gap-2`}
-              >
-                {customOrderData?.latitude && customOrderData?.longitude ? (
-                  `Location selected`
-                ) : (
-                  <>
-                    <span>Mark location</span>
-                    <RenderIcon iconName="LocationIcon" size={20} loading={6} />
-                  </>
-                )}
-              </button>
+              <div className="flex flex-col gap-y-3">
+                <div className="flex gap-3 w-4/5">
+                  <input
+                    type="text"
+                    className="h-10 ps-3 text-sm border-2 outline-none focus:outline-none rounded-md flex-1"
+                    placeholder="Latitude"
+                    name="latitude"
+                    value={customOrderData.latitude || ""}
+                    onChange={(e) =>
+                      setCustomOrderData({
+                        ...customOrderData,
+                        latitude: e.target.value,
+                      })
+                    }
+                    onKeyDown={(e) => {
+                      const allowedKeys = [
+                        "Backspace",
+                        "Tab",
+                        "ArrowLeft",
+                        "ArrowRight",
+                      ];
+                      const isNumberKey = e.key >= "0" && e.key <= "9";
+                      const isDot = e.key === ".";
+
+                      if (
+                        !isNumberKey &&
+                        !allowedKeys.includes(e.key) &&
+                        !isDot
+                      ) {
+                        e.preventDefault();
+                      }
+                    }}
+                  />
+                  <input
+                    type="text"
+                    className="h-10 ps-3 text-sm border-2 outline-none focus:outline-none rounded-md flex-1"
+                    placeholder="Longitude"
+                    name="longitude"
+                    value={customOrderData.longitude || ""}
+                    onChange={(e) =>
+                      setCustomOrderData({
+                        ...customOrderData,
+                        longitude: e.target.value,
+                      })
+                    }
+                    onKeyDown={(e) => {
+                      const allowedKeys = [
+                        "Backspace",
+                        "Tab",
+                        "ArrowLeft",
+                        "ArrowRight",
+                      ];
+                      const isNumberKey = e.key >= "0" && e.key <= "9";
+                      const isDot = e.key === ".";
+
+                      if (
+                        !isNumberKey &&
+                        !allowedKeys.includes(e.key) &&
+                        !isDot
+                      ) {
+                        e.preventDefault();
+                      }
+                    }}
+                  />
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setShowMap(true)}
+                  className={`${
+                    customOrderData?.latitude && customOrderData?.longitude
+                      ? `bg-teal-700 text-white`
+                      : `bg-transparent text-teal-700`
+                  } flex items-center justify-center font-medium border border-teal-700 w-4/5 rounded-md me-auto py-2 gap-2`}
+                >
+                  {customOrderData?.latitude && customOrderData?.longitude ? (
+                    `Location selected`
+                  ) : (
+                    <>
+                      <span>Mark location</span>
+                      <RenderIcon
+                        iconName="LocationIcon"
+                        size={20}
+                        loading={6}
+                      />
+                    </>
+                  )}
+                </button>
+              </div>
 
               <Map
                 isOpen={showMap}
