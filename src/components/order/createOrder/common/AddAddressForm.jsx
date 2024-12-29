@@ -38,6 +38,30 @@ const AddAddressForm = ({ onAddCustomerAddress }) => {
     setFormData({ ...formData, latitude: data[0], longitude: data[1] });
   };
 
+  const handleKeyDown = (e) => {
+    const allowedKeys = [
+      "Backspace",
+      "Tab",
+      "ArrowLeft",
+      "ArrowRight",
+      "Delete",
+      ".",
+    ];
+    const isNumberKey = e.key >= "0" && e.key <= "9";
+    const isPasteShortcut =
+      (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "v";
+
+    if (
+      e.target.name === "phoneNumber" ||
+      e.target.name === "latitude" ||
+      e.target.name === "longitude"
+    ) {
+      if (!isNumberKey && !allowedKeys.includes(e.key) && !isPasteShortcut) {
+        e.preventDefault();
+      }
+    }
+  };
+
   const handleAddNewAddress = () => {
     const requiredFields = ["type", "fullName", "phoneNumber", "flat", "area"];
     const missingFields = requiredFields.filter((field) => !formData[field]);
@@ -69,17 +93,14 @@ const AddAddressForm = ({ onAddCustomerAddress }) => {
   };
 
   const handleAddressButtonClick = (type) => {
-    // Prevent selecting the same type unless it's "other"
     if (type === addressType && type !== "other") {
       toaster.create({
         title: "Error",
         description: "Pick-up Address and Delivery Address cannot be the same",
         type: "error",
       });
-      return; // Prevent the state update
+      return;
     }
-
-    // Update the form state for the selected address type
     setFormData({ ...formData, type: type });
     setAddressType(type);
     setSelectedAddress({ type, otherAddressId: null });
@@ -115,57 +136,34 @@ const AddAddressForm = ({ onAddCustomerAddress }) => {
             { label: "Latitude", name: "latitude" },
             { label: "Longitude", name: "longitude" },
             { label: "Nearby Landmark", name: "landmark", required: false },
-          ].map(({ label, name, required = true }) => {
-            const handleKeyDown = (e) => {
-              const allowedKeys = [
-                "Backspace",
-                "Tab",
-                "ArrowLeft",
-                "ArrowRight",
-              ];
-              const isNumberKey = e.key >= "0" && e.key <= "9";
-
-              if (
-                name === "phoneNumber" ||
-                name === "latitude" ||
-                name === "longitude"
-              ) {
-                const isDotAllowed = name !== "phoneNumber" && e.key === ".";
-                if (
-                  !isNumberKey &&
-                  !allowedKeys.includes(e.key) &&
-                  !isDotAllowed
-                ) {
-                  e.preventDefault();
-                }
-              }
-            };
-
-            return (
-              <div className="flex items-center" key={name}>
-                <label className="w-1/3 text-md font-medium">
-                  {label}
-                  {required && <span className="text-red-500">*</span>}
-                </label>
-                <input
-                  type="text"
-                  name={name}
-                  placeholder={label}
-                  className="w-2/3 px-3 py-2 bg-white rounded focus:outline-none"
-                  value={formData[name]}
-                  onChange={handleChangeAddress}
-                  onKeyDown={handleKeyDown}
-                />
-              </div>
-            );
-          })}
+          ].map(({ label, name, required = true }) => (
+            <div className="flex items-center" key={name}>
+              <label className="w-1/3 text-md font-medium">
+                {label}
+                {required && <span className="text-red-500">*</span>}
+              </label>
+              <input
+                type="text"
+                name={name}
+                placeholder={label}
+                className="w-2/3 px-3 py-2 bg-white rounded focus:outline-none"
+                value={formData[name]}
+                onChange={handleChangeAddress}
+                onKeyDown={handleKeyDown}
+              />
+            </div>
+          ))}
 
           <div className="flex items-center">
             <label className="w-1/3 text-md font-medium">Location</label>
             <button
               type="button"
               onClick={() => setShowModal(true)}
-              className={`${formData.latitude && formData.longitude ? "bg-transparent text-teal-700" : "bg-teal-700 text-white"} font-medium border border-teal-700 w-2/3 rounded-md mx-auto py-2`}
+              className={`${
+                formData.latitude && formData.longitude
+                  ? "bg-transparent text-teal-700"
+                  : "bg-teal-700 text-white"
+              } font-medium border border-teal-700 w-2/3 rounded-md mx-auto py-2`}
             >
               {formData.latitude && formData.longitude
                 ? `Location Marked`
