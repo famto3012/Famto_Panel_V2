@@ -26,11 +26,7 @@ const MerchantData = ({ detail, onDataChange }) => {
   const { role } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const {
-    data: allGeofence,
-    isLoading: geofenceLoading,
-    isError: geofenceError,
-  } = useQuery({
+  const { data: allGeofence } = useQuery({
     queryKey: ["all-geofence"],
     queryFn: () => getAllGeofence(navigate),
   });
@@ -105,11 +101,9 @@ const MerchantData = ({ detail, onDataChange }) => {
               </label>
             </div>
           ) : previewURL ? (
-            <figure
-              onClick={() => toggleModal("enlarge", previewURL)}
-              className="w-[90%] h-[12rem] rounded-md relative"
-            >
+            <figure className="w-[90%] h-[12rem] rounded-md relative">
               <img
+                onClick={() => toggleModal("enlarge", previewURL)}
                 src={previewURL}
                 alt="profile"
                 className="w-full h-full rounded-md object-cover cursor-pointer"
@@ -123,13 +117,14 @@ const MerchantData = ({ detail, onDataChange }) => {
             </figure>
           ) : (
             detail?.merchantDetail?.merchantImage && (
-              <figure
-                onClick={() =>
-                  toggleModal("enlarge", detail?.merchantDetail?.merchantImage)
-                }
-                className="w-[90%] h-[12rem] rounded-md relative  z-10"
-              >
+              <figure className="w-[90%] h-[12rem] rounded-md relative  z-10">
                 <img
+                  onClick={() =>
+                    toggleModal(
+                      "enlarge",
+                      detail?.merchantDetail?.merchantImage
+                    )
+                  }
                   src={detail?.merchantDetail?.merchantImage}
                   alt="profile"
                   className="w-full h-full rounded-md object-cover cursor-pointer"

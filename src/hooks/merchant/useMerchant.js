@@ -352,7 +352,7 @@ export const updateMerchantStatusForMerchantToggle = async (
 ) => {
   try {
     const api = useApiClient(navigate);
-    console.log("status", status)
+
     const res = await api.patch(`/merchants/change-status-toggle`, { status });
     return res.status === 200 ? res.data : null;
   } catch (err) {
