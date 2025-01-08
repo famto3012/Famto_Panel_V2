@@ -77,7 +77,7 @@ const ConfigureMerchant = ({ detail, onDataChange }) => {
         ...detail,
         merchantDetail: {
           ...detail.merchantDetail,
-          merchantFoodType: " ",
+          merchantFoodType: detail?.merchantDetail?.merchantFoodType || " ",
         },
       });
     }
@@ -227,9 +227,9 @@ const ConfigureMerchant = ({ detail, onDataChange }) => {
             colorPalette="teal"
             name="preOrderStatus"
             checked={detail?.merchantDetail?.preOrderStatus}
-            onCheckedChange={(e) =>
-              togglePreOrderStatus(e.value, "preOrderStatus")
-            }
+            onCheckedChange={(e) => {
+              togglePreOrderStatus(e.checked, "preOrderStatus");
+            }}
             disabled={detail?.merchantDetail?.deliveryOption === "On-demand"}
           />
         </div>

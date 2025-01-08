@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import RenderIcon from "@/icons/RenderIcon";
 import Logout from "@/models/auth/Logout";
@@ -7,9 +7,21 @@ import { useNavigate } from "react-router-dom";
 import { initializeApp } from "firebase/app";
 import { getMessaging, onMessage } from "firebase/messaging";
 import { Avatar, Circle, Float } from "@chakra-ui/react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  fetchSingleMerchantDetail,
+  updateMerchantStatusForMerchantToggle,
+} from "@/hooks/merchant/useMerchant";
+import AuthContext from "@/context/AuthContext";
+import { useInterval } from "react-use";
 
 const GlobalSearch = () => {
   const [showModal, setShowModal] = useState(false);
+  const [merchantId, setMerchantId] = useState(null);
+  const [merchantAvailability, setMerchantAvailability] = useState();
+  const [statusManualToggle, setStatusManualToggle] = useState(false);
+
+  const queryClient = useQueryClient();
 
   const {
     playNewOrderNotificationSound,
@@ -22,6 +34,7 @@ const GlobalSearch = () => {
   } = useSoundContext();
 
   const navigate = useNavigate();
+  const { role, userId } = useContext(AuthContext);
 
   const handleNotificationLog = () => {
     navigate("/notification/logs");
@@ -37,6 +50,28 @@ const GlobalSearch = () => {
     appId: import.meta.env.VITE_APP_APP_ID,
     measurementId: import.meta.env.VITE_APP_MEASUREMENT_ID,
   };
+
+  const { data: merchantProfileData } = useQuery({
+    queryKey: ["merchant-detail", merchantId],
+    queryFn: () => fetchSingleMerchantDetail(role, merchantId, navigate),
+    enabled: !!merchantId,
+  });
+
+  const handleUpdateMerchantStatusToggleMutation = useMutation({
+    mutationKey: ["update-merchant-status"],
+    mutationFn: (status) =>
+      updateMerchantStatusForMerchantToggle(navigate, status),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["merchant-detail"]);
+    },
+    // onError: (data) => {
+    //   toaster.create({
+    //     title: "Error",
+    //     description: data?.message || "Error while updating customization",
+    //     type: "error",
+    //   });
+    // },
+  });
 
   const handleNotification = (payload) => {
     if (
@@ -82,6 +117,80 @@ const GlobalSearch = () => {
       setShowBadge(true);
     });
   }, []);
+
+  const getCurrentDayAndTime = () => {
+    const currentDay = new Date()
+      .toLocaleString("en-us", { weekday: "long" })
+      .toLowerCase();
+    const currentTime = new Date().toLocaleTimeString("en-US", {
+      hour12: false, // 24-hour format
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    return { currentDay, currentTime };
+  };
+
+  const checkAvailability = async () => {
+    try {
+      // Fetch the merchant's availability data
+      const { currentDay, currentTime } = getCurrentDayAndTime();
+      const todayAvailability = merchantAvailability?.specificDays[currentDay];
+      if (statusManualToggle) {
+        console.log("here");
+        return;
+      }
+      if (!todayAvailability) {
+        // setErrorMessage("No availability data found for today.");
+        console.log("Here 1");
+        return;
+      }
+
+      // Handle openAllDay
+      if (todayAvailability.openAllDay) {
+        handleUpdateMerchantStatusToggleMutation.mutate(true);
+        setStatusManualToggle(false);
+        return;
+      }
+
+      // Handle closedAllDay
+      if (todayAvailability.closedAllDay) {
+        handleUpdateMerchantStatusToggleMutation.mutate(false);
+        setStatusManualToggle(false);
+        // setErrorMessage("Merchant is closed all day.");
+        return;
+      }
+
+      // Handle specificTime
+      if (todayAvailability.specificTime) {
+        const { startTime, endTime } = todayAvailability;
+        if (currentTime >= startTime && currentTime <= endTime) {
+          console.log("Here 2");
+          handleUpdateMerchantStatusToggleMutation.mutate(true);
+          setStatusManualToggle(false);
+        } else {
+          console.log("Here 3");
+          handleUpdateMerchantStatusToggleMutation.mutate(false);
+          setStatusManualToggle(false);
+          // setErrorMessage("Merchant is not available at the current time.");
+        }
+        return;
+      }
+    } catch (error) {
+      console.error("Error fetching availability", error);
+      // setErrorMessage("Error fetching availability data.");
+    }
+  };
+
+  useInterval(() => {
+    checkAvailability();
+  }, 60000);
+
+  useEffect(() => {
+    setMerchantAvailability(merchantProfileData?.merchantDetail?.availability);
+    if (role === "Merchant" && userId) {
+      setMerchantId(userId);
+    }
+  }, [merchantProfileData, userId]);
 
   return (
     <div className="flex items-center justify-end pt-[20px] pe-[30px] bg-gray-100">

@@ -125,12 +125,7 @@ const Home = () => {
       updateMerchantStatusForMerchantToggle(navigate, status),
     onSuccess: () => {
       queryClient.invalidateQueries(["merchant-detail"]);
-      toaster.create({
-        title: "Success",
-        description: "Merchant status updated successfully",
-        type: "success",
-      });
-      setStatus(!status);
+      setStatus(status);
     },
     onError: (data) => {
       toaster.create({

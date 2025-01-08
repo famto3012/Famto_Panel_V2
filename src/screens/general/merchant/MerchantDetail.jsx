@@ -50,6 +50,7 @@ const MerchantDetail = () => {
 
   useEffect(() => {
     data && setFormData(data);
+    console.log("data", data);
   }, [data]);
 
   const handleUpdateStatusMutation = useMutation({
