@@ -326,42 +326,132 @@ const MerchantData = ({ detail, onDataChange }) => {
           )}
         </div>
 
-        <div className="mb-[20px] flex items-center justify-start gap-[30px]">
+        <div className="mb-[20px] flex items-center justify-start">
           <label className="text-gray-700 w-1/3">Location</label>
-          <button
-            type="button"
-            onClick={() => toggleModal("map")}
-            className={`font-medium text-start rounded-md py-2 w-2/3 flex items-center justify-center gap-2 me-1 border-2 border-teal-700 ${
-              detail?.merchantDetail?.location?.every((item) => !isNaN(item)) &&
-              detail?.merchantDetail?.location?.length === 2
-                ? "bg-teal-700 text-white"
-                : "text-teal-700"
-            }`}
-          >
-            <span>
-              {detail?.merchantDetail?.location?.every(
-                (item) => !isNaN(item)
-              ) && detail?.merchantDetail?.location?.length === 2
-                ? "Location Marked"
-                : "Mark Location"}
-            </span>
-            <RenderIcon iconName="LocationIcon" size={16} loading={6} />
-          </button>
+          <div className="flex flex-col gap-5">
+            <div className="flex gap-3 w-2/3">
+              <input
+                type="text"
+                className="h-10 ps-3 text-sm border-2 outline-none focus:outline-none rounded-md flex-1"
+                placeholder="Latitude"
+                name="latitude"
+                value={detail?.merchantDetail?.location[0] || ""}
+                onChange={(e) =>
+                  onDataChange({
+                    ...detail,
+                    merchantDetail: {
+                      ...detail.merchantDetail,
+                      location: [
+                        e.target.value, // Update latitude (index 0)
+                        detail?.merchantDetail?.location[1] || "", // Keep longitude (index 1) unchanged
+                      ],
+                    },
+                  })
+                }
+                onKeyDown={(e) => {
+                  const allowedKeys = [
+                    "Backspace",
+                    "Tab",
+                    "ArrowLeft",
+                    "ArrowRight",
+                  ];
+                  const isNumberKey = e.key >= "0" && e.key <= "9";
+                  const isDot = e.key === ".";
+                  const isPaste =
+                    (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "v";
 
-          {detail?.merchantDetail?.locationImage && (
-            <img
-              onClick={() =>
-                toggleModal("enlarge", detail?.merchantDetail?.locationImage)
-              }
-              src={detail?.merchantDetail?.locationImage}
-              className="w-[70px] h-[66px] rounded-md cursor-pointer"
-              alt="location map"
-            />
-          )}
+                  if (
+                    !isNumberKey &&
+                    !allowedKeys.includes(e.key) &&
+                    !isDot &&
+                    !isPaste
+                  ) {
+                    e.preventDefault();
+                  }
+                }}
+              />
+              <input
+                type="text"
+                className="h-10 ps-3 text-sm border-2 outline-none focus:outline-none rounded-md flex-1"
+                placeholder="Longitude"
+                name="longitude"
+                value={detail?.merchantDetail?.location[1] || ""}
+                onChange={(e) =>
+                  onDataChange({
+                    ...detail,
+                    merchantDetail: {
+                      ...detail.merchantDetail,
+                      location: [
+                        detail?.merchantDetail?.location[0] || "", // Keep latitude (index 0) unchanged
+                        e.target.value, // Update longitude (index 1)
+                      ],
+                    },
+                  })
+                }
+                onKeyDown={(e) => {
+                  const allowedKeys = [
+                    "Backspace",
+                    "Tab",
+                    "ArrowLeft",
+                    "ArrowRight",
+                  ];
+                  const isNumberKey = e.key >= "0" && e.key <= "9";
+                  const isDot = e.key === ".";
+                  const isPaste =
+                    (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "v";
 
-          {!detail?.merchantDetail?.locationImage && (
-            <div className="w-[70px] h-[66px] rounded-md bg-gray-300"></div>
-          )}
+                  if (
+                    !isNumberKey &&
+                    !allowedKeys.includes(e.key) &&
+                    !isDot &&
+                    !isPaste
+                  ) {
+                    e.preventDefault();
+                  }
+                }}
+              />
+            </div>
+            <div className="flex items-center justify-start gap-[30px]">
+              <button
+                type="button"
+                onClick={() => toggleModal("map")}
+                className={`font-medium text-start rounded-md py-2 w-2/3 flex items-center justify-center gap-2 me-1 border-2 border-teal-700 ${
+                  detail?.merchantDetail?.location?.every(
+                    (item) => !isNaN(item)
+                  ) && detail?.merchantDetail?.location?.length === 2
+                    ? "bg-teal-700 text-white"
+                    : "text-teal-700"
+                }`}
+              >
+                <span>
+                  {detail?.merchantDetail?.location?.every(
+                    (item) => !isNaN(item)
+                  ) && detail?.merchantDetail?.location?.length === 2
+                    ? "Location Marked"
+                    : "Mark Location"}
+                </span>
+                <RenderIcon iconName="LocationIcon" size={16} loading={6} />
+              </button>
+
+              {detail?.merchantDetail?.locationImage && (
+                <img
+                  onClick={() =>
+                    toggleModal(
+                      "enlarge",
+                      detail?.merchantDetail?.locationImage
+                    )
+                  }
+                  src={detail?.merchantDetail?.locationImage}
+                  className="w-[70px] h-[66px] rounded-md cursor-pointer"
+                  alt="location map"
+                />
+              )}
+
+              {!detail?.merchantDetail?.locationImage && (
+                <div className="w-[70px] h-[66px] rounded-md bg-gray-300"></div>
+              )}
+            </div>
+          </div>
         </div>
 
         <div className="mb-[20px] flex items-center justify-start gap-[30px]  me-[95px]">

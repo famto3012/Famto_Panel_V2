@@ -206,11 +206,14 @@ const CustomOrder = ({ data, address }) => {
                       ];
                       const isNumberKey = e.key >= "0" && e.key <= "9";
                       const isDot = e.key === ".";
+                      const isPaste =
+                        (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "v";
 
                       if (
                         !isNumberKey &&
                         !allowedKeys.includes(e.key) &&
-                        !isDot
+                        !isDot &&
+                        !isPaste
                       ) {
                         e.preventDefault();
                       }
@@ -237,11 +240,14 @@ const CustomOrder = ({ data, address }) => {
                       ];
                       const isNumberKey = e.key >= "0" && e.key <= "9";
                       const isDot = e.key === ".";
+                      const isPaste =
+                        (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "v";
 
                       if (
                         !isNumberKey &&
                         !allowedKeys.includes(e.key) &&
-                        !isDot
+                        !isDot &&
+                        !isPaste
                       ) {
                         e.preventDefault();
                       }
